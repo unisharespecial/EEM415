@@ -1,0 +1,53 @@
+
+#pragma config[1] = 0xF1 // Osilatör: XT
+#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+#pragma config[3] = 0xFE // Watchdog Timer kapalý
+
+void	keypad_oku();
+void	ayarlar();
+void 	bekle(unsigned long t);	// t milisaniye gecikme saðlayan fonksiyon tanýmý
+
+
+void main()
+{
+	ayarlar();
+
+//-----------------------------------------------	
+anadongu:
+	keypad_oku();
+
+ 	bekle(1);	// Acquisition Time(Sample & Hold kapasitörünün þarj olmasý için gerekli zaman)
+  	PORTD=0x00;
+    while(PORTB.0==0)
+        PORTD=0xFF;
+    
+	goto anadongu;
+//-----------------------------------------------	
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+void ayarlar()	// Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+{	
+	GIE=0;			// Bütün kesmeleri kapat
+	TRISB=0xFF;		// B portu giriþ yapýldý
+	TRISD=0;		// D portu çýkýþ yapýldý
+		
+	PORTD=0;		// D portu çýkýþlarý sýfýrlandý
+
+	
+	
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+{
+	unsigned x;
+	
+	for(;t>0;t--)
+		for(x=140;x>0;x--)
+			nop();
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////

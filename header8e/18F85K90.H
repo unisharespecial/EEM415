@@ -1,0 +1,1189 @@
+// Header file
+#pragma chip PIC18F85K90, core 16, code 16384, ram 0 : 0x7FF
+
+#ifdef ICD2_DEBUG
+ #pragma stackLevels 29   // reserve two levels for debugging
+#endif
+
+// Extended Instruction Set
+
+#pragma accessGPR 0x60
+
+/* Predefined:
+TOSU,TOSH,TOSL,
+STKPTR,
+PCLATU,PCLATH,PCL,
+TBLPTRU,TBLPTRH,TBLPTRL,TBLPTR,TABLAT,
+PRODH,PRODL,
+INTCON,INTCON2,INTCON3,
+INDF0,POSTINC0,POSTDEC0,PREINC0,PLUSW0,FSR0H,FSR0L,FSR0,
+WREG,
+INDF1,POSTINC1,POSTDEC1,PREINC1,PLUSW1,FSR1H,FSR1L,FSR1,
+BSR,BSRL,
+INDF2,POSTINC2,POSTDEC2,PREINC2,PLUSW2,FSR2H,FSR2L,FSR2,
+STATUS,
+Carry,DC,Zero_,Overflow,Negative,
+*/
+
+char TMR0H    @ 0xFD7;
+char TMR0L    @ 0xFD6;
+char T0CON    @ 0xFD5;
+char SPBRGH1  @ 0xFD4;
+char OSCCON   @ 0xFD3;
+char IPR5     @ 0xFD2;
+char WDTCON   @ 0xFD1;
+char RCON     @ 0xFD0;
+char TMR1H    @ 0xFCF;
+char TMR1L    @ 0xFCE;
+char T1CON    @ 0xFCD;
+char TMR2     @ 0xFCC;
+char PR2      @ 0xFCB;
+char T2CON    @ 0xFCA;
+char SSP1BUF  @ 0xFC9;
+char SSP1ADD  @ 0xFC8;
+char SSP1STAT @ 0xFC7;
+char SSP1CON1 @ 0xFC6;
+char SSP1CON2 @ 0xFC5;
+char ADRESH   @ 0xFC4;
+char ADRESL   @ 0xFC3;
+char ADCON0   @ 0xFC2;
+char ADCON1   @ 0xFC1;
+char ADCON2   @ 0xFC0;
+char ECCP1AS  @ 0xFBF;
+char ECCP1DEL @ 0xFBE;
+char CCPR1H   @ 0xFBD;
+char CCPR1L   @ 0xFBC;
+char CCP1CON  @ 0xFBB;
+char PIR5     @ 0xFBA;
+char PIE5     @ 0xFB9;
+char IPR4     @ 0xFB8;
+char PIR4     @ 0xFB7;
+char PIE4     @ 0xFB6;
+char CVRCON   @ 0xFB5;
+char CMSTAT   @ 0xFB4;
+char TMR3H    @ 0xFB3;
+char TMR3L    @ 0xFB2;
+char T3CON    @ 0xFB1;
+char T3GCON   @ 0xFB0;
+char SPBRG1   @ 0xFAF;
+char RCREG1   @ 0xFAE;
+char TXREG1   @ 0xFAD;
+char TXSTA1   @ 0xFAC;
+char RCSTA1   @ 0xFAB;
+char T1GCON   @ 0xFAA;
+char IPR6     @ 0xFA9;
+char HLVDCON  @ 0xFA8;
+
+char PIR6     @ 0xFA6;
+char IPR3     @ 0xFA5;
+char PIR3     @ 0xFA4;
+char PIE3     @ 0xFA3;
+char IPR2     @ 0xFA2;
+char PIR2     @ 0xFA1;
+char PIE2     @ 0xFA0;
+char IPR1     @ 0xF9F;
+char PIR1     @ 0xF9E;
+char PIE1     @ 0xF9D;
+char PSTR1CON @ 0xF9C;
+char OSCTUNE  @ 0xF9B;
+char TRISJ    @ 0xF9A;
+char TRISH    @ 0xF99;
+char TRISG    @ 0xF98;
+char TRISF    @ 0xF97;
+char TRISE    @ 0xF96;
+char TRISD    @ 0xF95;
+char TRISC    @ 0xF94;
+char TRISB    @ 0xF93;
+char TRISA    @ 0xF92;
+char LATJ     @ 0xF91;
+char LATH     @ 0xF90;
+char LATG     @ 0xF8F;
+char LATF     @ 0xF8E;
+char LATE     @ 0xF8D;
+char LATD     @ 0xF8C;
+char LATC     @ 0xF8B;
+char LATB     @ 0xF8A;
+char LATA     @ 0xF89;
+char PORTJ    @ 0xF88;
+char PORTH    @ 0xF87;
+char PORTG    @ 0xF86;
+char PORTF    @ 0xF85;
+char PORTE    @ 0xF84;
+char PORTD    @ 0xF83;
+char PORTC    @ 0xF82;
+char PORTB    @ 0xF81;
+char PORTA    @ 0xF80;
+char EECON1   @ 0xF7F;
+char EECON2   @ 0xF7E;
+char LCDDATA23 @ 0xF7D;
+char LCDDATA22 @ 0xF7C;
+char LCDDATA21 @ 0xF7B;
+char LCDDATA20 @ 0xF7A;
+char LCDDATA19 @ 0xF79;
+char LCDDATA18 @ 0xF78;
+char LCDDATA17 @ 0xF77;
+char LCDDATA16 @ 0xF76;
+char LCDDATA15 @ 0xF75;
+char LCDDATA14 @ 0xF74;
+char LCDDATA13 @ 0xF73;
+char LCDDATA12 @ 0xF72;
+char LCDDATA11 @ 0xF71;
+char LCDDATA10 @ 0xF70;
+char LCDDATA9 @ 0xF6F;
+char LCDDATA8 @ 0xF6E;
+char LCDDATA7 @ 0xF6D;
+char LCDDATA6 @ 0xF6C;
+char LCDDATA5 @ 0xF6B;
+char LCDDATA4 @ 0xF6A;
+char LCDDATA3 @ 0xF69;
+char LCDDATA2 @ 0xF68;
+char LCDDATA1 @ 0xF67;
+char LCDDATA0 @ 0xF66;
+char BAUDCON1 @ 0xF65;
+char OSCCON2  @ 0xF64;
+char EEADRH   @ 0xF63;
+char EEADR    @ 0xF62;
+char EEDATA   @ 0xF61;
+char PIE6     @ 0xF60;
+char RTCCFG   @ 0xF5F;
+char RTCCAL   @ 0xF5E;
+char RTCVALH  @ 0xF5D;
+char RTCVALL  @ 0xF5C;
+char ALRMCFG  @ 0xF5B;
+char ALRMRPT  @ 0xF5A;
+char ALRMVALH @ 0xF59;
+char ALRMVALL @ 0xF58;
+char CTMUCONH @ 0xF57;
+char CTMUCONL @ 0xF56;
+char CTMUICON @ 0xF55;
+char CM1CON   @ 0xF54;
+char PADCFG1  @ 0xF53;
+char ECCP2AS  @ 0xF52;
+char ECCP2DEL @ 0xF51;
+char CCPR2H   @ 0xF50;
+char CCPR2L   @ 0xF4F;
+char CCP2CON  @ 0xF4E;
+char ECCP3AS  @ 0xF4D;
+char ECCP3DEL @ 0xF4C;
+char CCPR3H   @ 0xF4B;
+char CCPR3L   @ 0xF4A;
+char CCP3CON  @ 0xF49;
+char CCPR8H   @ 0xF48;
+char CCPR8L   @ 0xF47;
+char CCP8CON  @ 0xF46;
+
+char TMR6     @ 0xF3B;
+char PR6      @ 0xF3A;
+char T6CON    @ 0xF39;
+char TMR8     @ 0xF38;
+char PR8      @ 0xF37;
+char T8CON    @ 0xF36;
+
+char CM2CON   @ 0xF2F;
+char CM3CON   @ 0xF2E;
+char CCPTMRS0 @ 0xF2D;
+char CCPTMRS1 @ 0xF2C;
+char CCPTMRS2 @ 0xF2B;
+char REFOCON  @ 0xF2A;
+char ODCON1   @ 0xF29;
+char ODCON2   @ 0xF28;
+char ODCON3   @ 0xF27;
+
+char ANCON0   @ 0xF25;
+char ANCON1   @ 0xF24;
+char ANCON2   @ 0xF23;
+char RCSTA2   @ 0xF22;
+char TXSTA2   @ 0xF21;
+char BAUDCON2 @ 0xF20;
+char SPBRGH2  @ 0xF1F;
+char SPBRG2   @ 0xF1E;
+char RCREG2   @ 0xF1D;
+char TXREG2   @ 0xF1C;
+char PSTR2CON @ 0xF1B;
+char PSTR3CON @ 0xF1A;
+char PMD0     @ 0xF19;
+char PMD1     @ 0xF18;
+char PMD2     @ 0xF17;
+char PMD3     @ 0xF16;
+char TMR5H    @ 0xF15;
+char TMR5L    @ 0xF14;
+char T5CON    @ 0xF13;
+char T5GCON   @ 0xF12;
+char CCPR4H   @ 0xF11;
+char CCPR4L   @ 0xF10;
+char CCP4CON  @ 0xF0F;
+char CCPR5H   @ 0xF0E;
+char CCPR5L   @ 0xF0D;
+char CCP5CON  @ 0xF0C;
+char CCPR6H   @ 0xF0B;
+char CCPR6L   @ 0xF0A;
+char CCP6CON  @ 0xF09;
+char CCPR7H   @ 0xF08;
+char CCPR7L   @ 0xF07;
+char CCP7CON  @ 0xF06;
+char TMR4     @ 0xF05;
+char PR4      @ 0xF04;
+char T4CON    @ 0xF03;
+char SSP2BUF  @ 0xF02;
+char SSP2ADD  @ 0xF01;
+char SSP2STAT @ 0xF00;
+char SSP2CON1 @ 0xEFF;
+char SSP2CON2 @ 0xEFE;
+char LCDREF   @ 0xEFD;
+char LCDRL    @ 0xEFC;
+char LCDSE5   @ 0xEFB;
+char LCDSE4   @ 0xEFA;
+char LCDSE3   @ 0xEF9;
+char LCDSE2   @ 0xEF8;
+char LCDSE1   @ 0xEF7;
+char LCDSE0   @ 0xEF6;
+char LCDPS    @ 0xEF5;
+char LCDCON   @ 0xEF4;
+
+bit RBIF    @ INTCON.0;
+bit INT0IF  @ INTCON.1;
+bit TMR0IF  @ INTCON.2;
+bit RBIE    @ INTCON.3;
+bit INT0IE  @ INTCON.4;
+bit TMR0IE  @ INTCON.5;
+bit PEIE    @ INTCON.6;
+bit GIEL    @ INTCON.6;
+bit GIE     @ INTCON.7;
+bit GIEH    @ INTCON.7;
+
+bit RBIP    @ INTCON2.0;
+bit INT3IP  @ INTCON2.1;
+bit TMR0IP  @ INTCON2.2;
+bit INTEDG3 @ INTCON2.3;
+bit INTEDG2 @ INTCON2.4;
+bit INTEDG1 @ INTCON2.5;
+bit INTEDG0 @ INTCON2.6;
+bit RBPU    @ INTCON2.7;
+
+bit INT1IF  @ INTCON3.0;
+bit INT2IF  @ INTCON3.1;
+bit INT3IF  @ INTCON3.2;
+bit INT1IE  @ INTCON3.3;
+bit INT2IE  @ INTCON3.4;
+bit INT3IE  @ INTCON3.5;
+bit INT1IP  @ INTCON3.6;
+bit INT2IP  @ INTCON3.7;
+
+bit PSA     @ T0CON.3;
+bit T0SE    @ T0CON.4;
+bit T0CS    @ T0CON.5;
+bit T08BIT  @ T0CON.6;
+bit TMR0ON  @ T0CON.7;
+
+bit SCS0    @ OSCCON.0;
+bit SCS1    @ OSCCON.1;
+bit HFIOFS  @ OSCCON.2;
+bit OSTS    @ OSCCON.3;
+bit IDLEN   @ OSCCON.7;
+
+bit TMR4IP  @ IPR5.0;
+bit TMR5IP  @ IPR5.1;
+bit TMR6IP  @ IPR5.2;
+bit TMR8IP  @ IPR5.4;
+
+bit SWDTEN  @ WDTCON.0;
+bit ULPSINK @ WDTCON.1;
+bit ULPEN   @ WDTCON.2;
+bit SRETEN  @ WDTCON.4;
+bit ULPLVL  @ WDTCON.5;
+bit REGSLP  @ WDTCON.7;
+
+bit BOR_    @ RCON.0;
+bit POR_    @ RCON.1;
+bit PD      @ RCON.2;
+bit TO      @ RCON.3;
+bit RI_     @ RCON.4;
+bit SBOREN  @ RCON.6;
+bit IPEN    @ RCON.7;
+
+bit TMR1ON  @ T1CON.0;
+bit T1RD16  @ T1CON.1;
+bit T1SYNC_ @ T1CON.2;
+bit SOSCEN  @ T1CON.3;
+bit T1CKPS0 @ T1CON.4;
+bit T1CKPS1 @ T1CON.5;
+bit TMR1CS0 @ T1CON.6;
+bit TMR1CS1 @ T1CON.7;
+
+bit T2CKPS0 @ T2CON.0;
+bit T2CKPS1 @ T2CON.1;
+bit TMR2ON  @ T2CON.2;
+
+bit BF      @ SSP1STAT.0;
+bit UA      @ SSP1STAT.1;
+bit RW_     @ SSP1STAT.2;
+bit S       @ SSP1STAT.3;
+bit P       @ SSP1STAT.4;
+bit DA_     @ SSP1STAT.5;
+bit CKE     @ SSP1STAT.6;
+bit SMP     @ SSP1STAT.7;
+
+bit CKP     @ SSP1CON1.4;
+bit SSPEN   @ SSP1CON1.5;
+bit SSPOV   @ SSP1CON1.6;
+bit WCOL    @ SSP1CON1.7;
+
+bit SEN     @ SSP1CON2.0;
+bit RSEN    @ SSP1CON2.1;
+bit PEN     @ SSP1CON2.2;
+bit RCEN    @ SSP1CON2.3;
+bit ACKEN   @ SSP1CON2.4;
+bit ACKDT   @ SSP1CON2.5;
+bit ACKSTAT @ SSP1CON2.6;
+bit GCEN    @ SSP1CON2.7;
+
+bit ADON    @ ADCON0.0;
+bit GO      @ ADCON0.1;
+bit CHS0    @ ADCON0.2;
+bit CHS1    @ ADCON0.3;
+bit CHS2    @ ADCON0.4;
+bit CHS3    @ ADCON0.5;
+bit CHS4    @ ADCON0.6;
+
+bit CHSN0   @ ADCON1.0;
+bit CHSN1   @ ADCON1.1;
+bit CHSN2   @ ADCON1.2;
+bit VNCFG   @ ADCON1.3;
+bit VCFG0   @ ADCON1.4;
+bit VCFG1   @ ADCON1.5;
+bit TRIGSEL0 @ ADCON1.6;
+bit TRIGSEL1 @ ADCON1.7;
+
+bit ADCS0   @ ADCON2.0;
+bit ADCS1   @ ADCON2.1;
+bit ADCS2   @ ADCON2.2;
+bit ADFM    @ ADCON2.7;
+
+bit PSS1BD0 @ ECCP1AS.0;
+bit PSS1BD1 @ ECCP1AS.1;
+bit PSS1AC0 @ ECCP1AS.2;
+bit PSS1AC1 @ ECCP1AS.3;
+bit ECCP1AS0 @ ECCP1AS.4;
+bit ECCP1AS1 @ ECCP1AS.5;
+bit ECCP1AS2 @ ECCP1AS.6;
+bit ECCP1ASE @ ECCP1AS.7;
+
+bit P1RSEN  @ ECCP1DEL.7;
+
+bit DC1B0   @ CCP1CON.4;
+bit DC1B1   @ CCP1CON.5;
+bit P1M0    @ CCP1CON.6;
+bit P1M1    @ CCP1CON.7;
+
+bit TMR4IF  @ PIR5.0;
+bit TMR5IF  @ PIR5.1;
+bit TMR6IF  @ PIR5.2;
+bit TMR8IF  @ PIR5.4;
+
+bit TMR4IE  @ PIE5.0;
+bit TMR5IE  @ PIE5.1;
+bit TMR6IE  @ PIE5.2;
+bit TMR8IE  @ PIE5.4;
+
+bit CCP3IP  @ IPR4.0;
+bit CCP4IP  @ IPR4.1;
+bit CCP5IP  @ IPR4.2;
+bit CCP6IP  @ IPR4.3;
+bit CCP8IP  @ IPR4.5;
+
+bit CCP3IF  @ PIR4.0;
+bit CCP4IF  @ PIR4.1;
+bit CCP5IF  @ PIR4.2;
+bit CCP6IF  @ PIR4.3;
+bit CCP8IF  @ PIR4.5;
+
+bit CCP3IE  @ PIE4.0;
+bit CCP4IE  @ PIE4.1;
+bit CCP5IE  @ PIE4.2;
+bit CCP6IE  @ PIE4.3;
+bit CCP8IE  @ PIE4.5;
+
+bit CVRSS   @ CVRCON.5;
+bit CVROE   @ CVRCON.6;
+bit CVREN   @ CVRCON.7;
+
+bit CMP1OUT @ CMSTAT.5;
+bit CMP2OUT @ CMSTAT.6;
+bit CMP3OUT @ CMSTAT.7;
+
+bit TMR3ON  @ T3CON.0;
+bit T3RD16  @ T3CON.1;
+bit T3SYNC_ @ T3CON.2;
+bit T3SOSCEN @ T3CON.3;
+bit T3CKPS0 @ T3CON.4;
+bit T3CKPS1 @ T3CON.5;
+bit TMR3CS0 @ T3CON.6;
+bit TMR3CS1 @ T3CON.7;
+
+bit T3GSS0  @ T3GCON.0;
+bit T3GSS1  @ T3GCON.1;
+bit T3GVAL  @ T3GCON.2;
+bit T3GGO   @ T3GCON.3;
+bit T3GSPM  @ T3GCON.4;
+bit T3GTM   @ T3GCON.5;
+bit T3GPOL  @ T3GCON.6;
+bit TMR3GE  @ T3GCON.7;
+
+bit TX9D1   @ TXSTA1.0;
+bit TRMT1   @ TXSTA1.1;
+bit BRGH1   @ TXSTA1.2;
+bit SENDB1  @ TXSTA1.3;
+bit SYNC1   @ TXSTA1.4;
+bit TXEN1   @ TXSTA1.5;
+bit TX9_1   @ TXSTA1.6;
+bit CSRC1   @ TXSTA1.7;
+
+bit RX9D1   @ RCSTA1.0;
+bit OERR1   @ RCSTA1.1;
+bit FERR1   @ RCSTA1.2;
+bit ADDEN1  @ RCSTA1.3;
+bit CREN1   @ RCSTA1.4;
+bit SREN1   @ RCSTA1.5;
+bit RX9_1   @ RCSTA1.6;
+bit SPEN1   @ RCSTA1.7;
+
+bit T1GSS0  @ T1GCON.0;
+bit T1GSS1  @ T1GCON.1;
+bit T1GVAL  @ T1GCON.2;
+bit T1GGO   @ T1GCON.3;
+bit T1GSPM  @ T1GCON.4;
+bit T1GTM   @ T1GCON.5;
+bit T1GPOL  @ T1GCON.6;
+bit TMR1GE  @ T1GCON.7;
+
+bit CMP1IP  @ IPR6.0;
+bit CMP2IP  @ IPR6.1;
+bit CMP3IP  @ IPR6.2;
+bit EEIP    @ IPR6.4;
+
+bit HLVDEN  @ HLVDCON.4;
+bit IRVST   @ HLVDCON.5;
+bit BGVST   @ HLVDCON.6;
+bit VDIRMAG @ HLVDCON.7;
+
+bit CMP1IF  @ PIR6.0;
+bit CMP2IF  @ PIR6.1;
+bit CMP3IF  @ PIR6.2;
+bit EEIF    @ PIR6.4;
+
+bit RTCCIP  @ IPR3.0;
+bit CCP1IP  @ IPR3.1;
+bit CCP2IP  @ IPR3.2;
+bit CTMUIP  @ IPR3.3;
+bit TX2IP   @ IPR3.4;
+bit RC2IP   @ IPR3.5;
+bit LCDIP   @ IPR3.6;
+bit TMR5GIP @ IPR3.7;
+
+bit RTCCIF  @ PIR3.0;
+bit CCP1IF  @ PIR3.1;
+bit CCP2IF  @ PIR3.2;
+bit CTMUIF  @ PIR3.3;
+bit TX2IF   @ PIR3.4;
+bit RC2IF   @ PIR3.5;
+bit LCDIF   @ PIR3.6;
+bit TMR5GIF @ PIR3.7;
+
+bit RTCCIE  @ PIE3.0;
+bit CCP1IE  @ PIE3.1;
+bit CCP2IE  @ PIE3.2;
+bit CTMUIE  @ PIE3.3;
+bit TX2IE   @ PIE3.4;
+bit RC2IE   @ PIE3.5;
+bit LCDIE   @ PIE3.6;
+bit TMR5GIE @ PIE3.7;
+
+bit TMR3GIP @ IPR2.0;
+bit TMR3IP  @ IPR2.1;
+bit HLVDIP  @ IPR2.2;
+bit BCL1IP  @ IPR2.3;
+bit BCL2IP  @ IPR2.4;
+bit SSP2IP  @ IPR2.5;
+bit OSCFIP  @ IPR2.7;
+
+bit TMR3GIF @ PIR2.0;
+bit TMR3IF  @ PIR2.1;
+bit HLVDIF  @ PIR2.2;
+bit BCL1IF  @ PIR2.3;
+bit BCL2IF  @ PIR2.4;
+bit SSP2IF  @ PIR2.5;
+bit OSCFIF  @ PIR2.7;
+
+bit TMR3GIE @ PIE2.0;
+bit TMR3IE  @ PIE2.1;
+bit HLVDIE  @ PIE2.2;
+bit BCL1IE  @ PIE2.3;
+bit BCL2IE  @ PIE2.4;
+bit SSP2IE  @ PIE2.5;
+bit OSCFIE  @ PIE2.7;
+
+bit TMR1IP  @ IPR1.0;
+bit TMR2IP  @ IPR1.1;
+bit TMR1GIP @ IPR1.2;
+bit SSP1IP  @ IPR1.3;
+bit TX1IP   @ IPR1.4;
+bit RC1IP   @ IPR1.5;
+bit ADIP    @ IPR1.6;
+
+bit TMR1IF  @ PIR1.0;
+bit TMR2IF  @ PIR1.1;
+bit TMR1GIF @ PIR1.2;
+bit SSP1IF  @ PIR1.3;
+bit TX1IF   @ PIR1.4;
+bit RC1IF   @ PIR1.5;
+bit ADIF    @ PIR1.6;
+
+bit TMR1IE  @ PIE1.0;
+bit TMR2IE  @ PIE1.1;
+bit TMR1GIE @ PIE1.2;
+bit SSP1IE  @ PIE1.3;
+bit TX1IE   @ PIE1.4;
+bit RC1IE   @ PIE1.5;
+bit ADIE    @ PIE1.6;
+
+bit STR1A   @ PSTR1CON.0;
+bit STR1B   @ PSTR1CON.1;
+bit STR1C   @ PSTR1CON.2;
+bit STR1D   @ PSTR1CON.3;
+bit STR1SYNC @ PSTR1CON.4;
+bit CMP1L0  @ PSTR1CON.6;
+bit CMP1L1  @ PSTR1CON.7;
+
+bit PLLEN   @ OSCTUNE.6;
+bit INTSRC  @ OSCTUNE.7;
+
+bit RD      @ EECON1.0;
+bit WR      @ EECON1.1;
+bit WREN    @ EECON1.2;
+bit WRERR   @ EECON1.3;
+bit FREE    @ EECON1.4;
+bit CFGS    @ EECON1.6;
+bit EEPGD   @ EECON1.7;
+
+bit S40C3   @ LCDDATA23.0;
+bit S41C3   @ LCDDATA23.1;
+bit S42C3   @ LCDDATA23.2;
+bit S43C3   @ LCDDATA23.3;
+bit S44C3   @ LCDDATA23.4;
+bit S45C3   @ LCDDATA23.5;
+bit S46C3   @ LCDDATA23.6;
+bit S47C3   @ LCDDATA23.7;
+
+bit S32C3   @ LCDDATA22.0;
+bit S33C3   @ LCDDATA22.1;
+bit S34C3   @ LCDDATA22.2;
+bit S35C3   @ LCDDATA22.3;
+bit S36C3   @ LCDDATA22.4;
+bit S37C3   @ LCDDATA22.5;
+bit S38C3   @ LCDDATA22.6;
+bit S39C3   @ LCDDATA22.7;
+
+bit S24C3   @ LCDDATA21.0;
+bit S25C3   @ LCDDATA21.1;
+bit S26C3   @ LCDDATA21.2;
+bit S27C3   @ LCDDATA21.3;
+bit S28C3   @ LCDDATA21.4;
+bit S29C3   @ LCDDATA21.5;
+bit S30C3   @ LCDDATA21.6;
+bit S31C3   @ LCDDATA21.7;
+
+bit S16C3   @ LCDDATA20.0;
+bit S17C3   @ LCDDATA20.1;
+bit S18C3   @ LCDDATA20.2;
+bit S19C3   @ LCDDATA20.3;
+bit S20C3   @ LCDDATA20.4;
+bit S21C3   @ LCDDATA20.5;
+bit S22C3   @ LCDDATA20.6;
+bit S23C3   @ LCDDATA20.7;
+
+bit S08C3   @ LCDDATA19.0;
+bit S09C3   @ LCDDATA19.1;
+bit S10C3   @ LCDDATA19.2;
+bit S11C3   @ LCDDATA19.3;
+bit S12C3   @ LCDDATA19.4;
+bit S13C3   @ LCDDATA19.5;
+bit S14C3   @ LCDDATA19.6;
+bit S15C3   @ LCDDATA19.7;
+
+bit S00C3   @ LCDDATA18.0;
+bit S01C3   @ LCDDATA18.1;
+bit S02C3   @ LCDDATA18.2;
+bit S03C3   @ LCDDATA18.3;
+bit S04C3   @ LCDDATA18.4;
+bit S05C3   @ LCDDATA18.5;
+bit S06C3   @ LCDDATA18.6;
+bit S07C3   @ LCDDATA18.7;
+
+bit S40C2   @ LCDDATA17.0;
+bit S41C2   @ LCDDATA17.1;
+bit S42C2   @ LCDDATA17.2;
+bit S43C2   @ LCDDATA17.3;
+bit S44C2   @ LCDDATA17.4;
+bit S45C2   @ LCDDATA17.5;
+bit S46C2   @ LCDDATA17.6;
+bit S47C2   @ LCDDATA17.7;
+
+bit S32C2   @ LCDDATA16.0;
+bit S33C2   @ LCDDATA16.1;
+bit S34C2   @ LCDDATA16.2;
+bit S35C2   @ LCDDATA16.3;
+bit S36C2   @ LCDDATA16.4;
+bit S37C2   @ LCDDATA16.5;
+bit S38C2   @ LCDDATA16.6;
+bit S39C2   @ LCDDATA16.7;
+
+bit S24C2   @ LCDDATA15.0;
+bit S25C2   @ LCDDATA15.1;
+bit S26C2   @ LCDDATA15.2;
+bit S27C2   @ LCDDATA15.3;
+bit S28C2   @ LCDDATA15.4;
+bit S29C2   @ LCDDATA15.5;
+bit S30C2   @ LCDDATA15.6;
+bit S31C2   @ LCDDATA15.7;
+
+bit S16C2   @ LCDDATA14.0;
+bit S17C2   @ LCDDATA14.1;
+bit S18C2   @ LCDDATA14.2;
+bit S19C2   @ LCDDATA14.3;
+bit S20C2   @ LCDDATA14.4;
+bit S21C2   @ LCDDATA14.5;
+bit S22C2   @ LCDDATA14.6;
+bit S23C2   @ LCDDATA14.7;
+
+bit S08C2   @ LCDDATA13.0;
+bit S09C2   @ LCDDATA13.1;
+bit S10C2   @ LCDDATA13.2;
+bit S11C2   @ LCDDATA13.3;
+bit S12C2   @ LCDDATA13.4;
+bit S13C2   @ LCDDATA13.5;
+bit S14C2   @ LCDDATA13.6;
+bit S15C2   @ LCDDATA13.7;
+
+bit S00C2   @ LCDDATA12.0;
+bit S01C2   @ LCDDATA12.1;
+bit S02C2   @ LCDDATA12.2;
+bit S03C2   @ LCDDATA12.3;
+bit S04C2   @ LCDDATA12.4;
+bit S05C2   @ LCDDATA12.5;
+bit S06C2   @ LCDDATA12.6;
+bit S07C2   @ LCDDATA12.7;
+
+bit S40C1   @ LCDDATA11.0;
+bit S41C1   @ LCDDATA11.1;
+bit S42C1   @ LCDDATA11.2;
+bit S43C1   @ LCDDATA11.3;
+bit S44C1   @ LCDDATA11.4;
+bit S45C1   @ LCDDATA11.5;
+bit S46C1   @ LCDDATA11.6;
+bit S47C1   @ LCDDATA11.7;
+
+bit S32C1   @ LCDDATA10.0;
+bit S33C1   @ LCDDATA10.1;
+bit S34C1   @ LCDDATA10.2;
+bit S35C1   @ LCDDATA10.3;
+bit S36C1   @ LCDDATA10.4;
+bit S37C1   @ LCDDATA10.5;
+bit S38C1   @ LCDDATA10.6;
+bit S39C1   @ LCDDATA10.7;
+
+bit S24C1   @ LCDDATA9.0;
+bit S25C1   @ LCDDATA9.1;
+bit S26C1   @ LCDDATA9.2;
+bit S27C1   @ LCDDATA9.3;
+bit S28C1   @ LCDDATA9.4;
+bit S29C1   @ LCDDATA9.5;
+bit S30C1   @ LCDDATA9.6;
+bit S31C1   @ LCDDATA9.7;
+
+bit S16C1   @ LCDDATA8.0;
+bit S17C1   @ LCDDATA8.1;
+bit S18C1   @ LCDDATA8.2;
+bit S19C1   @ LCDDATA8.3;
+bit S20C1   @ LCDDATA8.4;
+bit S21C1   @ LCDDATA8.5;
+bit S22C1   @ LCDDATA8.6;
+bit S23C1   @ LCDDATA8.7;
+
+bit S08C1   @ LCDDATA7.0;
+bit S09C1   @ LCDDATA7.1;
+bit S10C1   @ LCDDATA7.2;
+bit S11C1   @ LCDDATA7.3;
+bit S12C1   @ LCDDATA7.4;
+bit S13C1   @ LCDDATA7.5;
+bit S14C1   @ LCDDATA7.6;
+bit S15C1   @ LCDDATA7.7;
+
+bit S00C1   @ LCDDATA6.0;
+bit S01C1   @ LCDDATA6.1;
+bit S02C1   @ LCDDATA6.2;
+bit S03C1   @ LCDDATA6.3;
+bit S04C1   @ LCDDATA6.4;
+bit S05C1   @ LCDDATA6.5;
+bit S06C1   @ LCDDATA6.6;
+bit S07C1   @ LCDDATA6.7;
+
+bit S40C0   @ LCDDATA5.0;
+bit S41C0   @ LCDDATA5.1;
+bit S42C0   @ LCDDATA5.2;
+bit S43C0   @ LCDDATA5.3;
+bit S44C0   @ LCDDATA5.4;
+bit S45C0   @ LCDDATA5.5;
+bit S46C0   @ LCDDATA5.6;
+bit S47C0   @ LCDDATA5.7;
+
+bit S32C0   @ LCDDATA4.0;
+bit S33C0   @ LCDDATA4.1;
+bit S34C0   @ LCDDATA4.2;
+bit S35C0   @ LCDDATA4.3;
+bit S36C0   @ LCDDATA4.4;
+bit S37C0   @ LCDDATA4.5;
+bit S38C0   @ LCDDATA4.6;
+bit S39C0   @ LCDDATA4.7;
+
+bit S24C0   @ LCDDATA3.0;
+bit S25C0   @ LCDDATA3.1;
+bit S26C0   @ LCDDATA3.2;
+bit S27C0   @ LCDDATA3.3;
+bit S28C0   @ LCDDATA3.4;
+bit S29C0   @ LCDDATA3.5;
+bit S30C0   @ LCDDATA3.6;
+bit S31C0   @ LCDDATA3.7;
+
+bit S16C0   @ LCDDATA2.0;
+bit S17C0   @ LCDDATA2.1;
+bit S18C0   @ LCDDATA2.2;
+bit S19C0   @ LCDDATA2.3;
+bit S20C0   @ LCDDATA2.4;
+bit S21C0   @ LCDDATA2.5;
+bit S22C0   @ LCDDATA2.6;
+bit S23C0   @ LCDDATA2.7;
+
+bit S08C0   @ LCDDATA1.0;
+bit S09C0   @ LCDDATA1.1;
+bit S10C0   @ LCDDATA1.2;
+bit S11C0   @ LCDDATA1.3;
+bit S12C0   @ LCDDATA1.4;
+bit S13C0   @ LCDDATA1.5;
+bit S14C0   @ LCDDATA1.6;
+bit S15C0   @ LCDDATA1.7;
+
+bit S00C0   @ LCDDATA0.0;
+bit S01C0   @ LCDDATA0.1;
+bit S02C0   @ LCDDATA0.2;
+bit S03C0   @ LCDDATA0.3;
+bit S04C0   @ LCDDATA0.4;
+bit S05C0   @ LCDDATA0.5;
+bit S06C0   @ LCDDATA0.6;
+bit S07C0   @ LCDDATA0.7;
+
+bit ABDEN1  @ BAUDCON1.0;
+bit WUE1    @ BAUDCON1.1;
+bit BRG16_1 @ BAUDCON1.3;
+bit TXCKP1  @ BAUDCON1.4;
+bit RXDTP1  @ BAUDCON1.5;
+bit RCIDL1  @ BAUDCON1.6;
+bit ABDOVF1 @ BAUDCON1.7;
+
+bit MFIOSEL @ OSCCON2.0;
+bit MFIOFS  @ OSCCON2.1;
+bit SOSCGO  @ OSCCON2.3;
+bit SOSCRUN @ OSCCON2.6;
+
+bit CMP1IE  @ PIE6.0;
+bit CMP2IE  @ PIE6.1;
+bit CMP3IE  @ PIE6.2;
+bit EEIE    @ PIE6.4;
+
+bit RTCPTR0 @ RTCCFG.0;
+bit RTCPTR1 @ RTCCFG.1;
+bit RTCOE   @ RTCCFG.2;
+bit HALFSEC @ RTCCFG.3;
+bit RTCSYNC @ RTCCFG.4;
+bit RTCWREN @ RTCCFG.5;
+bit RTCEN   @ RTCCFG.7;
+
+bit ALRMPTR0 @ ALRMCFG.0;
+bit ALRMPTR1 @ ALRMCFG.1;
+bit AMASK0  @ ALRMCFG.2;
+bit AMASK1  @ ALRMCFG.3;
+bit AMASK2  @ ALRMCFG.4;
+bit AMASK3  @ ALRMCFG.5;
+bit CHIME   @ ALRMCFG.6;
+bit ALRMEN  @ ALRMCFG.7;
+
+bit CTTRIG  @ CTMUCONH.0;
+bit IDISSEN @ CTMUCONH.1;
+bit EDGSEQEN @ CTMUCONH.2;
+bit EDGEN   @ CTMUCONH.3;
+bit TGEN    @ CTMUCONH.4;
+bit CTMUSIDL @ CTMUCONH.5;
+bit CTMUEN  @ CTMUCONH.7;
+
+bit EDG1STAT @ CTMUCONL.0;
+bit EDG2STAT @ CTMUCONL.1;
+bit EDG1SEL0 @ CTMUCONL.2;
+bit EDG1SEL1 @ CTMUCONL.3;
+bit EDG1POL @ CTMUCONL.4;
+bit EDG2SEL0 @ CTMUCONL.5;
+bit EDG2SEL1 @ CTMUCONL.6;
+bit EDG2POL @ CTMUCONL.7;
+
+bit IRNG0   @ CTMUICON.0;
+bit IRNG1   @ CTMUICON.1;
+
+bit CCH0    @ CM1CON.0;
+bit CCH1    @ CM1CON.1;
+bit CREF    @ CM1CON.2;
+bit EVPOL0  @ CM1CON.3;
+bit EVPOL1  @ CM1CON.4;
+bit CPOL    @ CM1CON.5;
+bit COE     @ CM1CON.6;
+bit CON     @ CM1CON.7;
+
+bit RTSECSEL0 @ PADCFG1.1;
+bit RTSECSEL1 @ PADCFG1.2;
+bit RJPU    @ PADCFG1.5;
+bit REPU    @ PADCFG1.6;
+bit RDPU    @ PADCFG1.7;
+
+bit PSS2BD0 @ ECCP2AS.0;
+bit PSS2BD1 @ ECCP2AS.1;
+bit PSS2AC0 @ ECCP2AS.2;
+bit PSS2AC1 @ ECCP2AS.3;
+bit ECCP2ASE @ ECCP2AS.7;
+
+bit P2RSEN  @ ECCP2DEL.7;
+
+bit DC2B0   @ CCP2CON.4;
+bit DC2B1   @ CCP2CON.5;
+bit P2M0    @ CCP2CON.6;
+bit P2M1    @ CCP2CON.7;
+
+bit PSS3BD0 @ ECCP3AS.0;
+bit PSS3BD1 @ ECCP3AS.1;
+bit PSS3AC0 @ ECCP3AS.2;
+bit PSS3AC1 @ ECCP3AS.3;
+bit ECCP3ASE @ ECCP3AS.7;
+
+bit P3RSEN  @ ECCP3DEL.7;
+
+bit DC3B0   @ CCP3CON.4;
+bit DC3B1   @ CCP3CON.5;
+bit P3M0    @ CCP3CON.6;
+bit P3M1    @ CCP3CON.7;
+
+bit DC8B0   @ CCP8CON.4;
+bit DC8B1   @ CCP8CON.5;
+
+bit T6CKPS0 @ T6CON.0;
+bit T6CKPS1 @ T6CON.1;
+bit TMR6ON  @ T6CON.2;
+
+bit T8CKPS0 @ T8CON.0;
+bit T8CKPS1 @ T8CON.1;
+bit TMR8ON  @ T8CON.2;
+
+bit C2CH0   @ CM2CON.0;
+bit C2CH1   @ CM2CON.1;
+bit C2REF   @ CM2CON.2;
+bit EV2POL0 @ CM2CON.3;
+bit EV2POL1 @ CM2CON.4;
+bit C2POL   @ CM2CON.5;
+bit C2OE    @ CM2CON.6;
+bit C2ON    @ CM2CON.7;
+
+bit C3CH0   @ CM3CON.0;
+bit C3CH1   @ CM3CON.1;
+bit C3REF   @ CM3CON.2;
+bit EV3POL0 @ CM3CON.3;
+bit EV3POL1 @ CM3CON.4;
+bit C3POL   @ CM3CON.5;
+bit C3OE    @ CM3CON.6;
+bit C3ON    @ CM3CON.7;
+
+bit C1TSEL0 @ CCPTMRS0.0;
+bit C1TSEL1 @ CCPTMRS0.1;
+bit C1TSEL2 @ CCPTMRS0.2;
+bit C2TSEL0 @ CCPTMRS0.3;
+bit C2TSEL1 @ CCPTMRS0.4;
+bit C2TSEL2 @ CCPTMRS0.5;
+bit C3TSEL0 @ CCPTMRS0.6;
+bit C3TSEL1 @ CCPTMRS0.7;
+
+bit C4TSEL0 @ CCPTMRS1.0;
+bit C4TSEL1 @ CCPTMRS1.1;
+bit C5TSEL0 @ CCPTMRS1.2;
+bit C6TSEL0 @ CCPTMRS1.4;
+bit C7TSEL0 @ CCPTMRS1.6;
+bit C7TSEL1 @ CCPTMRS1.7;
+
+bit C8TSEL0 @ CCPTMRS2.0;
+bit C8TSEL1 @ CCPTMRS2.1;
+
+bit RODIV0  @ REFOCON.0;
+bit RODIV1  @ REFOCON.1;
+bit RODIV2  @ REFOCON.2;
+bit RODIV3  @ REFOCON.3;
+bit ROSEL   @ REFOCON.4;
+bit ROSSLP  @ REFOCON.5;
+bit ROON    @ REFOCON.7;
+
+bit SSP2OD  @ ODCON1.0;
+bit CCP1OD  @ ODCON1.5;
+bit CCP2OD  @ ODCON1.6;
+bit SSP1OD  @ ODCON1.7;
+
+bit CCP3OD  @ ODCON2.0;
+bit CCP4OD  @ ODCON2.1;
+bit CCP5OD  @ ODCON2.2;
+bit CCP6OD  @ ODCON2.3;
+bit CCP7OD  @ ODCON2.4;
+bit CCP8OD  @ ODCON2.5;
+
+bit CTMUDS  @ ODCON3.0;
+bit U1OD    @ ODCON3.6;
+bit U2OD    @ ODCON3.7;
+
+bit ANSEL0  @ ANCON0.0;
+bit ANSEL1  @ ANCON0.1;
+bit ANSEL2  @ ANCON0.2;
+bit ANSEL3  @ ANCON0.3;
+bit ANSEL4  @ ANCON0.4;
+bit ANSEL5  @ ANCON0.5;
+bit ANSEL6  @ ANCON0.6;
+bit ANSEL7  @ ANCON0.7;
+
+bit ANSEL8  @ ANCON1.0;
+bit ANSEL9  @ ANCON1.1;
+bit ANSEL10 @ ANCON1.2;
+bit ANSEL11 @ ANCON1.3;
+bit ANSEL12 @ ANCON1.4;
+bit ANSEL13 @ ANCON1.5;
+bit ANSEL14 @ ANCON1.6;
+bit ANSEL15 @ ANCON1.7;
+
+bit ANSEL16 @ ANCON2.0;
+bit ANSEL17 @ ANCON2.1;
+bit ANSEL18 @ ANCON2.2;
+bit ANSEL19 @ ANCON2.3;
+bit ANSEL20 @ ANCON2.4;
+bit ANSEL21 @ ANCON2.5;
+bit ANSEL22 @ ANCON2.6;
+bit ANSEL23 @ ANCON2.7;
+
+bit RX9D2   @ RCSTA2.0;
+bit OERR2   @ RCSTA2.1;
+bit FERR2   @ RCSTA2.2;
+bit ADDEN2  @ RCSTA2.3;
+bit CREN2   @ RCSTA2.4;
+bit SREN2   @ RCSTA2.5;
+bit RX9_2   @ RCSTA2.6;
+bit SPEN2   @ RCSTA2.7;
+
+bit TX9D2   @ TXSTA2.0;
+bit TRMT2   @ TXSTA2.1;
+bit BRGH2   @ TXSTA2.2;
+bit SENDB2  @ TXSTA2.3;
+bit SYNC2   @ TXSTA2.4;
+bit TXEN2   @ TXSTA2.5;
+bit TX9_2   @ TXSTA2.6;
+bit CSRC2   @ TXSTA2.7;
+
+bit ABDEN2  @ BAUDCON2.0;
+bit WUE2    @ BAUDCON2.1;
+bit BRG16_2 @ BAUDCON2.3;
+bit CKTXP2  @ BAUDCON2.4;
+bit DTRXP2  @ BAUDCON2.5;
+bit RCIDL2  @ BAUDCON2.6;
+bit ABDOVF2 @ BAUDCON2.7;
+
+bit STR2A   @ PSTR2CON.0;
+bit STR2B   @ PSTR2CON.1;
+bit STR2C   @ PSTR2CON.2;
+bit STR2D   @ PSTR2CON.3;
+bit STR2SYNC @ PSTR2CON.4;
+bit CMP2L0  @ PSTR2CON.6;
+bit CMP2L1  @ PSTR2CON.7;
+
+bit STR3A   @ PSTR3CON.0;
+bit STR3B   @ PSTR3CON.1;
+bit STR3C   @ PSTR3CON.2;
+bit STR3D   @ PSTR3CON.3;
+bit STR3SYNC @ PSTR3CON.4;
+bit CMP3L0  @ PSTR3CON.6;
+bit CMP3L1  @ PSTR3CON.7;
+
+bit ADCMD   @ PMD0.0;
+bit SSP1MD  @ PMD0.1;
+bit SSP2MD  @ PMD0.2;
+bit UART1MD @ PMD0.3;
+bit UART2MD @ PMD0.4;
+bit CCP1MD  @ PMD0.5;
+bit CCP2MD  @ PMD0.6;
+bit CCP3MD  @ PMD0.7;
+
+bit TMR1MD  @ PMD1.1;
+bit TMR2MD  @ PMD1.2;
+bit TMR3MD  @ PMD1.3;
+bit TMR4MD  @ PMD1.4;
+bit RTCCMD  @ PMD1.5;
+bit CTMUMD  @ PMD1.6;
+
+bit CMP1MD  @ PMD2.0;
+bit CMP2MD  @ PMD2.1;
+bit CMP3MD  @ PMD2.2;
+bit TMR5MD  @ PMD2.3;
+bit TMR6MD  @ PMD2.4;
+bit TMR8MD  @ PMD2.6;
+
+bit CCP4MD  @ PMD3.1;
+bit CCP5MD  @ PMD3.2;
+bit CCP6MD  @ PMD3.3;
+bit CCP7MD  @ PMD3.4;
+bit CCP8MD  @ PMD3.5;
+
+bit TMR5ON  @ T5CON.0;
+bit T5RD16  @ T5CON.1;
+bit T5SYNC_ @ T5CON.2;
+bit T5SOSCEN @ T5CON.3;
+bit T5CKPS0 @ T5CON.4;
+bit T5CKPS1 @ T5CON.5;
+bit TMR5CS0 @ T5CON.6;
+bit TMR5CS1 @ T5CON.7;
+
+bit T5GSS0  @ T5GCON.0;
+bit T5GSS1  @ T5GCON.1;
+bit T5GVAL  @ T5GCON.2;
+bit T5GGO   @ T5GCON.3;
+bit T5GSPM  @ T5GCON.4;
+bit T5GTM   @ T5GCON.5;
+bit T5GPOL  @ T5GCON.6;
+bit TMR5GE  @ T5GCON.7;
+
+bit DC4B0   @ CCP4CON.4;
+bit DC4B1   @ CCP4CON.5;
+
+bit DC5B0   @ CCP5CON.4;
+bit DC5B1   @ CCP5CON.5;
+
+bit DC6B0   @ CCP6CON.4;
+bit DC6B1   @ CCP6CON.5;
+
+bit DC7B0   @ CCP7CON.4;
+bit DC7B1   @ CCP7CON.5;
+
+bit T4CKPS0 @ T4CON.0;
+bit T4CKPS1 @ T4CON.1;
+bit TMR4ON  @ T4CON.2;
+
+bit BF2     @ SSP2STAT.0;
+bit UA2     @ SSP2STAT.1;
+bit RW2_    @ SSP2STAT.2;
+bit S2      @ SSP2STAT.3;
+bit P2      @ SSP2STAT.4;
+bit DA2_    @ SSP2STAT.5;
+bit CKE2    @ SSP2STAT.6;
+bit SMP2    @ SSP2STAT.7;
+
+bit CKP2    @ SSP2CON1.4;
+bit SSPEN2  @ SSP2CON1.5;
+bit SSPOV2  @ SSP2CON1.6;
+bit WCOL2   @ SSP2CON1.7;
+
+bit SEN2    @ SSP2CON2.0;
+bit RSEN2   @ SSP2CON2.1;
+bit PEN2    @ SSP2CON2.2;
+bit RCEN2   @ SSP2CON2.3;
+bit ACKEN2  @ SSP2CON2.4;
+bit ACKDT2  @ SSP2CON2.5;
+bit ACKSTAT2 @ SSP2CON2.6;
+bit GCEN2   @ SSP2CON2.7;
+
+bit VLCD1PE @ LCDREF.0;
+bit VLCD2PE @ LCDREF.1;
+bit VLCD3PE @ LCDREF.2;
+bit LCDCST0 @ LCDREF.3;
+bit LCDCST1 @ LCDREF.4;
+bit LCDCST2 @ LCDREF.5;
+bit LCDIRS  @ LCDREF.6;
+bit LCDIRE  @ LCDREF.7;
+
+bit LRLAT0  @ LCDRL.0;
+bit LRLAT1  @ LCDRL.1;
+bit LRLAT2  @ LCDRL.2;
+bit LRLBP0  @ LCDRL.4;
+bit LRLBP1  @ LCDRL.5;
+bit LRLAP0  @ LCDRL.6;
+bit LRLAP1  @ LCDRL.7;
+
+bit SE40    @ LCDSE5.0;
+bit SE41    @ LCDSE5.1;
+bit SE42    @ LCDSE5.2;
+bit SE43    @ LCDSE5.3;
+bit SE44    @ LCDSE5.4;
+bit SE45    @ LCDSE5.5;
+bit SE46    @ LCDSE5.6;
+bit SE47    @ LCDSE5.7;
+
+bit SE32    @ LCDSE4.0;
+bit SE33    @ LCDSE4.1;
+bit SE34    @ LCDSE4.2;
+bit SE35    @ LCDSE4.3;
+bit SE36    @ LCDSE4.4;
+bit SE37    @ LCDSE4.5;
+bit SE38    @ LCDSE4.6;
+bit SE39    @ LCDSE4.7;
+
+bit SE24    @ LCDSE3.0;
+bit SE25    @ LCDSE3.1;
+bit SE26    @ LCDSE3.2;
+bit SE27    @ LCDSE3.3;
+bit SE28    @ LCDSE3.4;
+bit SE29    @ LCDSE3.5;
+bit SE30    @ LCDSE3.6;
+bit SE31    @ LCDSE3.7;
+
+bit SE16    @ LCDSE2.0;
+bit SE17    @ LCDSE2.1;
+bit SE18    @ LCDSE2.2;
+bit SE19    @ LCDSE2.3;
+bit SE20    @ LCDSE2.4;
+bit SE21    @ LCDSE2.5;
+bit SE22    @ LCDSE2.6;
+bit SE23    @ LCDSE2.7;
+
+bit SE08    @ LCDSE1.0;
+bit SE09    @ LCDSE1.1;
+bit SE10    @ LCDSE1.2;
+bit SE11    @ LCDSE1.3;
+bit SE12    @ LCDSE1.4;
+bit SE13    @ LCDSE1.5;
+bit SE14    @ LCDSE1.6;
+bit SE15    @ LCDSE1.7;
+
+bit SE00    @ LCDSE0.0;
+bit SE01    @ LCDSE0.1;
+bit SE02    @ LCDSE0.2;
+bit SE03    @ LCDSE0.3;
+bit SE04    @ LCDSE0.4;
+bit SE05    @ LCDSE0.5;
+bit SE06    @ LCDSE0.6;
+bit SE07    @ LCDSE0.7;
+
+bit WA      @ LCDPS.4;
+bit LCDA    @ LCDPS.5;
+bit BIASMD  @ LCDPS.6;
+bit WFT     @ LCDPS.7;
+
+bit LMUX0   @ LCDCON.0;
+bit LMUX1   @ LCDCON.1;
+bit CS0     @ LCDCON.2;
+bit CS1     @ LCDCON.3;
+bit WERR    @ LCDCON.5;
+bit SLPEN   @ LCDCON.6;
+bit LCDEN   @ LCDCON.7;

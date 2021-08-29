@@ -1,0 +1,21 @@
+CC8E Version 1.3D, Copyright (c) B Knudsen Data, Norway 2001-2010
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+masterc.c:
+ 23. Jan 2011  21:14
+ Chip = 18F452
+ RAM : ===***** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:253  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 3 bytes (3 local), 1533 bytes free
+ File 'masterc.fcs'
+ Optimizing - removed 70 code words (-25 %)
+ File 'masterc.var'
+ File 'masterc.asm'
+ File 'masterc.lst'
+ File 'masterc.cod'
+ File 'masterc.occ'
+ File 'masterc.hex'
+Total of 265 code words (1 %)
+ * Estimated CODE SIZE of full optimization: 263 code words (-0 %)

@@ -1,0 +1,33 @@
+CC8E Version 1.3F, Copyright (c) B Knudsen Data, Norway 2001-2012
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+display.c:
+  7. Dec 2013  10:49
+ Chip = 18F452
+Warning[1] C:\Users\Beril\Desktop\ödev mikro\dahili_clock_interrupt_ters\dahili_clock_interrupt_ters\display.c 72 : Local variables and parameters in uncalled functions are not allocated (4)
+ (The application contains non-library functions that are not called. Local
+ variables in these functions (option -wU) are not allocated to save space)
+ RAM : =====*** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:251  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 5 bytes (5 local), 1531 bytes free
+ File 'display.fcs'
+ Optimizing - removed 15 code words (-13 %)
+ File 'display.var'
+ File 'display.asm'
+ File 'display.lst'
+ File 'display.cod'
+WARNING: File name limit in COD file exceeded (max 64 characters):
+C:\Users\Beril\Desktop\ödev mikro\dahili_clock_interrupt_ters\dahili_clock_interrupt_ters\display.c
+ -> string changed to: display.c
+  ***** SEE README.TXT: COD FILE NAME LIMIT
+ File 'display.occ'
+Warning[2] C:\Users\Beril\Desktop\ödev mikro\dahili_clock_interrupt_ters\dahili_clock_interrupt_ters\display.c 15 : Read-modify-write sequence on the same PORT may fail
+ (Two consecutive instructions modifying the same PORT may fail depending on
+ execution speed and load (fall/rise times) on the port pins. Option -wf will
+ remove this warning)
+Warning[3] C:\Users\Beril\Desktop\ödev mikro\dahili_clock_interrupt_ters\dahili_clock_interrupt_ters\display.c 18 : Read-modify-write sequence on the same PORT may fail
+ File 'display.hex'
+Total of 117 code words (0 %)
+ * Estimated CODE SIZE of full optimization: 112 code words (-4 %)

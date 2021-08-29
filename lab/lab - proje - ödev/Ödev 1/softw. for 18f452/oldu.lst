@@ -1,0 +1,168 @@
+CC8E Version 1.3F,   File: oldu.c              20. Oct 2013  11:13   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3F, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  20. Oct 2013  11:13  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 
+       0FF2       00011 INTCON      EQU   0xFF2
+       0002       00012 Zero_       EQU   2
+       0FC4       00013 ADRESH      EQU   0xFC4
+       0FC2       00014 ADCON0      EQU   0xFC2
+       0FC1       00015 ADCON1      EQU   0xFC1
+       0F96       00016 TRISE       EQU   0xF96
+       0F95       00017 TRISD       EQU   0xF95
+       0F94       00018 TRISC       EQU   0xF94
+       0F93       00019 TRISB       EQU   0xF93
+       0F92       00020 TRISA       EQU   0xF92
+       0F83       00021 PORTD       EQU   0xF83
+       0F82       00022 PORTC       EQU   0xF82
+       0007       00023 GIE         EQU   7
+       0002       00024 GO          EQU   2
+       0000       00025 y           EQU   0x00
+       0001       00026 t           EQU   0x01
+       0003       00027 x           EQU   0x03
+                  00028 
+000000 EF08 F000  00029 	GOTO main
+                  00030 
+                  00031   ; FILE oldu.c
+                  00032 			;#pragma config[1] = 0xF1 // Osilatör: XT#pragma config[1] = 0xF1 // Osilatör: XT
+                  00033 			;void ayarlar();
+                  00034 			;void deger();	
+                  00035 			;void bekle(unsigned long t);
+                  00036 			;void deger()
+                  00037 			;{
+                  00038 deger
+                  00039 			;
+                  00040 			;	GO=1;	// adc cevrimi baslar
+000004 84C2       00041 	BSF   0xFC2,GO,0
+                  00042 			;	while(GO);	//cevirme bitene kadar calisir, cevirme bitince go=0 olur
+000006 B4C2       00043 m001	BTFSC 0xFC2,GO,0
+000008 D7FE       00044 	BRA   m001
+                  00045 			;	PORTC=ADRESH;	//adc'den okunan deger PORTC ye aktarilirak sonuc gozlemlenir.
+00000A CFC4 FF82  00046 	MOVFF ADRESH,PORTC
+                  00047 			;}
+00000E 0012       00048 	RETURN
+                  00049 			;
+                  00050 			;void main()
+                  00051 			;{
+                  00052 main
+                  00053 			;	
+                  00054 			;	ayarlar();
+000010 D80C       00055 	RCALL ayarlar
+                  00056 			;
+                  00057 			;//-----------------------------------------------	
+                  00058 			;anadongu:
+                  00059 			;	// Acquisition Time(Sample & Hold kapasitörünün þarj olmasý için gerekli zaman)
+                  00060 			;	INTCON=0x90; // 
+CC8E Version 1.3F,   File: oldu.c              20. Oct 2013  11:13   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+000012 0E90       00061 m002	MOVLW 144
+000014 6EF2       00062 	MOVWF INTCON,0
+                  00063 			;	bekle(1);
+000016 0E01       00064 	MOVLW 1
+000018 6E01       00065 	MOVWF t,0
+00001A 6A02       00066 	CLRF  t+1,0
+00001C D812       00067 	RCALL bekle
+                  00068 			;    unsigned y=0;
+00001E 6A00       00069 	CLRF  y,0
+                  00070 			;    while(y==0)    
+000020 5200       00071 m003	MOVF  y,1,0
+000022 A4D8       00072 	BTFSS 0xFD8,Zero_,0
+000024 D7F6       00073 	BRA   m002
+                  00074 			;	deger();        
+000026 DFEE       00075 	RCALL deger
+000028 D7FB       00076 	BRA   m003
+                  00077 			;	   
+                  00078 			;
+                  00079 			;
+                  00080 			;
+                  00081 			;goto anadongu;
+                  00082 			;//-----------------------------------------------	
+                  00083 			;}
+                  00084 			;
+                  00085 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00086 			;
+                  00087 			;
+                  00088 			;void ayarlar()	// Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00089 			;{	
+                  00090 ayarlar
+                  00091 			;	GIE=1;			// Bütün kesmeleri ac
+00002A 8EF2       00092 	BSF   0xFF2,GIE,0
+                  00093 			;	TRISA=0xFF;
+00002C 6892       00094 	SETF  TRISA,0
+                  00095 			;	TRISB=0xFF;
+00002E 6893       00096 	SETF  TRISB,0
+                  00097 			;	TRISC=0x00;	
+000030 6A94       00098 	CLRF  TRISC,0
+                  00099 			;	TRISD=0x00;		
+000032 6A95       00100 	CLRF  TRISD,0
+                  00101 			;	TRISE=0xFF;
+000034 6896       00102 	SETF  TRISE,0
+                  00103 			;	
+                  00104 			;	PORTC=0x00;		
+000036 6A82       00105 	CLRF  PORTC,0
+                  00106 			;	PORTD=0x00;
+000038 6A83       00107 	CLRF  PORTD,0
+                  00108 			;	
+                  00109 			;	ADCON0=0b.0100.0001;// Anlog kanal 0 aktif, A/D conversion is not in progress
+00003A 0E41       00110 	MOVLW 65
+00003C 6EC2       00111 	MOVWF ADCON0,0
+                  00112 			;	ADCON1=0b.0000.0000;
+00003E 6AC1       00113 	CLRF  ADCON1,0
+                  00114 			;}
+000040 0012       00115 	RETURN
+                  00116 			;
+                  00117 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00118 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00119 			;{
+                  00120 bekle
+CC8E Version 1.3F,   File: oldu.c              20. Oct 2013  11:13   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 			;	unsigned x;	
+                  00122 			;	for(;t>0;t--)
+000042 5001       00123 m004	MOVF  t,W,0
+000044 1002       00124 	IORWF t+1,W,0
+000046 B4D8       00125 	BTFSC 0xFD8,Zero_,0
+000048 D00C       00126 	BRA   m007
+                  00127 			;		for(x=140;x>0;x--)
+00004A 0E8C       00128 	MOVLW 140
+00004C 6E03       00129 	MOVWF x,0
+00004E 5203       00130 m005	MOVF  x,1,0
+000050 B4D8       00131 	BTFSC 0xFD8,Zero_,0
+000052 D003       00132 	BRA   m006
+                  00133 			;			nop();
+000054 0000       00134 	NOP  
+000056 0603       00135 	DECF  x,1,0
+000058 D7FA       00136 	BRA   m005
+00005A 0601       00137 m006	DECF  t,1,0
+00005C 0E00       00138 	MOVLW 0
+00005E 5A02       00139 	SUBWFB t+1,1,0
+000060 D7F0       00140 	BRA   m004
+                  00141 			;}
+000062 0012       00142 m007	RETURN
+                  00143 
+                  00144 	END
+                  00145 
+                  00146 
+                  00147 ; *** KEY INFO ***
+                  00148 
+                  00149 ; 0x00002A   12 word(s)  0 % : ayarlar
+                  00150 ; 0x000004    6 word(s)  0 % : deger
+                  00151 ; 0x000042   17 word(s)  0 % : bekle
+                  00152 ; 0x000010   13 word(s)  0 % : main
+                  00153 
+                  00154 ; RAM usage: 4 bytes (4 local), 1532 bytes free
+                  00155 ; Maximum call level: 1
+                  00156 ; Total of 50 code words (0 %)

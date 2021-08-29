@@ -1,0 +1,12 @@
+CC8E Version 1.3D, Copyright (c) B Knudsen Data, Norway 2001-2010
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+proje11.c:
+ 25. Oct 2010  22:04
+
+#ifndef ICD2_DEBUG
+ #pragma chip PIC18F452, core 16, code 16384, ram 0 : 0x5FF
+                                                           ^------
+Error[1] C:\Program Files\bknd\CC8E\18F452.H 3 : Duplicate chip definition
+ (Multiple chip definitions detected (option -p<chip> and #include <header.h>).The #include statement should be removed)
+
+Error options: -ew: no warning details  -ed: no error details  -eL: list details

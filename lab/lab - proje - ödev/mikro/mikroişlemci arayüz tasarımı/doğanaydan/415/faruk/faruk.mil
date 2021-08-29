@@ -1,0 +1,93 @@
+_init:
+  begin
+//faruk.c,5 :: 		{TRISB=1;
+	TRISB <- 1
+//faruk.c,6 :: 		PORTB=0;
+	PORTB <- 0
+//faruk.c,7 :: 		TRISC=0;
+	TRISC <- 0
+//faruk.c,8 :: 		PORTC=0;
+	PORTC <- 0
+//faruk.c,9 :: 		TRISD=0;
+	TRISD <- 0
+//faruk.c,10 :: 		PORTD=0;
+	PORTD <- 0
+  end
+
+_main:
+  begin
+//faruk.c,13 :: 		{init();
+	CALL _init
+//faruk.c,14 :: 		do{ if(PORTB==2)
+L_main_0:
+	if ( PORTB != 2) then goto L_main_2
+//faruk.c,15 :: 		{i=1;
+	_i <- 1
+//faruk.c,16 :: 		if(i==1 && PORTB==3)
+	if ( PORTB != 3) then goto L_main_5
+L22_ex_L_main_5:
+//faruk.c,18 :: 		PORTC=dizi[x];
+	STACK_0 <-  2 * _x
+	FSR0L <-  0 + STACK_0
+	PORTC <- *FSR0L  [Optimized To Dest]
+	PORTC <- PORTC
+//faruk.c,19 :: 		if(x==0)
+	if ( _x != 0) then goto L_main_6
+//faruk.c,20 :: 		x=8;
+	_x <- 8
+	goto	L_main_7
+L_main_6:
+//faruk.c,21 :: 		else x--;
+	_x <-  _x - 1
+	_x <- _x
+L_main_7:
+//faruk.c,22 :: 		i=0;
+	_i <- 0
+//faruk.c,23 :: 		PORTD=1;
+	PORTD <- 1
+//faruk.c,24 :: 		}
+L_main_5:
+//faruk.c,25 :: 		}
+L_main_2:
+//faruk.c,27 :: 		if(PORTB==1)
+	if ( PORTB != 1) then goto L_main_8
+//faruk.c,28 :: 		{ j=1;
+	_j <- 1
+//faruk.c,29 :: 		if(j==1 && PORTB==3)
+	if ( PORTB != 3) then goto L_main_11
+L51_ex_L_main_11:
+//faruk.c,31 :: 		PORTC=dizi[x];
+	STACK_0 <-  2 * _x
+	FSR0L <-  0 + STACK_0
+	PORTC <- *FSR0L  [Optimized To Dest]
+	PORTC <- PORTC
+//faruk.c,32 :: 		if(x==8)
+	if ( _x != 8) then goto L_main_12
+//faruk.c,33 :: 		x=0;
+	_x <- 0
+	goto	L_main_13
+L_main_12:
+//faruk.c,34 :: 		else x++;
+	_x <-  _x + 1
+	_x <- _x
+L_main_13:
+//faruk.c,35 :: 		j=0;
+	_j <- 0
+//faruk.c,36 :: 		PORTD=2;
+	PORTD <- 2
+//faruk.c,37 :: 		}
+L_main_11:
+//faruk.c,38 :: 		}
+	goto	L_main_14
+L_main_8:
+//faruk.c,39 :: 		else portd=255;
+	PORTD <- 255
+L_main_14:
+//faruk.c,44 :: 		}while(1);
+	goto	L_main_0
+  end
+
+GlobalInifaruk:
+  begin
+  end
+

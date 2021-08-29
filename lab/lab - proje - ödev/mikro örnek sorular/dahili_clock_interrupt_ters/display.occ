@@ -1,0 +1,24 @@
+CC8E Version 1.3D, Copyright (c) B Knudsen Data, Norway 2001-2010
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+display.c:
+ 17. Dec 2013  19:16
+ Chip = 18F452
+Warning[1] C:\Users\Phoenix\Desktop\dahili_clock_interrupt\display.c 68 : Local variables and parameters in uncalled functions are not allocated (4)
+ (The application contains non-library functions that are not called. Local
+ variables in these functions (option -wU) are not allocated to save space)
+ RAM : =====*** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:251  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 5 bytes (5 local), 1531 bytes free
+ File 'display.fcs'
+ Optimizing - removed 15 code words (-14 %)
+ File 'display.var'
+ File 'display.asm'
+ File 'display.lst'
+ File 'display.cod'
+ File 'display.occ'
+ File 'display.hex'
+Total of 113 code words (0 %)
+ * Estimated CODE SIZE of full optimization: 108 code words (-4 %)

@@ -1,0 +1,21 @@
+CC8E Version 1.2A, Copyright (c) B Knudsen Data, Norway 2001-2007
+ --> DEMO edition, 8-24 bit int, 24-32 bit float, 1k code words
+verici.c:
+  7. Jan 2009   1:42
+ Chip = 18F452
+ RAM : ===***** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:253  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 3 bytes (3 local), 1533 bytes free
+ File 'verici.fcs'
+ Optimizing - removed 23 code words (-29 %)
+ File 'verici.var'
+ File 'verici.asm'
+ File 'verici.lst'
+ File 'verici.cod'
+ File 'verici.occ'
+ File 'verici.hex'
+Total of 78 code words (0 %)
+ RESTRICTION: Generated code is for evaluation use only.

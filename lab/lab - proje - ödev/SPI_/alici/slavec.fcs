@@ -1,0 +1,113 @@
+
+CC8E Version 1.3D, Copyright (c) B Knudsen Data.
+* FUNCTION CALL STRUCTURE
+
+F: main                   :#0 
+    ayarlar               : #1 
+    bekle                 : #4 
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+    LcdInit               : #16
+    MesajYaz              : #16
+
+F: ayarlar                :#1 
+
+F: LcdKomut               :#5 
+    bekle                 : #4 
+
+F: LcdYaz                 :#1 
+    bekle                 : #4 
+    bekle                 : #4 
+
+F: LcdInit                :#16
+    LcdKomut              : #5 
+    LcdKomut              : #5 
+    LcdKomut              : #5 
+    LcdKomut              : #5 
+
+F: MesajYaz               :#16
+    _const1               : #2 
+    LcdKomut              : #5 
+    _const1               : #2 
+    LcdYaz                : #1 
+
+F: bekle                  :#4 
+
+F: _const1                :#2 
+
+
+ L0  main
+ L1    ayarlar
+ L1    bekle
+ L1    LcdInit
+ L2      LcdKomut
+ L3        bekle
+ L2      LcdKomut ..
+ L2      LcdKomut ..
+ L1      LcdKomut [T-GOTO] ..
+ L1    MesajYaz
+ L2      _const1
+ L2      LcdKomut ..
+ L2      _const1
+ L2      LcdYaz
+ L3        bekle
+ L2        bekle [T-GOTO]
+ L1    LcdInit ..
+ L1    MesajYaz ..
+ L1    LcdInit ..
+ L1    MesajYaz ..
+ L1    LcdInit ..
+ L1    MesajYaz ..
+ L1    LcdInit ..
+ L1    MesajYaz ..
+ L1    LcdInit ..
+ L1    MesajYaz ..
+ L1    LcdInit ..
+ L1    MesajYaz ..
+ L1    LcdInit ..
+ L1    MesajYaz ..
+ L1    LcdInit ..
+ L1    MesajYaz ..
+ L1    LcdInit ..
+ L1    MesajYaz ..
+ L1    LcdInit ..
+ L1    MesajYaz ..
+ L1    LcdInit ..
+ L1    MesajYaz ..
+ L1    LcdInit ..
+ L1    MesajYaz ..
+ L1    LcdInit ..
+ L1    MesajYaz ..
+ L1    LcdInit ..
+ L1    MesajYaz ..
+ L1    LcdInit ..
+ L1    MesajYaz ..
+

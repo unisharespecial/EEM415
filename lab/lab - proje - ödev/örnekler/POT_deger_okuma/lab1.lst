@@ -1,0 +1,174 @@
+CC8E Version 1.3B,   File: lab1.c              14. Oct 2011  11:54   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3B, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  14. Oct 2011  11:54  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 
+       0FF2       00011 INTCON      EQU   0xFF2
+       0FC4       00012 ADRESH      EQU   0xFC4
+       0FC2       00013 ADCON0      EQU   0xFC2
+       0FC1       00014 ADCON1      EQU   0xFC1
+       0F96       00015 TRISE       EQU   0xF96
+       0F95       00016 TRISD       EQU   0xF95
+       0F94       00017 TRISC       EQU   0xF94
+       0F93       00018 TRISB       EQU   0xF93
+       0F92       00019 TRISA       EQU   0xF92
+       0F83       00020 PORTD       EQU   0xF83
+       0F82       00021 PORTC       EQU   0xF82
+       0001       00022 INT0IF      EQU   1
+       0007       00023 GIE         EQU   7
+       0002       00024 GO          EQU   2
+       0000       00025 y           EQU   0x00
+       0001       00026 t           EQU   0x01
+       0003       00027 x           EQU   0x03
+                  00028 
+000000 EF0C F000  00029 	GOTO main
+                  00030 
+                  00031   ; FILE lab1.c
+                  00032 			;#pragma config[1] = 0xF1 // Osilatör: XT#pragma config[1] = 0xF1 // Osilatör: XT
+                  00033 			;void ayarlar();
+                  00034 			;void bekle(unsigned long t);	// t milisaniye gecikme saðlayan fonksiyon tanýmý
+                  00035 			;void kesme();	
+                  00036 			;
+                  00037 			;
+                  00038 			;void kesme() //kesme gelince yapilacak komutlar, kesmede calisacak fonksiyon main fonksiyonunun ustunde yazilir...	
+                  00039 			;{
+                  00040 kesme
+                  00041 			;	INTCON=0x90; // kesmeler acilir RBO/INT0 girisi interrupt enable edilir. 
+000004 0E90       00042 	MOVLW 144
+000006 6EF2       00043 	MOVWF INTCON,0
+                  00044 			; 	GO=1;	// adc cevrimi baslar
+000008 84C2       00045 	BSF   0xFC2,GO,0
+                  00046 			;	while(GO);	//cevirme bitene kadar calisir, cevirme bitince go=0 olur
+00000A B4C2       00047 m001	BTFSC 0xFC2,GO,0
+00000C D7FE       00048 	BRA   m001
+                  00049 			;	PORTC=ADRESH;	//adc'den okunan deger PORTC ye aktarilirak sonuc gozlemlenir.
+00000E CFC4 FF82  00050 	MOVFF ADRESH,PORTC
+                  00051 			;	INT0IF=0;  // yeni kesmeler gelmesi icin butona bagli olan INT0 portundaki interrupt flagi kapatilir.
+000012 92F2       00052 	BCF   0xFF2,INT0IF,0
+                  00053 			;	GIE=1;	//kesmeler acilir, yeni kesme gelmesine musade edilir
+000014 8EF2       00054 	BSF   0xFF2,GIE,0
+                  00055 			;}	
+000016 0012       00056 	RETURN
+                  00057 			;
+                  00058 			;
+                  00059 			;void main()
+                  00060 			;{
+CC8E Version 1.3B,   File: lab1.c              14. Oct 2011  11:54   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 main
+                  00062 			;	
+                  00063 			;	ayarlar();
+000018 D81A       00064 	RCALL ayarlar
+                  00065 			;
+                  00066 			;//-----------------------------------------------	
+                  00067 			;anadongu:
+                  00068 			;
+                  00069 			;	bekle(1);	// Acquisition Time(Sample & Hold kapasitörünün þarj olmasý için gerekli zaman)
+00001A 0E01       00070 m002	MOVLW 1
+00001C 6E01       00071 	MOVWF t,0
+00001E 6A02       00072 	CLRF  t+1,0
+000020 D807       00073 	RCALL bekle
+                  00074 			;	INTCON=0x90; // 
+000022 0E90       00075 	MOVLW 144
+000024 6EF2       00076 	MOVWF INTCON,0
+                  00077 			;	
+                  00078 			;    unsigned y=0;
+000026 6A00       00079 	CLRF  y,0
+                  00080 			;    while(y==0)            
+000028 6600       00081 m003	TSTFSZ y,0
+00002A D7F7       00082 	BRA   m002
+                  00083 			;	   nop();
+00002C 0000       00084 	NOP  
+00002E D7FC       00085 	BRA   m003
+                  00086 			;
+                  00087 			;
+                  00088 			;
+                  00089 			;goto anadongu;
+                  00090 			;//-----------------------------------------------	
+                  00091 			;}
+                  00092 			;
+                  00093 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00094 			;
+                  00095 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00096 			;{
+                  00097 bekle
+                  00098 			;	unsigned x;
+                  00099 			;	for(;t>0;t--)
+000030 5001       00100 m004	MOVF  t,W,0
+000032 1002       00101 	IORWF t+1,W,0
+000034 E00B       00102 	BZ    m007
+                  00103 			;		for(x=140;x>0;x--)
+000036 0E8C       00104 	MOVLW 140
+000038 6E03       00105 	MOVWF x,0
+00003A 5203       00106 m005	MOVF  x,1,0
+00003C E003       00107 	BZ    m006
+                  00108 			;			nop();
+00003E 0000       00109 	NOP  
+000040 0603       00110 	DECF  x,1,0
+000042 D7FB       00111 	BRA   m005
+000044 0601       00112 m006	DECF  t,1,0
+000046 0E00       00113 	MOVLW 0
+000048 5A02       00114 	SUBWFB t+1,1,0
+00004A D7F2       00115 	BRA   m004
+                  00116 			;}
+00004C 0012       00117 m007	RETURN
+                  00118 			;
+                  00119 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00120 			;
+CC8E Version 1.3B,   File: lab1.c              14. Oct 2011  11:54   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 			;void ayarlar()	// Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00122 			;{	
+                  00123 ayarlar
+                  00124 			;	GIE=1;			// Bütün kesmeleri ac
+00004E 8EF2       00125 	BSF   0xFF2,GIE,0
+                  00126 			;	TRISA=0xFF;
+000050 6892       00127 	SETF  TRISA,0
+                  00128 			;	TRISB=0xFF;
+000052 6893       00129 	SETF  TRISB,0
+                  00130 			;	TRISC=0x00;	
+000054 6A94       00131 	CLRF  TRISC,0
+                  00132 			;	TRISD=0x00;		
+000056 6A95       00133 	CLRF  TRISD,0
+                  00134 			;	TRISE=0xFF;
+000058 6896       00135 	SETF  TRISE,0
+                  00136 			;	
+                  00137 			;	PORTC=0x00;		
+00005A 6A82       00138 	CLRF  PORTC,0
+                  00139 			;	PORTD=0x00;
+00005C 6A83       00140 	CLRF  PORTD,0
+                  00141 			;	
+                  00142 			;	ADCON0=0b.0100.0001;// Anlog kanal 0 aktif, A/D conversion is not in progress
+00005E 0E41       00143 	MOVLW 65
+000060 6EC2       00144 	MOVWF ADCON0,0
+                  00145 			;	ADCON1=0b.0000.0000;
+000062 6AC1       00146 	CLRF  ADCON1,0
+                  00147 			;}
+000064 0012       00148 	RETURN
+                  00149 
+                  00150 	END
+                  00151 
+                  00152 
+                  00153 ; *** KEY INFO ***
+                  00154 
+                  00155 ; 0x00004E   12 word(s)  0 % : ayarlar
+                  00156 ; 0x000030   15 word(s)  0 % : bekle
+                  00157 ; 0x000004   10 word(s)  0 % : kesme
+                  00158 ; 0x000018   12 word(s)  0 % : main
+                  00159 
+                  00160 ; RAM usage: 4 bytes (4 local), 1532 bytes free
+                  00161 ; Maximum call level: 1
+                  00162 ; Total of 51 code words (0 %)

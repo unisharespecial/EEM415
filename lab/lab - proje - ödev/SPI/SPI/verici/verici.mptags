@@ -1,0 +1,81 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.5.4	//
+!_TAG_REVISION_NAME	MCHPTags	//
+!_TAG_REVISION_VERSION	6.0.1	//
+bekle	C:\SPI\verici\verici.c	4;"	p	line:4	file:	signature:(unsigned long)
+bekle	C:\SPI\verici\verici.c	63;"	f	line:63	signature:(unsigned long t)
+init	C:\SPI\verici\verici.c	1;"	p	line:1	file:
+init	C:\SPI\verici\verici.c	29;"	f	line:29
+main	C:\SPI\verici\verici.c	6;"	f	line:6
+spi_gonder	C:\SPI\verici\verici.c	3;"	p	line:3	file:
+spi_gonder	C:\SPI\verici\verici.c	53;"	f	line:53	signature:(uns8 data1)
+spi_init	C:\SPI\verici\verici.c	2;"	p	line:2	file:
+spi_init	C:\SPI\verici\verici.c	39;"	f	line:39
+temp	C:\SPI\verici\verici.c	55;"	l	line:55
+x	C:\SPI\verici\verici.c	65;"	l	line:65
+x5F4	C:\SPI\verici\18F452.H	9;"	v	line:9
+xF80	C:\SPI\verici\18F452.H	100;"	v	line:100
+xF81	C:\SPI\verici\18F452.H	99;"	v	line:99
+xF82	C:\SPI\verici\18F452.H	98;"	v	line:98
+xF83	C:\SPI\verici\18F452.H	97;"	v	line:97
+xF84	C:\SPI\verici\18F452.H	96;"	v	line:96
+xF89	C:\SPI\verici\18F452.H	94;"	v	line:94
+xF8A	C:\SPI\verici\18F452.H	93;"	v	line:93
+xF8B	C:\SPI\verici\18F452.H	92;"	v	line:92
+xF8C	C:\SPI\verici\18F452.H	91;"	v	line:91
+xF8D	C:\SPI\verici\18F452.H	90;"	v	line:90
+xF92	C:\SPI\verici\18F452.H	88;"	v	line:88
+xF93	C:\SPI\verici\18F452.H	87;"	v	line:87
+xF94	C:\SPI\verici\18F452.H	86;"	v	line:86
+xF95	C:\SPI\verici\18F452.H	85;"	v	line:85
+xF96	C:\SPI\verici\18F452.H	84;"	v	line:84
+xF9D	C:\SPI\verici\18F452.H	82;"	v	line:82
+xF9E	C:\SPI\verici\18F452.H	81;"	v	line:81
+xF9F	C:\SPI\verici\18F452.H	80;"	v	line:80
+xFA0	C:\SPI\verici\18F452.H	79;"	v	line:79
+xFA1	C:\SPI\verici\18F452.H	78;"	v	line:78
+xFA2	C:\SPI\verici\18F452.H	77;"	v	line:77
+xFA6	C:\SPI\verici\18F452.H	75;"	v	line:75
+xFA7	C:\SPI\verici\18F452.H	74;"	v	line:74
+xFA8	C:\SPI\verici\18F452.H	73;"	v	line:73
+xFA9	C:\SPI\verici\18F452.H	72;"	v	line:72
+xFAB	C:\SPI\verici\18F452.H	70;"	v	line:70
+xFAC	C:\SPI\verici\18F452.H	69;"	v	line:69
+xFAD	C:\SPI\verici\18F452.H	68;"	v	line:68
+xFAE	C:\SPI\verici\18F452.H	67;"	v	line:67
+xFAF	C:\SPI\verici\18F452.H	66;"	v	line:66
+xFB1	C:\SPI\verici\18F452.H	64;"	v	line:64
+xFB2	C:\SPI\verici\18F452.H	63;"	v	line:63
+xFB3	C:\SPI\verici\18F452.H	62;"	v	line:62
+xFBA	C:\SPI\verici\18F452.H	60;"	v	line:60
+xFBB	C:\SPI\verici\18F452.H	59;"	v	line:59
+xFBC	C:\SPI\verici\18F452.H	58;"	v	line:58
+xFBD	C:\SPI\verici\18F452.H	57;"	v	line:57
+xFBE	C:\SPI\verici\18F452.H	56;"	v	line:56
+xFBF	C:\SPI\verici\18F452.H	55;"	v	line:55
+xFC1	C:\SPI\verici\18F452.H	53;"	v	line:53
+xFC2	C:\SPI\verici\18F452.H	52;"	v	line:52
+xFC3	C:\SPI\verici\18F452.H	51;"	v	line:51
+xFC4	C:\SPI\verici\18F452.H	50;"	v	line:50
+xFC5	C:\SPI\verici\18F452.H	49;"	v	line:49
+xFC6	C:\SPI\verici\18F452.H	48;"	v	line:48
+xFC7	C:\SPI\verici\18F452.H	47;"	v	line:47
+xFC8	C:\SPI\verici\18F452.H	46;"	v	line:46
+xFC9	C:\SPI\verici\18F452.H	45;"	v	line:45
+xFCA	C:\SPI\verici\18F452.H	44;"	v	line:44
+xFCB	C:\SPI\verici\18F452.H	43;"	v	line:43
+xFCC	C:\SPI\verici\18F452.H	42;"	v	line:42
+xFCD	C:\SPI\verici\18F452.H	41;"	v	line:41
+xFCE	C:\SPI\verici\18F452.H	40;"	v	line:40
+xFCF	C:\SPI\verici\18F452.H	39;"	v	line:39
+xFD0	C:\SPI\verici\18F452.H	38;"	v	line:38
+xFD1	C:\SPI\verici\18F452.H	37;"	v	line:37
+xFD2	C:\SPI\verici\18F452.H	36;"	v	line:36
+xFD3	C:\SPI\verici\18F452.H	35;"	v	line:35
+xFD5	C:\SPI\verici\18F452.H	33;"	v	line:33
+xFD6	C:\SPI\verici\18F452.H	32;"	v	line:32
+xFD7	C:\SPI\verici\18F452.H	31;"	v	line:31

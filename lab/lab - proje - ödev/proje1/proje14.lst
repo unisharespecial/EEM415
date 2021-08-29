@@ -1,0 +1,133 @@
+CC8E Version 1.3D,   File: proje14.c            1. Nov 2010  12:42   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3D, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************   1. Nov 2010  12:42  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0002       00013 Zero_       EQU   2
+       0F95       00014 TRISD       EQU   0xF95
+       0F93       00015 TRISB       EQU   0xF93
+       0F83       00016 PORTD       EQU   0xF83
+       0F81       00017 PORTB       EQU   0xF81
+       0007       00018 GIE         EQU   7
+       0000       00019 t           EQU   0x00
+       0002       00020 x           EQU   0x02
+                  00021 
+000000 EF02 F000  00022 	GOTO main
+                  00023 
+                  00024   ; FILE proje14.c
+                  00025 			;
+                  00026 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00027 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00028 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00029 			;
+                  00030 			;void ayarlar();
+                  00031 			;void bekle(unsigned long t);	// t milisaniye gecikme saðlayan fonksiyon tanýmý
+                  00032 			;
+                  00033 			;
+                  00034 			;void main()
+                  00035 			;{
+                  00036 main
+                  00037 			;	ayarlar();
+000004 D809       00038 	RCALL ayarlar
+                  00039 			;
+                  00040 			;//-----------------------------------------------	
+                  00041 			;anadongu:
+                  00042 			;
+                  00043 			; 	bekle(1);	// Acquisition Time(Sample & Hold kapasitörünün þarj olmasý için gerekli zaman)
+000006 0E01       00044 m001	MOVLW 1
+000008 6E00       00045 	MOVWF t,0
+00000A 6A01       00046 	CLRF  t+1,0
+00000C D80A       00047 	RCALL bekle
+                  00048 			;  	PORTD=0x00;
+00000E 6A83       00049 	CLRF  PORTD,0
+                  00050 			;    while(PORTB.0==0)
+000010 B081       00051 m002	BTFSC PORTB,0,0
+000012 D7F9       00052 	BRA   m001
+                  00053 			;        PORTD=0xFF;
+000014 6883       00054 	SETF  PORTD,0
+000016 D7FC       00055 	BRA   m002
+                  00056 			;    
+                  00057 			;	goto anadongu;
+                  00058 			;//-----------------------------------------------	
+                  00059 			;}
+                  00060 			;
+CC8E Version 1.3D,   File: proje14.c            1. Nov 2010  12:42   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00062 			;
+                  00063 			;void ayarlar()	// Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00064 			;{	
+                  00065 ayarlar
+                  00066 			;	GIE=0;			// Bütün kesmeleri kapat
+000018 9EF2       00067 	BCF   0xFF2,GIE,0
+                  00068 			;	TRISB=0xFF;		// B portu giriþ yapýldý
+00001A 6893       00069 	SETF  TRISB,0
+                  00070 			;	TRISD=0;		// D portu çýkýþ yapýldý
+00001C 6A95       00071 	CLRF  TRISD,0
+                  00072 			;		
+                  00073 			;	PORTD=0;		// D portu çýkýþlarý sýfýrlandý
+00001E 6A83       00074 	CLRF  PORTD,0
+                  00075 			;
+                  00076 			;	
+                  00077 			;	
+                  00078 			;}
+000020 0012       00079 	RETURN
+                  00080 			;
+                  00081 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00082 			;
+                  00083 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00084 			;{
+                  00085 bekle
+                  00086 			;	unsigned x;
+                  00087 			;	
+                  00088 			;	for(;t>0;t--)
+000022 5000       00089 m003	MOVF  t,W,0
+000024 1001       00090 	IORWF t+1,W,0
+000026 B4D8       00091 	BTFSC 0xFD8,Zero_,0
+000028 D00C       00092 	BRA   m006
+                  00093 			;		for(x=140;x>0;x--)
+00002A 0E8C       00094 	MOVLW 140
+00002C 6E02       00095 	MOVWF x,0
+00002E 5202       00096 m004	MOVF  x,1,0
+000030 B4D8       00097 	BTFSC 0xFD8,Zero_,0
+000032 D003       00098 	BRA   m005
+                  00099 			;			nop();
+000034 0000       00100 	NOP  
+000036 0602       00101 	DECF  x,1,0
+000038 D7FA       00102 	BRA   m004
+00003A 0600       00103 m005	DECF  t,1,0
+00003C 0E00       00104 	MOVLW 0
+00003E 5A01       00105 	SUBWFB t+1,1,0
+000040 D7F0       00106 	BRA   m003
+                  00107 			;}
+000042 0012       00108 m006	RETURN
+                  00109 
+                  00110 	END
+                  00111 
+                  00112 
+                  00113 ; *** KEY INFO ***
+                  00114 
+                  00115 ; 0x000018    5 word(s)  0 % : ayarlar
+                  00116 ; 0x000022   17 word(s)  0 % : bekle
+                  00117 ; 0x000004   10 word(s)  0 % : main
+                  00118 
+                  00119 ; RAM usage: 3 bytes (3 local), 1533 bytes free
+                  00120 ; Maximum call level: 1
+CC8E Version 1.3D,   File: proje14.c            1. Nov 2010  12:42   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 ; Total of 34 code words (0 %)

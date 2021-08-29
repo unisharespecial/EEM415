@@ -1,0 +1,149 @@
+CC8E Version 1.2A,   File: mikro2.c            22. Jan 2010  13:37   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.2A, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  22. Jan 2010  13:37  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0FC9       00013 SSPBUF      EQU   0xFC9
+       0FC8       00014 SSPADD      EQU   0xFC8
+       0FC6       00015 SSPCON1     EQU   0xFC6
+       0F94       00016 TRISC       EQU   0xF94
+       0F93       00017 TRISB       EQU   0xF93
+       0F81       00018 PORTB       EQU   0xF81
+       0005       00019 SSPEN       EQU   5
+       0000       00020 SEN         EQU   0
+       0001       00021 RSEN        EQU   1
+       0002       00022 PEN         EQU   2
+       0003       00023 RCEN        EQU   3
+       0003       00024 SSPIF       EQU   3
+       0000       00025 data        EQU   0x00
+                  00026 
+000000 EF0E F000  00027 	GOTO main
+                  00028 
+                  00029   ; FILE mikro2.c
+                  00030 			;#include "INT18XXX.H"
+                  00031 			;
+                  00032 			;
+                  00033 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00034 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00035 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00036 			;
+                  00037 			;void ayarlar()
+                  00038 			;{
+                  00039 ayarlar
+                  00040 			;	TRISC.3=1; //I2C SCL Ayarý
+000004 8694       00041 	BSF   TRISC,3,0
+                  00042 			;	TRISC.4=1; //I2C SDA Ayarý
+000006 8894       00043 	BSF   TRISC,4,0
+                  00044 			;	TRISB=0x00;
+000008 6A93       00045 	CLRF  TRISB,0
+                  00046 			;	PORTB=0x00;
+00000A 6A81       00047 	CLRF  PORTB,0
+                  00048 			;	SSPCON1.3=1; //I2C Master Modu seç
+00000C 86C6       00049 	BSF   SSPCON1,3,0
+                  00050 			;	SSPCON1.2=0;
+00000E 94C6       00051 	BCF   SSPCON1,2,0
+                  00052 			;	SSPCON1.1=0;
+000010 92C6       00053 	BCF   SSPCON1,1,0
+                  00054 			;	SSPCON1.0=0;
+000012 90C6       00055 	BCF   SSPCON1,0,0
+                  00056 			;	SSPADD=0x0A; //100kHZ Hýz Modu seç
+000014 0E0A       00057 	MOVLW 10
+000016 6EC8       00058 	MOVWF SSPADD,0
+                  00059 			;	SSPEN=1; //MSSP'yi Etkinleþtir
+000018 8AC6       00060 	BSF   0xFC6,SSPEN,0
+CC8E Version 1.2A,   File: mikro2.c            22. Jan 2010  13:37   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;}
+00001A 0012       00062 	RETURN
+                  00063 			;uns8 data;
+                  00064 			;void main()
+                  00065 			;{
+                  00066 main
+                  00067 			;	ayarlar(); //Ayarlarý yap
+00001C DFF3       00068 	RCALL ayarlar
+                  00069 			;	while(1) //Her zaman
+                  00070 			;	{
+                  00071 			;		SEN=1; //I2C Start Biti Yolla
+00001E 80C5       00072 m001	BSF   0xFC5,SEN,0
+                  00073 			;		while(SEN); //Baþlatma iþlemi geçerli olana kadar bekle
+000020 B0C5       00074 m002	BTFSC 0xFC5,SEN,0
+000022 D7FE       00075 	BRA   m002
+                  00076 			;		SSPIF=0; //SSPIF Bayraðýný Sýfýrla
+000024 969E       00077 	BCF   0xF9E,SSPIF,0
+                  00078 			;		SSPBUF=0b.1001.1010; //Adres yolla ve yazma bitini aktifleþtir
+000026 0E9A       00079 	MOVLW 154
+000028 6EC9       00080 	MOVWF SSPBUF,0
+                  00081 			;		while(!SSPIF); //Adres Gönderilene Kadar Bekle	
+00002A A69E       00082 m003	BTFSS 0xF9E,SSPIF,0
+00002C D7FE       00083 	BRA   m003
+                  00084 			;		SSPIF=0;
+00002E 969E       00085 	BCF   0xF9E,SSPIF,0
+                  00086 			;		SSPBUF=0b.0000.0000; //Komut biti yolla (KOmut=00000000 olurse derece okunur)
+000030 6AC9       00087 	CLRF  SSPBUF,0
+                  00088 			;		while(!SSPIF); //Komut biti yollanana kadar bekle
+000032 A69E       00089 m004	BTFSS 0xF9E,SSPIF,0
+000034 D7FE       00090 	BRA   m004
+                  00091 			;		SSPIF=0; //SSPIF bayraðý sýfýrla
+000036 969E       00092 	BCF   0xF9E,SSPIF,0
+                  00093 			;		RSEN=1; //Tekrar baþlat
+000038 82C5       00094 	BSF   0xFC5,RSEN,0
+                  00095 			;		while(RSEN); //Tekrar baþlatma aktifleþene kadar bekle
+00003A B2C5       00096 m005	BTFSC 0xFC5,RSEN,0
+00003C D7FE       00097 	BRA   m005
+                  00098 			;		SSPIF=0; //SSPIF bayraðýný sil
+00003E 969E       00099 	BCF   0xF9E,SSPIF,0
+                  00100 			;		SSPBUF=0b.1001.1011; //Adresi gönder ve okuma bitini aktifleþtir
+000040 0E9B       00101 	MOVLW 155
+000042 6EC9       00102 	MOVWF SSPBUF,0
+                  00103 			;		while(!SSPIF); //Adres gönderilene kadar bekle
+000044 A69E       00104 m006	BTFSS 0xF9E,SSPIF,0
+000046 D7FE       00105 	BRA   m006
+                  00106 			;		SSPIF=0; //SSPIF bayraðýný sýfýrla
+000048 969E       00107 	BCF   0xF9E,SSPIF,0
+                  00108 			;		RCEN=1; //Master alým bitini aktfileþtir (derece okumak için)
+00004A 86C5       00109 	BSF   0xFC5,RCEN,0
+                  00110 			;		while(RCEN); //Aktifleþene kadar bekle
+00004C B6C5       00111 m007	BTFSC 0xFC5,RCEN,0
+00004E D7FE       00112 	BRA   m007
+                  00113 			;		data=SSPBUF; //8'bitlik dereceyi al
+000050 CFC9 F000  00114 	MOVFF SSPBUF,data
+                  00115 			;		PEN=1; //Gönderim iþlemini durdur
+000054 84C5       00116 	BSF   0xFC5,PEN,0
+                  00117 			;		while(PEN); //Durana kadar bekle
+000056 B4C5       00118 m008	BTFSC 0xFC5,PEN,0
+000058 D7FE       00119 	BRA   m008
+                  00120 			;		SSPIF=0; //SSPIF bayraðýný sil
+CC8E Version 1.2A,   File: mikro2.c            22. Jan 2010  13:37   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+00005A 969E       00121 	BCF   0xF9E,SSPIF,0
+                  00122 			;		PORTB=data; //Okunan veriyi PORT'e çýk			
+00005C C000 FF81  00123 	MOVFF data,PORTB
+                  00124 			;	}
+000060 D7DE       00125 	BRA   m001
+                  00126 
+                  00127 	END
+                  00128 
+                  00129 
+                  00130 ; *** KEY INFO ***
+                  00131 
+                  00132 ; 0x000004   12 word(s)  0 % : ayarlar
+                  00133 ; 0x00001C   35 word(s)  0 % : main
+                  00134 
+                  00135 ; RAM usage: 1 bytes (0 local), 1535 bytes free
+                  00136 ; Maximum call level: 1
+                  00137 ; Total of 49 code words (0 %)

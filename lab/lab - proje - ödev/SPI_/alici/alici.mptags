@@ -1,0 +1,94 @@
+!_TAG_FILE_FORMAT	2	/extended format; --format=1 will not append ;" to lines/
+!_TAG_FILE_SORTED	1	/0=unsorted, 1=sorted, 2=foldcase/
+!_TAG_PROGRAM_AUTHOR	Darren Hiebert	/dhiebert@users.sourceforge.net/
+!_TAG_PROGRAM_NAME	Exuberant Ctags	//
+!_TAG_PROGRAM_URL	http://ctags.sourceforge.net	/official site/
+!_TAG_PROGRAM_VERSION	5.5.4	//
+!_TAG_REVISION_NAME	MCHPTags	//
+!_TAG_REVISION_VERSION	6.0.1	//
+LcdInit	C:\SPI\alici\alici.c	5;"	p	line:5	file:
+LcdInit	C:\SPI\alici\alici.c	97;"	f	line:97
+LcdKomut	C:\SPI\alici\alici.c	78;"	f	line:78	signature:(unsigned kom)
+LcdKomut	C:\SPI\alici\alici.c	7;"	p	line:7	file:	signature:(unsigned kom)
+LcdYaz	C:\SPI\alici\alici.c	6;"	p	line:6	file:	signature:(char )
+LcdYaz	C:\SPI\alici\alici.c	87;"	f	line:87	signature:(char c)
+MesajYaz	C:\SPI\alici\alici.c	107;"	f	line:107	signature:(const char *msj,unsigned adr)
+MesajYaz	C:\SPI\alici\alici.c	8;"	p	line:8	file:	signature:(const char *msj,unsigned adr)
+PORTD	C:\SPI\alici\alici.c	11;"	v	line:11
+bekle	C:\SPI\alici\alici.c	4;"	p	line:4	file:	signature:(unsigned long)
+bekle	C:\SPI\alici\alici.c	71;"	f	line:71	signature:(unsigned long t)
+gelen	C:\SPI\alici\alici.c	15;"	l	line:15
+i	C:\SPI\alici\alici.c	109;"	l	line:109
+init	C:\SPI\alici\alici.c	1;"	p	line:1	file:
+init	C:\SPI\alici\alici.c	34;"	f	line:34
+j	C:\SPI\alici\alici.c	109;"	l	line:109
+k	C:\SPI\alici\alici.c	109;"	l	line:109
+main	C:\SPI\alici\alici.c	13;"	f	line:13
+spi_gonder_al	C:\SPI\alici\alici.c	3;"	p	line:3	file:
+spi_gonder_al	C:\SPI\alici\alici.c	59;"	f	line:59	signature:(uns8 data1)
+spi_init	C:\SPI\alici\alici.c	2;"	p	line:2	file:
+spi_init	C:\SPI\alici\alici.c	46;"	f	line:46
+temp	C:\SPI\alici\alici.c	61;"	l	line:61
+x	C:\SPI\alici\alici.c	73;"	l	line:73
+x5F4	C:\SPI\alici\18F452.H	9;"	v	line:9
+xF80	C:\SPI\alici\18F452.H	100;"	v	line:100
+xF81	C:\SPI\alici\18F452.H	99;"	v	line:99
+xF82	C:\SPI\alici\18F452.H	98;"	v	line:98
+xF83	C:\SPI\alici\18F452.H	97;"	v	line:97
+xF84	C:\SPI\alici\18F452.H	96;"	v	line:96
+xF89	C:\SPI\alici\18F452.H	94;"	v	line:94
+xF8A	C:\SPI\alici\18F452.H	93;"	v	line:93
+xF8B	C:\SPI\alici\18F452.H	92;"	v	line:92
+xF8C	C:\SPI\alici\18F452.H	91;"	v	line:91
+xF8D	C:\SPI\alici\18F452.H	90;"	v	line:90
+xF92	C:\SPI\alici\18F452.H	88;"	v	line:88
+xF93	C:\SPI\alici\18F452.H	87;"	v	line:87
+xF94	C:\SPI\alici\18F452.H	86;"	v	line:86
+xF95	C:\SPI\alici\18F452.H	85;"	v	line:85
+xF96	C:\SPI\alici\18F452.H	84;"	v	line:84
+xF9D	C:\SPI\alici\18F452.H	82;"	v	line:82
+xF9E	C:\SPI\alici\18F452.H	81;"	v	line:81
+xF9F	C:\SPI\alici\18F452.H	80;"	v	line:80
+xFA0	C:\SPI\alici\18F452.H	79;"	v	line:79
+xFA1	C:\SPI\alici\18F452.H	78;"	v	line:78
+xFA2	C:\SPI\alici\18F452.H	77;"	v	line:77
+xFA6	C:\SPI\alici\18F452.H	75;"	v	line:75
+xFA7	C:\SPI\alici\18F452.H	74;"	v	line:74
+xFA8	C:\SPI\alici\18F452.H	73;"	v	line:73
+xFA9	C:\SPI\alici\18F452.H	72;"	v	line:72
+xFAB	C:\SPI\alici\18F452.H	70;"	v	line:70
+xFAC	C:\SPI\alici\18F452.H	69;"	v	line:69
+xFAD	C:\SPI\alici\18F452.H	68;"	v	line:68
+xFAE	C:\SPI\alici\18F452.H	67;"	v	line:67
+xFAF	C:\SPI\alici\18F452.H	66;"	v	line:66
+xFB1	C:\SPI\alici\18F452.H	64;"	v	line:64
+xFB2	C:\SPI\alici\18F452.H	63;"	v	line:63
+xFB3	C:\SPI\alici\18F452.H	62;"	v	line:62
+xFBA	C:\SPI\alici\18F452.H	60;"	v	line:60
+xFBB	C:\SPI\alici\18F452.H	59;"	v	line:59
+xFBC	C:\SPI\alici\18F452.H	58;"	v	line:58
+xFBD	C:\SPI\alici\18F452.H	57;"	v	line:57
+xFBE	C:\SPI\alici\18F452.H	56;"	v	line:56
+xFBF	C:\SPI\alici\18F452.H	55;"	v	line:55
+xFC1	C:\SPI\alici\18F452.H	53;"	v	line:53
+xFC2	C:\SPI\alici\18F452.H	52;"	v	line:52
+xFC3	C:\SPI\alici\18F452.H	51;"	v	line:51
+xFC4	C:\SPI\alici\18F452.H	50;"	v	line:50
+xFC5	C:\SPI\alici\18F452.H	49;"	v	line:49
+xFC6	C:\SPI\alici\18F452.H	48;"	v	line:48
+xFC7	C:\SPI\alici\18F452.H	47;"	v	line:47
+xFC8	C:\SPI\alici\18F452.H	46;"	v	line:46
+xFC9	C:\SPI\alici\18F452.H	45;"	v	line:45
+xFCA	C:\SPI\alici\18F452.H	44;"	v	line:44
+xFCB	C:\SPI\alici\18F452.H	43;"	v	line:43
+xFCC	C:\SPI\alici\18F452.H	42;"	v	line:42
+xFCD	C:\SPI\alici\18F452.H	41;"	v	line:41
+xFCE	C:\SPI\alici\18F452.H	40;"	v	line:40
+xFCF	C:\SPI\alici\18F452.H	39;"	v	line:39
+xFD0	C:\SPI\alici\18F452.H	38;"	v	line:38
+xFD1	C:\SPI\alici\18F452.H	37;"	v	line:37
+xFD2	C:\SPI\alici\18F452.H	36;"	v	line:36
+xFD3	C:\SPI\alici\18F452.H	35;"	v	line:35
+xFD5	C:\SPI\alici\18F452.H	33;"	v	line:33
+xFD6	C:\SPI\alici\18F452.H	32;"	v	line:32
+xFD7	C:\SPI\alici\18F452.H	31;"	v	line:31

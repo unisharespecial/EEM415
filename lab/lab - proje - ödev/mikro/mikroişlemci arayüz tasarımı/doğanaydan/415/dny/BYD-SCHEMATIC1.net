@@ -1,0 +1,6 @@
+* source BYD
+I_I2         0 OUT DC 1mAdc  
+R_R2         0 OUT  10k  
+V_V4         IN 0 DC 0Vdc AC 1Vac 
+D_D1         IN OUT D1N4148 
+C_C1         0 OUT  5uF  

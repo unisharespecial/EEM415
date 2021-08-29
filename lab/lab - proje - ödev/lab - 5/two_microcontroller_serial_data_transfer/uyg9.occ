@@ -1,0 +1,22 @@
+CC8E Version 1.3B, Copyright (c) B Knudsen Data, Norway 2001-2009, No. 2367
+ --> STANDARD edition, 8-32 bit int, 16-32 bit float, 128k code words
+uyg9.c:
+ 15. Dec 2010  22:52
+ Chip = 18F452
+ RAM : ====**** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:252  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 4 bytes (4 local), 1532 bytes free
+ File 'uyg9.fcs'
+ Optimizing - removed 16 code words (-22 %)
+ File 'uyg9.var'
+ File 'uyg9.asm'
+ File 'uyg9.lst'
+ File 'uyg9.cod'
+ File 'uyg9.occ'
+ File 'uyg9.hex'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\GENCER\Desktop\deney_16_Aralik\18F452.h
+Total of 71 code words (0 %)

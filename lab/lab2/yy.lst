@@ -1,0 +1,128 @@
+CC8E Version 1.4,   File: yy.c                 3. Nov 2014  10:16   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.4, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************   3. Nov 2014  10:16  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 
+       0000       00011 Carry       EQU   0
+       0002       00012 Zero_       EQU   2
+       0F96       00013 TRISE       EQU   0xF96
+       0F95       00014 TRISD       EQU   0xF95
+       0F94       00015 TRISC       EQU   0xF94
+       0F93       00016 TRISB       EQU   0xF93
+       0F92       00017 TRISA       EQU   0xF92
+       0F83       00018 PORTD       EQU   0xF83
+       0F82       00019 PORTC       EQU   0xF82
+       0000       00020 t           EQU   0x00
+       0002       00021 x           EQU   0x02
+                  00022 
+000000 EF02 F000  00023 	GOTO main
+                  00024 
+                  00025   ; FILE yy.c
+                  00026 			;#pragma config[1] = 0xF1 // Osilatör: XT#pragmaconfig[1] = 0xF1 // Osilatör: XT
+                  00027 			;void ayarlar();
+                  00028 			;void bekle(unsigned long t);	// t milisaniye gecikme saðlayan fonksiyon tanýmý
+                  00029 			;	
+                  00030 			;void main()
+                  00031 			;{
+                  00032 main
+                  00033 			;	ayarlar();
+000004 D822       00034 	RCALL ayarlar
+                  00035 			;anadongu:
+                  00036 			;    PORTC.0=1;
+000006 8082       00037 m001	BSF   PORTC,0,0
+                  00038 			;	bekle(0xFF); // %50 High – ADC kullanýldýðýnda ADRESH deðeri olmalýdýr
+000008 6800       00039 	SETF  t,0
+00000A 6A01       00040 	CLRF  t+1,0
+00000C D80A       00041 	RCALL bekle
+                  00042 			;	PORTC.0=0;
+00000E 9082       00043 	BCF   PORTC,0,0
+                  00044 			;	bekle(0xFF-0xFF); // %50 Low – ADC kullanýldýðýnda 0xFF-ADRESH deðeri olmalýdýr
+000010 6A00       00045 	CLRF  t,0
+000012 6A01       00046 	CLRF  t+1,0
+000014 D806       00047 	RCALL bekle
+                  00048 			;	bekle(1);	// Acquisition Time(Sample&Holdkapasitörünün þarj olmasý için gerekli zaman)
+000016 0E01       00049 	MOVLW 1
+000018 6E00       00050 	MOVWF t,0
+00001A 6A01       00051 	CLRF  t+1,0
+00001C D802       00052 	RCALL bekle
+                  00053 			;
+                  00054 			;	nop();
+00001E 0000       00055 	NOP  
+                  00056 			;goto anadongu;
+000020 D7F2       00057 	BRA   m001
+                  00058 			;//-----------------------------------------------	
+                  00059 			;}
+                  00060 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+CC8E Version 1.4,   File: yy.c                 3. Nov 2014  10:16   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;{
+                  00062 bekle
+                  00063 			;	unsigned x;
+                  00064 			;	t=t/2;
+000022 90D8       00065 	BCF   0xFD8,Carry,0
+000024 3201       00066 	RRCF  t+1,1,0
+000026 3200       00067 	RRCF  t,1,0
+                  00068 			;	for(;t>0;t--)
+000028 5000       00069 m002	MOVF  t,W,0
+00002A 1001       00070 	IORWF t+1,W,0
+00002C B4D8       00071 	BTFSC 0xFD8,Zero_,0
+00002E D00C       00072 	BRA   m005
+                  00073 			;		for(x=140;x>0;x--)
+000030 0E8C       00074 	MOVLW 140
+000032 6E02       00075 	MOVWF x,0
+000034 5202       00076 m003	MOVF  x,1,0
+000036 B4D8       00077 	BTFSC 0xFD8,Zero_,0
+000038 D003       00078 	BRA   m004
+                  00079 			;			nop();
+00003A 0000       00080 	NOP  
+00003C 0602       00081 	DECF  x,1,0
+00003E D7FA       00082 	BRA   m003
+000040 0600       00083 m004	DECF  t,1,0
+000042 0E00       00084 	MOVLW 0
+000044 5A01       00085 	SUBWFB t+1,1,0
+000046 D7F0       00086 	BRA   m002
+                  00087 			;}
+000048 0012       00088 m005	RETURN
+                  00089 			;void ayarlar()	// Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00090 			;{	
+                  00091 ayarlar
+                  00092 			;	TRISA=0xFF;
+00004A 6892       00093 	SETF  TRISA,0
+                  00094 			;	TRISB=0xFF;
+00004C 6893       00095 	SETF  TRISB,0
+                  00096 			;	TRISC=0x00;	
+00004E 6A94       00097 	CLRF  TRISC,0
+                  00098 			;	TRISD=0x00;		
+000050 6A95       00099 	CLRF  TRISD,0
+                  00100 			;	TRISE=0xFF;
+000052 6896       00101 	SETF  TRISE,0
+                  00102 			;	PORTC=0x00;		
+000054 6A82       00103 	CLRF  PORTC,0
+                  00104 			;	PORTD=0x00;
+000056 6A83       00105 	CLRF  PORTD,0
+                  00106 			;}
+000058 0012       00107 	RETURN
+                  00108 
+                  00109 	END
+                  00110 
+                  00111 
+                  00112 ; *** KEY INFO ***
+                  00113 
+                  00114 ; 0x00004A    8 word(s)  0 % : ayarlar
+                  00115 ; 0x000022   20 word(s)  0 % : bekle
+                  00116 ; 0x000004   15 word(s)  0 % : main
+                  00117 
+                  00118 ; RAM usage: 3 bytes (3 local), 1533 bytes free
+                  00119 ; Maximum call level: 1
+                  00120 ; Total of 45 code words (0 %)

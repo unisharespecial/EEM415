@@ -1,0 +1,136 @@
+CC8E Version 1.3F,   File: display.c            1. Dec 2013  18:30   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3F, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************   1. Dec 2013  18:30  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+       0002       00009 Zero_       EQU   2
+       0FD6       00010 TMR0L       EQU   0xFD6
+       0FD5       00011 T0CON       EQU   0xFD5
+       0F94       00012 TRISC       EQU   0xF94
+       0F92       00013 TRISA       EQU   0xF92
+       0F82       00014 PORTC       EQU   0xF82
+       0007       00015 GIE         EQU   7
+       0000       00016 t           EQU   0x00
+       0002       00017 x           EQU   0x02
+       0000       00018 s           EQU   0x00
+                  00019 
+000000 EF02 F000  00020 	GOTO main
+                  00021 
+                  00022   ; FILE display.c
+                  00023 			;void ayarlar();
+                  00024 			;void bekle(unsigned long t);
+                  00025 			;void sifirla(unsigned long s);
+                  00026 			;
+                  00027 			;
+                  00028 			;void main()
+                  00029 			;{
+                  00030 main
+                  00031 			;	ayarlar();
+000004 D825       00032 	RCALL ayarlar
+                  00033 			;
+                  00034 			;anadongu:
+                  00035 			;
+                  00036 			;
+                  00037 			;T0CON=0b.1110.1000;
+000006 0EE8       00038 m001	MOVLW 232
+000008 6ED5       00039 	MOVWF T0CON,0
+                  00040 			;PORTC=TMR0L;
+00000A CFD6 FF82  00041 	MOVFF TMR0L,PORTC
+                  00042 			;//T0CON=0b.0000.0000;
+                  00043 			;bekle(5);
+00000E 0E05       00044 	MOVLW 5
+000010 6E00       00045 	MOVWF t,0
+000012 6A01       00046 	CLRF  t+1,0
+000014 D805       00047 	RCALL bekle
+                  00048 			;sifirla(TMR0L);
+000016 CFD6 F000  00049 	MOVFF TMR0L,s
+00001A 6A01       00050 	CLRF  s+1,0
+00001C D812       00051 	RCALL sifirla
+                  00052 			;
+                  00053 			;
+                  00054 			;
+                  00055 			;goto anadongu;
+00001E D7F3       00056 	BRA   m001
+                  00057 			;}
+                  00058 			;
+                  00059 			;void bekle(unsigned long t)
+                  00060 			;{
+CC8E Version 1.3F,   File: display.c            1. Dec 2013  18:30   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 bekle
+                  00062 			;	unsigned x;
+                  00063 			;	
+                  00064 			;	for(;t>0;t--)
+000020 5000       00065 m002	MOVF  t,W,0
+000022 1001       00066 	IORWF t+1,W,0
+000024 B4D8       00067 	BTFSC 0xFD8,Zero_,0
+000026 D00C       00068 	BRA   m005
+                  00069 			;		for(x=140;x>0;x--)
+000028 0E8C       00070 	MOVLW 140
+00002A 6E02       00071 	MOVWF x,0
+00002C 5202       00072 m003	MOVF  x,1,0
+00002E B4D8       00073 	BTFSC 0xFD8,Zero_,0
+000030 D003       00074 	BRA   m004
+                  00075 			;			nop();
+000032 0000       00076 	NOP  
+000034 0602       00077 	DECF  x,1,0
+000036 D7FA       00078 	BRA   m003
+000038 0600       00079 m004	DECF  t,1,0
+00003A 0E00       00080 	MOVLW 0
+00003C 5A01       00081 	SUBWFB t+1,1,0
+00003E D7F0       00082 	BRA   m002
+                  00083 			;}
+000040 0012       00084 m005	RETURN
+                  00085 			;
+                  00086 			;void sifirla(unsigned long s)
+                  00087 			;{
+                  00088 sifirla
+                  00089 			;	if(s>9)
+000042 5001       00090 	MOVF  s+1,W,0
+000044 A4D8       00091 	BTFSS 0xFD8,Zero_,0
+000046 D002       00092 	BRA   m006
+000048 0E0A       00093 	MOVLW 10
+00004A 6000       00094 	CPFSLT s,0
+                  00095 			;		TMR0L=0b.0000;
+00004C 6AD6       00096 m006	CLRF  TMR0L,0
+                  00097 			;}
+00004E 0012       00098 	RETURN
+                  00099 			;
+                  00100 			;void ayarlar()
+                  00101 			;{	
+                  00102 ayarlar
+                  00103 			;	GIE=0;	
+000050 9EF2       00104 	BCF   0xFF2,GIE,0
+                  00105 			;	TRISA=0xFF;
+000052 6892       00106 	SETF  TRISA,0
+                  00107 			;	TRISC=0x00;		
+000054 6A94       00108 	CLRF  TRISC,0
+                  00109 			;}
+000056 0012       00110 	RETURN
+                  00111 
+                  00112 	END
+                  00113 
+                  00114 
+                  00115 ; *** KEY INFO ***
+                  00116 
+                  00117 ; 0x000050    4 word(s)  0 % : ayarlar
+                  00118 ; 0x000020   17 word(s)  0 % : bekle
+                  00119 ; 0x000042    7 word(s)  0 % : sifirla
+                  00120 ; 0x000004   14 word(s)  0 % : main
+CC8E Version 1.3F,   File: display.c            1. Dec 2013  18:30   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 
+                  00122 ; RAM usage: 3 bytes (3 local), 1533 bytes free
+                  00123 ; Maximum call level: 1
+                  00124 ; Total of 44 code words (0 %)

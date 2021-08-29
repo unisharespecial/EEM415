@@ -1,0 +1,210 @@
+CC8E Version 1.2A,   File: verici.c             7. Jan 2009   1:42   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.2A, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************   7. Jan 2009   1:42  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+       0FC9       00009 SSPBUF      EQU   0xFC9
+       0FC6       00010 SSPCON1     EQU   0xFC6
+       0F96       00011 TRISE       EQU   0xF96
+       0F95       00012 TRISD       EQU   0xF95
+       0F94       00013 TRISC       EQU   0xF94
+       0F93       00014 TRISB       EQU   0xF93
+       0F92       00015 TRISA       EQU   0xF92
+       0F83       00016 PORTD       EQU   0xF83
+       0F81       00017 PORTB       EQU   0xF81
+       0006       00018 CKE         EQU   6
+       0004       00019 CKP         EQU   4
+       0005       00020 SSPEN       EQU   5
+       0006       00021 SSPOV       EQU   6
+       0007       00022 WCOL        EQU   7
+       0003       00023 SSPIF       EQU   3
+       0000       00024 data1       EQU   0x00
+       0001       00025 temp        EQU   0x01
+       0000       00026 t           EQU   0x00
+       0002       00027 x           EQU   0x02
+                  00028 
+000000 EF02 F000  00029 	GOTO main
+                  00030 
+                  00031   ; FILE verici.c
+                  00032 			;void init();	//Baslangýc ayarlarý fonksiyonu
+                  00033 			;void spi_init();//SPI Ayarlarý fonksiyonu
+                  00034 			;void spi_gonder(uns8);	//SPI veri gonderme fonksiyonu 
+                  00035 			;void bekle(unsigned long);	//Bekleme fonksiyonu
+                  00036 			;
+                  00037 			;void main()
+                  00038 			;{
+                  00039 main
+                  00040 			;	init();		//baslangýc ayarlarý yapýlýyor
+000004 D821       00041 	RCALL init
+                  00042 			;dongu:
+                  00043 			;	if(PORTB.0 == 1 ){ 
+000006 A081       00044 m001	BTFSS PORTB,0,0
+000008 D006       00045 	BRA   m002
+                  00046 			;		spi_gonder(0x01);
+00000A 0E01       00047 	MOVLW 1
+00000C D82D       00048 	RCALL spi_gonder
+                  00049 			;		bekle(200);
+00000E 0EC8       00050 	MOVLW 200
+000010 6E00       00051 	MOVWF t,0
+000012 6A01       00052 	CLRF  t+1,0
+000014 D834       00053 	RCALL bekle
+                  00054 			;	}
+                  00055 			;	if(PORTB.1 == 1 ){ 
+000016 A281       00056 m002	BTFSS PORTB,1,0
+000018 D006       00057 	BRA   m003
+                  00058 			;		spi_gonder(0x02);
+00001A 0E02       00059 	MOVLW 2
+00001C D825       00060 	RCALL spi_gonder
+CC8E Version 1.2A,   File: verici.c             7. Jan 2009   1:42   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;		bekle(200);
+00001E 0EC8       00062 	MOVLW 200
+000020 6E00       00063 	MOVWF t,0
+000022 6A01       00064 	CLRF  t+1,0
+000024 D82C       00065 	RCALL bekle
+                  00066 			;	}
+                  00067 			;
+                  00068 			;	if(PORTB.2 == 1 ){ 
+000026 A481       00069 m003	BTFSS PORTB,2,0
+000028 D006       00070 	BRA   m004
+                  00071 			;		spi_gonder(0x04);
+00002A 0E04       00072 	MOVLW 4
+00002C D81D       00073 	RCALL spi_gonder
+                  00074 			;		bekle(200);
+00002E 0EC8       00075 	MOVLW 200
+000030 6E00       00076 	MOVWF t,0
+000032 6A01       00077 	CLRF  t+1,0
+000034 D824       00078 	RCALL bekle
+                  00079 			;	}
+                  00080 			;	if(PORTB.3 == 1 ){ 
+000036 A681       00081 m004	BTFSS PORTB,3,0
+000038 D7E6       00082 	BRA   m001
+                  00083 			;		spi_gonder(0x08);
+00003A 0E08       00084 	MOVLW 8
+00003C D815       00085 	RCALL spi_gonder
+                  00086 			;		bekle(200);
+00003E 0EC8       00087 	MOVLW 200
+000040 6E00       00088 	MOVWF t,0
+000042 6A01       00089 	CLRF  t+1,0
+000044 D81C       00090 	RCALL bekle
+                  00091 			;	}
+                  00092 			;	goto dongu;
+000046 D7DF       00093 	BRA   m001
+                  00094 			;}
+                  00095 			;void init()
+                  00096 			;{
+                  00097 init
+                  00098 			;	TRISA=0XFF;
+000048 6892       00099 	SETF  TRISA,0
+                  00100 			;	TRISE=0x00;
+00004A 6A96       00101 	CLRF  TRISE,0
+                  00102 			;	TRISD=0x00;	// PORTD.0 = CS, PORTD çýkýþ yapýlýyor.
+00004C 6A95       00103 	CLRF  TRISD,0
+                  00104 			;	TRISC=0x00;	//	SPI pinleri çýkýþ yapýlýyor.
+00004E 6A94       00105 	CLRF  TRISC,0
+                  00106 			;	//TRISC.5=1;
+                  00107 			;	TRISB=0xFF;	//  Buton = PORTB.0, giriþ yapýlýyor
+000050 6893       00108 	SETF  TRISB,0
+                  00109 			;	spi_init();	// SPI Ayarlarý yapýlýyor
+000052 D000       00110 	BRA   spi_init
+                  00111 			;}
+                  00112 			;void spi_init()
+                  00113 			;{
+                  00114 spi_init
+                  00115 			;	CKP = 0 ;	//Clock polarity 
+000054 98C6       00116 	BCF   0xFC6,CKP,0
+                  00117 			;	CKE=1;		//Clock edge select
+000056 8CC7       00118 	BSF   0xFC7,CKE,0
+                  00119 			;	//SPI Master mode, Fosc\4
+                  00120 			;	SSPCON1.3=0;
+CC8E Version 1.2A,   File: verici.c             7. Jan 2009   1:42   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+000058 96C6       00121 	BCF   SSPCON1,3,0
+                  00122 			;	SSPCON1.2=0;
+00005A 94C6       00123 	BCF   SSPCON1,2,0
+                  00124 			;	SSPCON1.1=0;
+00005C 92C6       00125 	BCF   SSPCON1,1,0
+                  00126 			;	SSPCON1.0=0;
+00005E 90C6       00127 	BCF   SSPCON1,0,0
+                  00128 			;	//////////////////////
+                  00129 			;	SSPEN=1;	//Synchronous Serial Port Enable bit //5. bit
+000060 8AC6       00130 	BSF   0xFC6,SSPEN,0
+                  00131 			;	SSPOV=0;	// Receive overflow indicator bit
+000062 9CC6       00132 	BCF   0xFC6,SSPOV,0
+                  00133 			;	WCOL=0;		// Write collision detect bit
+000064 9EC6       00134 	BCF   0xFC6,WCOL,0
+                  00135 			;}
+000066 0012       00136 	RETURN
+                  00137 			;void spi_gonder(uns8 data1)
+                  00138 			;{
+                  00139 spi_gonder
+000068 6E00       00140 	MOVWF data1,0
+                  00141 			;	uns8 temp;
+                  00142 			;	PORTD.0=0;	//CS = 0 
+00006A 9083       00143 	BCF   PORTD,0,0
+                  00144 			;	SSPBUF = data1;		//Instruction register verisi
+00006C C000 FFC9  00145 	MOVFF data1,SSPBUF
+                  00146 			;	while(!SSPIF);  //	Buffer kontrolü
+000070 A69E       00147 m005	BTFSS 0xF9E,SSPIF,0
+000072 D7FE       00148 	BRA   m005
+                  00149 			;  	SSPIF = 0;
+000074 969E       00150 	BCF   0xF9E,SSPIF,0
+                  00151 			;	temp=SSPBUF;  //yedekleme iþlemi   
+000076 CFC9 F001  00152 	MOVFF SSPBUF,temp
+                  00153 			;	PORTD.0=1;	//CS=1
+00007A 8083       00154 	BSF   PORTD,0,0
+                  00155 			;}
+00007C 0012       00156 	RETURN
+                  00157 			;void bekle(unsigned long t)	/*t milisaniye gecikme saðlar*/
+                  00158 			;{
+                  00159 bekle
+                  00160 			;	unsigned x;	
+                  00161 			;	for(;t>0;t--)
+00007E 5000       00162 m006	MOVF  t,W,0
+000080 1001       00163 	IORWF t+1,W,0
+000082 E00B       00164 	BZ    m009
+                  00165 			;		for(x=140;x>0;x--)
+000084 0E8C       00166 	MOVLW 140
+000086 6E02       00167 	MOVWF x,0
+000088 5202       00168 m007	MOVF  x,1,0
+00008A E003       00169 	BZ    m008
+                  00170 			;			nop();
+00008C 0000       00171 	NOP  
+00008E 0602       00172 	DECF  x,1,0
+000090 D7FB       00173 	BRA   m007
+000092 0600       00174 m008	DECF  t,1,0
+000094 0E00       00175 	MOVLW 0
+000096 5A01       00176 	SUBWFB t+1,1,0
+000098 D7F2       00177 	BRA   m006
+                  00178 			;}
+00009A 0012       00179 m009	RETURN
+                  00180 
+CC8E Version 1.2A,   File: verici.c             7. Jan 2009   1:42   Page 4
+
+ADDR   CODE       LINE  SOURCE
+
+                  00181 	END
+                  00182 
+                  00183 
+                  00184 ; *** KEY INFO ***
+                  00185 
+                  00186 ; 0x000048    6 word(s)  0 % : init
+                  00187 ; 0x000054   10 word(s)  0 % : spi_init
+                  00188 ; 0x000068   11 word(s)  0 % : spi_gonder
+                  00189 ; 0x00007E   15 word(s)  0 % : bekle
+                  00190 ; 0x000004   34 word(s)  0 % : main
+                  00191 
+                  00192 ; RAM usage: 3 bytes (3 local), 1533 bytes free
+                  00193 ; Maximum call level: 1
+                  00194 ; Total of 78 code words (0 %)

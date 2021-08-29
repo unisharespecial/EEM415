@@ -1,0 +1,21 @@
+CC8E Version 1.3D, Copyright (c) B Knudsen Data, Norway 2001-2010
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+prj2.c:
+ 19. Nov 2010  21:35
+ Chip = 18F452
+ RAM : =======* ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:249  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 7 bytes (7 local), 1529 bytes free
+ File 'prj2.fcs'
+ Optimizing - removed 15 code words (-28 %)
+ File 'prj2.var'
+ File 'prj2.asm'
+ File 'prj2.lst'
+ File 'prj2.cod'
+ File 'prj2.occ'
+ File 'prj2.hex'
+Total of 55 code words (0 %)
+ * Estimated CODE SIZE of full optimization: 53 code words (-3 %)

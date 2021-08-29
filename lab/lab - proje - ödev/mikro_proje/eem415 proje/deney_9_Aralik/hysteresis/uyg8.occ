@@ -1,0 +1,26 @@
+CC8E Version 1.3B, Copyright (c) B Knudsen Data, Norway 2001-2009, No. 2367
+ --> STANDARD edition, 8-32 bit int, 16-32 bit float, 128k code words
+uyg8.c:
+  8. Dec 2010  14:37
+ Chip = 18F452
+ RAM : =======* ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:249  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 7 bytes (7 local), 1529 bytes free
+ File 'uyg8.fcs'
+ Optimizing - removed 18 code words (-23 %)
+ File 'uyg8.var'
+ File 'uyg8.asm'
+ File 'uyg8.lst'
+ File 'uyg8.cod'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\user\Desktop\deney_9_Aralik\hysteresis\uyg8.c
+ File 'uyg8.occ'
+ File 'uyg8.hex'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\user\Desktop\deney_9_Aralik\hysteresis\uyg8.c
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\user\Desktop\deney_9_Aralik\hysteresis\18F452.h
+Total of 76 code words (0 %)

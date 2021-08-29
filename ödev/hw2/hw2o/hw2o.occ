@@ -1,0 +1,21 @@
+CC8E Version 1.4, Copyright (c) B Knudsen Data, Norway 2001-2014
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+hw2o.c:
+  8. Dec 2014  19:19
+ Chip = 18F452
+ RAM : ===***** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:253  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 3 bytes (3 local), 1533 bytes free
+ File 'hw2o.fcs'
+ Optimizing - removed 10 code words (-20 %)
+ File 'hw2o.var'
+ File 'hw2o.asm'
+ File 'hw2o.lst'
+ File 'hw2o.cod'
+ File 'hw2o.occ'
+ File 'hw2o.hex'
+Total of 49 code words (0 %)
+ * Estimated CODE SIZE of full optimization: 47 code words (-4 %)

@@ -1,0 +1,176 @@
+CC8E Version 1.3B,   File: Kilit.c             14. Jan 2011  12:05   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3B, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  14. Jan 2011  12:05  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+                  00009 	__config 0x300002, 0xF8
+300002 FEF8       00010 	__config 0x300003, 0xFE
+                  00011 
+       0FD6       00012 TMR0L       EQU   0xFD6
+       0FD5       00013 T0CON       EQU   0xFD5
+       0FC4       00014 ADRESH      EQU   0xFC4
+       0FC2       00015 ADCON0      EQU   0xFC2
+       0FC1       00016 ADCON1      EQU   0xFC1
+       0F95       00017 TRISD       EQU   0xF95
+       0F93       00018 TRISB       EQU   0xF93
+       0F92       00019 TRISA       EQU   0xF92
+       0F83       00020 PORTD       EQU   0xF83
+       0F81       00021 PORTB       EQU   0xF81
+       0007       00022 GIE         EQU   7
+       0007       00023 TMR0ON      EQU   7
+       0002       00024 GO          EQU   2
+       0000       00025 deger       EQU   0x00
+       0001       00026 t           EQU   0x01
+       0003       00027 x           EQU   0x03
+                  00028 
+000000 EF02 F000  00029 	GOTO main
+                  00030 
+                  00031   ; FILE Kilit.c
+                  00032 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00033 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00034 			;
+                  00035 			;void ayarlar();
+                  00036 			;void bekle(unsigned long t);	
+                  00037 			;
+                  00038 			;void main()
+                  00039 			;{
+                  00040 main
+                  00041 			;    unsigned int deger;
+                  00042 			;	ayarlar();
+000004 D817       00043 	RCALL ayarlar
+                  00044 			;
+                  00045 			;	anadongu:
+                  00046 			;	
+                  00047 			;	PORTD.0 = 1;	//	mavi ledi yak
+000006 8083       00048 m001	BSF   PORTD,0,0
+                  00049 			;	
+                  00050 			;	if(PORTB.0==0)	//	BUTTON_1'e basýldýysa
+000008 B081       00051 	BTFSC PORTB,0,0
+00000A D7FD       00052 	BRA   m001
+                  00053 			;	{
+                  00054 			;		PORTD.0 = 0;	//	mavi ledi söndür
+00000C 9083       00055 	BCF   PORTD,0,0
+                  00056 			;		PORTD.1 = 1;	//	yeþil ledi yak
+00000E 8283       00057 	BSF   PORTD,1,0
+                  00058 			;				
+                  00059 			;		GO=1;	//	ADC çevrimini baþlat
+000010 84C2       00060 	BSF   0xFC2,GO,0
+CC8E Version 1.3B,   File: Kilit.c             14. Jan 2011  12:05   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;		while(GO);
+000012 B4C2       00062 m002	BTFSC 0xFC2,GO,0
+000014 D7FE       00063 	BRA   m002
+                  00064 			;		deger=ADRESH; //okunan analog deðerin digital karþýlýðýný deger deðiþkenine at
+000016 CFC4 F000  00065 	MOVFF ADRESH,deger
+                  00066 			;
+                  00067 			;    	TMR0ON = 1;	// Timer0'ý saymaya baþlat
+00001A 8ED5       00068 	BSF   0xFD5,TMR0ON,0
+                  00069 			;		
+                  00070 			;
+                  00071 			;		while(TMR0L < deger);	//	Timer0 "deger" deðiþkenindeki deðere ulaþana kadar say
+00001C 5000       00072 m003	MOVF  deger,W,0
+00001E 60D6       00073 	CPFSLT TMR0L,0
+000020 D001       00074 	BRA   m004
+000022 D7FC       00075 	BRA   m003
+                  00076 			;		bekle(3000);
+000024 0EB8       00077 m004	MOVLW 184
+000026 6E01       00078 	MOVWF t,0
+000028 0E0B       00079 	MOVLW 11
+00002A 6E02       00080 	MOVWF t+1,0
+00002C D80E       00081 	RCALL bekle
+                  00082 			;				
+                  00083 			;		PORTD.1 = 0;	//	yeþil ledi söndür
+00002E 9283       00084 	BCF   PORTD,1,0
+                  00085 			;		PORTD.0 = 1;	//	mavi ledi yak
+000030 8083       00086 	BSF   PORTD,0,0
+                  00087 			;				
+                  00088 			; 		
+                  00089 			;	}
+                  00090 			;	goto anadongu;
+000032 D7E9       00091 	BRA   m001
+                  00092 			;//-----------------------------------------------
+                  00093 			;
+                  00094 			;}
+                  00095 			;
+                  00096 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00097 			;
+                  00098 			;void ayarlar()	
+                  00099 			;{	
+                  00100 ayarlar
+                  00101 			;
+                  00102 			;  	GIE=0;			// Bütün kesmeleri kapat
+000034 9EF2       00103 	BCF   0xFF2,GIE,0
+                  00104 			;	TRISA=0xFF;		// PORTA giriþ
+000036 6892       00105 	SETF  TRISA,0
+                  00106 			;	TRISB=0xFF;		// PORTB giriþ	
+000038 6893       00107 	SETF  TRISB,0
+                  00108 			;	TRISD=0x00;		// PORTD çýkýþ
+00003A 6A95       00109 	CLRF  TRISD,0
+                  00110 			;
+                  00111 			; 	PORTD=0x00;
+00003C 6A83       00112 	CLRF  PORTD,0
+                  00113 			;
+                  00114 			;	ADCON0=0b.0100.0001;	//	ADC ayarlarý
+00003E 0E41       00115 	MOVLW 65
+000040 6EC2       00116 	MOVWF ADCON0,0
+                  00117 			;	ADCON1=0b.0000.0000;
+000042 6AC1       00118 	CLRF  ADCON1,0
+                  00119 			;	
+                  00120 			;	T0CON = 0b.1101.1000;	// Timer0 ayarlarý
+CC8E Version 1.3B,   File: Kilit.c             14. Jan 2011  12:05   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+000044 0ED8       00121 	MOVLW 216
+000046 6ED5       00122 	MOVWF T0CON,0
+                  00123 			;}
+000048 0012       00124 	RETURN
+                  00125 			;
+                  00126 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00127 			;
+                  00128 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00129 			;{
+                  00130 bekle
+                  00131 			;	unsigned x;
+                  00132 			;	
+                  00133 			;	for(;t>0;t--)
+00004A 5001       00134 m005	MOVF  t,W,0
+00004C 1002       00135 	IORWF t+1,W,0
+00004E E00B       00136 	BZ    m008
+                  00137 			;		for(x=140;x>0;x--)
+000050 0E8C       00138 	MOVLW 140
+000052 6E03       00139 	MOVWF x,0
+000054 5203       00140 m006	MOVF  x,1,0
+000056 E003       00141 	BZ    m007
+                  00142 			;			nop();
+000058 0000       00143 	NOP  
+00005A 0603       00144 	DECF  x,1,0
+00005C D7FB       00145 	BRA   m006
+00005E 0601       00146 m007	DECF  t,1,0
+000060 0E00       00147 	MOVLW 0
+000062 5A02       00148 	SUBWFB t+1,1,0
+000064 D7F2       00149 	BRA   m005
+                  00150 			;}
+000066 0012       00151 m008	RETURN
+                  00152 
+                  00153 	END
+                  00154 
+                  00155 
+                  00156 ; *** KEY INFO ***
+                  00157 
+                  00158 ; 0x000034   11 word(s)  0 % : ayarlar
+                  00159 ; 0x00004A   15 word(s)  0 % : bekle
+                  00160 ; 0x000004   24 word(s)  0 % : main
+                  00161 
+                  00162 ; RAM usage: 4 bytes (4 local), 1532 bytes free
+                  00163 ; Maximum call level: 1
+                  00164 ; Total of 52 code words (0 %)

@@ -1,0 +1,109 @@
+CC8E Version 1.3F,   File: eem415.c             6. Oct 2013  22:47   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3F, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************   6. Oct 2013  22:47  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0002       00013 Zero_       EQU   2
+       0F95       00014 TRISD       EQU   0xF95
+       0F93       00015 TRISB       EQU   0xF93
+       0F83       00016 PORTD       EQU   0xF83
+       0F81       00017 PORTB       EQU   0xF81
+       0007       00018 GIE         EQU   7
+       007F       00019 t           EQU   0x7F
+       007F       00020 x           EQU   0x7F
+                  00021 
+000000 EF02 F000  00022 	GOTO main
+                  00023 
+                  00024   ; FILE eem415.c
+                  00025 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00026 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00027 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00028 			;
+                  00029 			;void ayarlar();
+                  00030 			;void bekle(unsigned long t);	// t milisaniye gecikme saðlayan fonksiyon tanýmý
+                  00031 			;void main()
+                  00032 			;{
+                  00033 main
+                  00034 			;	ayarlar();
+000004 D805       00035 	RCALL ayarlar
+                  00036 			;//-----------------------------------------------	
+                  00037 			;anadongu:
+                  00038 			; 	PORTD.0=0;
+000006 9083       00039 m001	BCF   PORTD,0,0
+                  00040 			;	while(PORTB.0==1)
+000008 A081       00041 m002	BTFSS PORTB,0,0
+00000A D7FD       00042 	BRA   m001
+                  00043 			;        PORTD.0=1;    
+00000C 8083       00044 	BSF   PORTD,0,0
+00000E D7FC       00045 	BRA   m002
+                  00046 			;	goto anadongu;
+                  00047 			;//-----------------------------------------------	
+                  00048 			;}
+                  00049 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00050 			;void ayarlar()	// Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00051 			;{	
+                  00052 ayarlar
+                  00053 			;	GIE=0;			// Bütün kesmeleri kapat
+000010 9EF2       00054 	BCF   0xFF2,GIE,0
+                  00055 			;	TRISB=0xFF;		// B portu giriþ yapýldý
+000012 6893       00056 	SETF  TRISB,0
+                  00057 			;	TRISD=0;		// D portu çýkýþ yapýldý		
+000014 6A95       00058 	CLRF  TRISD,0
+                  00059 			;	PORTD=0;		// D portu çýkýþlarý sýfýrlandý	
+000016 6A83       00060 	CLRF  PORTD,0
+CC8E Version 1.3F,   File: eem415.c             6. Oct 2013  22:47   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;}
+000018 0012       00062 	RETURN
+                  00063 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00064 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00065 			;{
+                  00066 bekle
+                  00067 			;	unsigned x;	
+                  00068 			;	for(;t>0;t--)
+00001A 507F       00069 m003	MOVF  t,W,0
+00001C 107F       00070 	IORWF t+1,W,0
+00001E B4D8       00071 	BTFSC 0xFD8,Zero_,0
+000020 D00C       00072 	BRA   m006
+                  00073 			;		for(x=140;x>0;x--)
+000022 0E8C       00074 	MOVLW 140
+000024 6E7F       00075 	MOVWF x,0
+000026 527F       00076 m004	MOVF  x,1,0
+000028 B4D8       00077 	BTFSC 0xFD8,Zero_,0
+00002A D003       00078 	BRA   m005
+                  00079 			;			nop();
+00002C 0000       00080 	NOP  
+00002E 067F       00081 	DECF  x,1,0
+000030 D7FA       00082 	BRA   m004
+000032 067F       00083 m005	DECF  t,1,0
+000034 0E00       00084 	MOVLW 0
+000036 5A7F       00085 	SUBWFB t+1,1,0
+000038 D7F0       00086 	BRA   m003
+                  00087 			;}
+00003A 0012       00088 m006	RETURN
+                  00089 
+                  00090 	END
+                  00091 
+                  00092 
+                  00093 ; *** KEY INFO ***
+                  00094 
+                  00095 ; 0x000010    5 word(s)  0 % : ayarlar
+                  00096 ; 0x00001A   17 word(s)  0 % : bekle
+                  00097 ; 0x000004    6 word(s)  0 % : main
+                  00098 
+                  00099 ; RAM usage: 0 bytes (0 local), 1536 bytes free
+                  00100 ; Maximum call level: 1
+                  00101 ; Total of 30 code words (0 %)

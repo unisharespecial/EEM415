@@ -1,0 +1,659 @@
+CC8E Version 1.3D,   File: slavec.c            24. Jan 2011  10:46   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3D, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  24. Jan 2011  10:46  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0FF6       00013 TBLPTR      EQU   0xFF6
+       0FF5       00014 TABLAT      EQU   0xFF5
+       0002       00015 Zero_       EQU   2
+       0FC9       00016 SSPBUF      EQU   0xFC9
+       0FC6       00017 SSPCON1     EQU   0xFC6
+       0F96       00018 TRISE       EQU   0xF96
+       0F95       00019 TRISD       EQU   0xF95
+       0F94       00020 TRISC       EQU   0xF94
+       0F93       00021 TRISB       EQU   0xF93
+       0F92       00022 TRISA       EQU   0xF92
+       0F81       00023 PORTB       EQU   0xF81
+       0007       00024 GIE         EQU   7
+       0000       00025 BF          EQU   0
+       0006       00026 CKE         EQU   6
+       0007       00027 SMP         EQU   7
+       0004       00028 CKP         EQU   4
+       0005       00029 SSPEN       EQU   5
+       0006       00030 SSPOV       EQU   6
+       0007       00031 WCOL        EQU   7
+       0002       00032 BRGH        EQU   2
+       0004       00033 SYNC        EQU   4
+       0003       00034 SSPIF       EQU   3
+       0000       00035 e           EQU   0
+       0001       00036 rs          EQU   1
+       0002       00037 rw          EQU   2
+       0F83       00038 disp        EQU   0xF83
+       0000       00039 gelen       EQU   0x00
+       0006       00040 kom         EQU   0x06
+       0006       00041 c           EQU   0x06
+       0001       00042 msj         EQU   0x01
+       0002       00043 adr         EQU   0x02
+       0003       00044 i           EQU   0x03
+       0004       00045 j           EQU   0x04
+       0005       00046 k           EQU   0x05
+       0007       00047 t           EQU   0x07
+       0009       00048 x           EQU   0x09
+       0006       00049 ci          EQU   0x06
+                  00050 
+000000 EF02 F000  00051 	GOTO main
+                  00052 
+                  00053   ; FILE slavec.c
+                  00054 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00055 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00056 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00057 			;
+                  00058 			;void ayarlar();
+                  00059 			;void LcdInit();
+                  00060 			;void LcdYaz(char);
+CC8E Version 1.3D,   File: slavec.c            24. Jan 2011  10:46   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;void LcdKomut(unsigned kom);
+                  00062 			;void MesajYaz(const char*msj,unsigned adr);
+                  00063 			;bit e@PORTE.0, rs@PORTE.1, rw@PORTE.2;
+                  00064 			;unsigned disp@PORTD;
+                  00065 			;void bekle(unsigned long t);   // t milisaniye gecikme saðlayan fonksiyon tanýmý
+                  00066 			;
+                  00067 			;
+                  00068 			;void main()
+                  00069 			;{  
+                  00070 main
+                  00071 			;   
+                  00072 			;   uns8 gelen;
+                  00073 			;   ayarlar();
+000004 D88C       00074 	RCALL ayarlar
+                  00075 			; 
+                  00076 			;
+                  00077 			;//-----------------------------------------------   
+                  00078 			;while(1){
+                  00079 			;
+                  00080 			; SSPBUF=0x00;
+000006 6AC9       00081 m001	CLRF  SSPBUF,0
+                  00082 			;while(!SSPIF);
+000008 A69E       00083 m002	BTFSS 0xF9E,SSPIF,0
+00000A D7FE       00084 	BRA   m002
+                  00085 			;gelen=SSPBUF;
+00000C CFC9 F000  00086 	MOVFF SSPBUF,gelen
+                  00087 			;SSPIF=0;
+000010 969E       00088 	BCF   0xF9E,SSPIF,0
+                  00089 			;PORTB=gelen; 
+000012 C000 FF81  00090 	MOVFF gelen,PORTB
+                  00091 			;bekle(1000);
+000016 0EE8       00092 	MOVLW 232
+000018 6E07       00093 	MOVWF t,0
+00001A 0E03       00094 	MOVLW 3
+00001C 6E08       00095 	MOVWF t+1,0
+00001E D8D8       00096 	RCALL bekle
+                  00097 			;if(gelen== 0x1)
+000020 2C00       00098 	DECFSZ gelen,W,0
+000022 D004       00099 	BRA   m003
+                  00100 			;{  LcdInit();
+000024 D8AC       00101 	RCALL LcdInit
+                  00102 			;  MesajYaz(" 1 butonu " ,0x80); 
+000026 6A01       00103 	CLRF  msj,0
+000028 0E80       00104 	MOVLW 128
+00002A D8B4       00105 	RCALL MesajYaz
+                  00106 			;}
+                  00107 			;if(gelen== 0x2)
+00002C 0E02       00108 m003	MOVLW 2
+00002E 6200       00109 	CPFSEQ gelen,0
+000030 D005       00110 	BRA   m004
+                  00111 			;{  LcdInit();
+000032 D8A5       00112 	RCALL LcdInit
+                  00113 			;  MesajYaz(" 2 butonu " ,0x80); 
+000034 0E0B       00114 	MOVLW 11
+000036 6E01       00115 	MOVWF msj,0
+000038 0E80       00116 	MOVLW 128
+00003A D8AC       00117 	RCALL MesajYaz
+                  00118 			;}
+                  00119 			;if(gelen== 0x3)
+00003C 0E03       00120 m004	MOVLW 3
+CC8E Version 1.3D,   File: slavec.c            24. Jan 2011  10:46   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+00003E 6200       00121 	CPFSEQ gelen,0
+000040 D005       00122 	BRA   m005
+                  00123 			;{  LcdInit();
+000042 D89D       00124 	RCALL LcdInit
+                  00125 			;  MesajYaz(" 3 butonu " ,0x80); 
+000044 0E16       00126 	MOVLW 22
+000046 6E01       00127 	MOVWF msj,0
+000048 0E80       00128 	MOVLW 128
+00004A D8A4       00129 	RCALL MesajYaz
+                  00130 			;}
+                  00131 			;
+                  00132 			;if(gelen== 0x4)
+00004C 0E04       00133 m005	MOVLW 4
+00004E 6200       00134 	CPFSEQ gelen,0
+000050 D005       00135 	BRA   m006
+                  00136 			;{  LcdInit();
+000052 D895       00137 	RCALL LcdInit
+                  00138 			;  MesajYaz(" 4 butonu " ,0x80); 
+000054 0E21       00139 	MOVLW 33
+000056 6E01       00140 	MOVWF msj,0
+000058 0E80       00141 	MOVLW 128
+00005A D89C       00142 	RCALL MesajYaz
+                  00143 			;}
+                  00144 			;if(gelen== 0x5)
+00005C 0E05       00145 m006	MOVLW 5
+00005E 6200       00146 	CPFSEQ gelen,0
+000060 D005       00147 	BRA   m007
+                  00148 			;{  LcdInit();
+000062 D88D       00149 	RCALL LcdInit
+                  00150 			;  MesajYaz(" 5 butonu " ,0x80); 
+000064 0E2C       00151 	MOVLW 44
+000066 6E01       00152 	MOVWF msj,0
+000068 0E80       00153 	MOVLW 128
+00006A D894       00154 	RCALL MesajYaz
+                  00155 			;}
+                  00156 			;if(gelen== 0x6)
+00006C 0E06       00157 m007	MOVLW 6
+00006E 6200       00158 	CPFSEQ gelen,0
+000070 D005       00159 	BRA   m008
+                  00160 			;{  LcdInit();
+000072 D885       00161 	RCALL LcdInit
+                  00162 			;  MesajYaz(" 6 butonu " ,0x80); 
+000074 0E37       00163 	MOVLW 55
+000076 6E01       00164 	MOVWF msj,0
+000078 0E80       00165 	MOVLW 128
+00007A D88C       00166 	RCALL MesajYaz
+                  00167 			;}
+                  00168 			;if(gelen== 0x0)
+00007C 5200       00169 m008	MOVF  gelen,1,0
+00007E A4D8       00170 	BTFSS 0xFD8,Zero_,0
+000080 D005       00171 	BRA   m009
+                  00172 			;{  LcdInit();
+000082 D87D       00173 	RCALL LcdInit
+                  00174 			;  MesajYaz(" 0 butonu " ,0x80); 
+000084 0E42       00175 	MOVLW 66
+000086 6E01       00176 	MOVWF msj,0
+000088 0E80       00177 	MOVLW 128
+00008A D884       00178 	RCALL MesajYaz
+                  00179 			;}
+                  00180 			;
+CC8E Version 1.3D,   File: slavec.c            24. Jan 2011  10:46   Page 4
+
+ADDR   CODE       LINE  SOURCE
+
+                  00181 			;
+                  00182 			;
+                  00183 			;
+                  00184 			;if(gelen== 0xB)
+00008C 0E0B       00185 m009	MOVLW 11
+00008E 6200       00186 	CPFSEQ gelen,0
+000090 D005       00187 	BRA   m010
+                  00188 			;{  LcdInit();
+000092 D875       00189 	RCALL LcdInit
+                  00190 			;  MesajYaz(" B butonu " ,0x80); 
+000094 0E4D       00191 	MOVLW 77
+000096 6E01       00192 	MOVWF msj,0
+000098 0E80       00193 	MOVLW 128
+00009A D87C       00194 	RCALL MesajYaz
+                  00195 			;}
+                  00196 			;if(gelen==0x7)
+00009C 0E07       00197 m010	MOVLW 7
+00009E 6200       00198 	CPFSEQ gelen,0
+0000A0 D005       00199 	BRA   m011
+                  00200 			;{ LcdInit();
+0000A2 D86D       00201 	RCALL LcdInit
+                  00202 			;   MesajYaz(" 7 butonu " ,0x80); 
+0000A4 0E58       00203 	MOVLW 88
+0000A6 6E01       00204 	MOVWF msj,0
+0000A8 0E80       00205 	MOVLW 128
+0000AA D874       00206 	RCALL MesajYaz
+                  00207 			;}
+                  00208 			;if(gelen==0x8)
+0000AC 0E08       00209 m011	MOVLW 8
+0000AE 6200       00210 	CPFSEQ gelen,0
+0000B0 D005       00211 	BRA   m012
+                  00212 			;{ LcdInit();
+0000B2 D865       00213 	RCALL LcdInit
+                  00214 			;   MesajYaz(" 8 butonu " ,0x80); 
+0000B4 0E63       00215 	MOVLW 99
+0000B6 6E01       00216 	MOVWF msj,0
+0000B8 0E80       00217 	MOVLW 128
+0000BA D86C       00218 	RCALL MesajYaz
+                  00219 			;}
+                  00220 			;if(gelen==0x9)
+0000BC 0E09       00221 m012	MOVLW 9
+0000BE 6200       00222 	CPFSEQ gelen,0
+0000C0 D005       00223 	BRA   m013
+                  00224 			;{ LcdInit();
+0000C2 D85D       00225 	RCALL LcdInit
+                  00226 			;   MesajYaz(" 9 butonu " ,0x80); 
+0000C4 0E6E       00227 	MOVLW 110
+0000C6 6E01       00228 	MOVWF msj,0
+0000C8 0E80       00229 	MOVLW 128
+0000CA D864       00230 	RCALL MesajYaz
+                  00231 			;}
+                  00232 			;if(gelen==0xA)
+0000CC 0E0A       00233 m013	MOVLW 10
+0000CE 6200       00234 	CPFSEQ gelen,0
+0000D0 D005       00235 	BRA   m014
+                  00236 			;{ LcdInit();
+0000D2 D855       00237 	RCALL LcdInit
+                  00238 			;   MesajYaz(" A butonu " ,0x80); 
+0000D4 0E79       00239 	MOVLW 121
+0000D6 6E01       00240 	MOVWF msj,0
+CC8E Version 1.3D,   File: slavec.c            24. Jan 2011  10:46   Page 5
+
+ADDR   CODE       LINE  SOURCE
+
+0000D8 0E80       00241 	MOVLW 128
+0000DA D85C       00242 	RCALL MesajYaz
+                  00243 			;}
+                  00244 			;if(gelen==0xC)
+0000DC 0E0C       00245 m014	MOVLW 12
+0000DE 6200       00246 	CPFSEQ gelen,0
+0000E0 D005       00247 	BRA   m015
+                  00248 			;{ LcdInit();
+0000E2 D84D       00249 	RCALL LcdInit
+                  00250 			;   MesajYaz(" C butonu " ,0x80);
+0000E4 0E84       00251 	MOVLW 132
+0000E6 6E01       00252 	MOVWF msj,0
+0000E8 0E80       00253 	MOVLW 128
+0000EA D854       00254 	RCALL MesajYaz
+                  00255 			;}
+                  00256 			;if(gelen==0xD)
+0000EC 0E0D       00257 m015	MOVLW 13
+0000EE 6200       00258 	CPFSEQ gelen,0
+0000F0 D005       00259 	BRA   m016
+                  00260 			;{ LcdInit();
+0000F2 D845       00261 	RCALL LcdInit
+                  00262 			;   MesajYaz(" D butonu " ,0x80);
+0000F4 0E8F       00263 	MOVLW 143
+0000F6 6E01       00264 	MOVWF msj,0
+0000F8 0E80       00265 	MOVLW 128
+0000FA D84C       00266 	RCALL MesajYaz
+                  00267 			;}
+                  00268 			;if(gelen==0xE)
+0000FC 0E0E       00269 m016	MOVLW 14
+0000FE 6200       00270 	CPFSEQ gelen,0
+000100 D005       00271 	BRA   m017
+                  00272 			;{ LcdInit();
+000102 D83D       00273 	RCALL LcdInit
+                  00274 			;   MesajYaz(" E butonu " ,0x80); 
+000104 0E9A       00275 	MOVLW 154
+000106 6E01       00276 	MOVWF msj,0
+000108 0E80       00277 	MOVLW 128
+00010A D844       00278 	RCALL MesajYaz
+                  00279 			;}
+                  00280 			;if(gelen==0xF)
+00010C 0E0F       00281 m017	MOVLW 15
+00010E 6200       00282 	CPFSEQ gelen,0
+000110 D77A       00283 	BRA   m001
+                  00284 			;{ LcdInit();
+000112 D835       00285 	RCALL LcdInit
+                  00286 			;   MesajYaz(" F butonu " ,0x80); 
+000114 0EA5       00287 	MOVLW 165
+000116 6E01       00288 	MOVWF msj,0
+000118 0E80       00289 	MOVLW 128
+00011A D83C       00290 	RCALL MesajYaz
+                  00291 			;} 
+                  00292 			; 
+                  00293 			;}
+00011C D774       00294 	BRA   m001
+                  00295 			;
+                  00296 			;//-----------------------------------------------   
+                  00297 			;}
+                  00298 			;
+                  00299 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00300 			;void ayarlar()   // Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+CC8E Version 1.3D,   File: slavec.c            24. Jan 2011  10:46   Page 6
+
+ADDR   CODE       LINE  SOURCE
+
+                  00301 			;{   
+                  00302 ayarlar
+                  00303 			;   GIE=0;         // Bütün kesmeleri kapat
+00011E 9EF2       00304 	BCF   0xFF2,GIE,0
+                  00305 			;   TRISD=0x00;
+000120 6A95       00306 	CLRF  TRISD,0
+                  00307 			;   TRISA=0xFF;
+000122 6892       00308 	SETF  TRISA,0
+                  00309 			;   TRISE=0x00; 
+000124 6A96       00310 	CLRF  TRISE,0
+                  00311 			;   TRISC=0x18; 
+000126 0E18       00312 	MOVLW 24
+000128 6E94       00313 	MOVWF TRISC,0
+                  00314 			;   TRISB=0x00;
+00012A 6A93       00315 	CLRF  TRISB,0
+                  00316 			;   PORTB=0x00;  
+00012C 6A81       00317 	CLRF  PORTB,0
+                  00318 			;   //SPBRG=25;   // Baud Rate=9.6k
+                  00319 			;   BRGH=1;      // Yüksek Hýz
+00012E 84AC       00320 	BSF   0xFAC,BRGH,0
+                  00321 			;  SYNC=1;      // senkron mod
+000130 88AC       00322 	BSF   0xFAC,SYNC,0
+                  00323 			;  SMP=0;
+000132 9EC7       00324 	BCF   0xFC7,SMP,0
+                  00325 			;  CKE=0;
+000134 9CC7       00326 	BCF   0xFC7,CKE,0
+                  00327 			;  BF=0;
+000136 90C7       00328 	BCF   0xFC7,BF,0
+                  00329 			;  WCOL=0;
+000138 9EC6       00330 	BCF   0xFC6,WCOL,0
+                  00331 			;  SSPOV=0;
+00013A 9CC6       00332 	BCF   0xFC6,SSPOV,0
+                  00333 			;  SSPEN=0;
+00013C 9AC6       00334 	BCF   0xFC6,SSPEN,0
+                  00335 			;  SSPEN=1;
+00013E 8AC6       00336 	BSF   0xFC6,SSPEN,0
+                  00337 			;  CKP=1;
+000140 88C6       00338 	BSF   0xFC6,CKP,0
+                  00339 			;  SSPCON1.3=0;
+000142 96C6       00340 	BCF   SSPCON1,3,0
+                  00341 			;  SSPCON1.2=1;
+000144 84C6       00342 	BSF   SSPCON1,2,0
+                  00343 			;  SSPCON1.1=0;
+000146 92C6       00344 	BCF   SSPCON1,1,0
+                  00345 			;  SSPCON1.0=1;
+000148 80C6       00346 	BSF   SSPCON1,0,0
+                  00347 			;  
+                  00348 			;} 
+00014A 0012       00349 	RETURN
+                  00350 			; void LcdKomut(unsigned kom)
+                  00351 			;{
+                  00352 LcdKomut
+00014C 6E06       00353 	MOVWF kom,0
+                  00354 			;	//while(IsLcdBusy());
+                  00355 			;	bekle(20);
+00014E 0E14       00356 	MOVLW 20
+000150 6E07       00357 	MOVWF t,0
+000152 6A08       00358 	CLRF  t+1,0
+000154 D83D       00359 	RCALL bekle
+                  00360 			;	disp=kom;
+CC8E Version 1.3D,   File: slavec.c            24. Jan 2011  10:46   Page 7
+
+ADDR   CODE       LINE  SOURCE
+
+000156 C006 FF83  00361 	MOVFF kom,disp
+                  00362 			;	rs=0;
+00015A 9284       00363 	BCF   0xF84,rs,0
+                  00364 			;	e=0;
+00015C 9084       00365 	BCF   0xF84,e,0
+                  00366 			;	e=1;
+00015E 8084       00367 	BSF   0xF84,e,0
+                  00368 			;}
+000160 0012       00369 	RETURN
+                  00370 			;void LcdYaz(char c)
+                  00371 			;{
+                  00372 LcdYaz
+000162 6E06       00373 	MOVWF c,0
+                  00374 			;	//while(IsLcdBusy());
+                  00375 			;	bekle(20);
+000164 0E14       00376 	MOVLW 20
+000166 6E07       00377 	MOVWF t,0
+000168 6A08       00378 	CLRF  t+1,0
+00016A D832       00379 	RCALL bekle
+                  00380 			;	disp=c;
+00016C C006 FF83  00381 	MOVFF c,disp
+                  00382 			;	rs=1;
+000170 8284       00383 	BSF   0xF84,rs,0
+                  00384 			;	e=0;
+000172 9084       00385 	BCF   0xF84,e,0
+                  00386 			;	e=1;
+000174 8084       00387 	BSF   0xF84,e,0
+                  00388 			;	bekle(1);	
+000176 0E01       00389 	MOVLW 1
+000178 6E07       00390 	MOVWF t,0
+00017A 6A08       00391 	CLRF  t+1,0
+00017C D029       00392 	BRA   bekle
+                  00393 			;}
+                  00394 			;void LcdInit()
+                  00395 			;{
+                  00396 LcdInit
+                  00397 			;	rw=0;
+00017E 9484       00398 	BCF   0xF84,rw,0
+                  00399 			;	e=1;
+000180 8084       00400 	BSF   0xF84,e,0
+                  00401 			;	rs=1;
+000182 8284       00402 	BSF   0xF84,rs,0
+                  00403 			;	LcdKomut(0x38);
+000184 0E38       00404 	MOVLW 56
+000186 DFE2       00405 	RCALL LcdKomut
+                  00406 			;	LcdKomut(0x01);	//Clear display
+000188 0E01       00407 	MOVLW 1
+00018A DFE0       00408 	RCALL LcdKomut
+                  00409 			;	LcdKomut(0x0D); //Display,Cursor,Blink on
+00018C 0E0D       00410 	MOVLW 13
+00018E DFDE       00411 	RCALL LcdKomut
+                  00412 			;	LcdKomut(0x06); //Increment ddram adres, do not shift disp.
+000190 0E06       00413 	MOVLW 6
+000192 D7DC       00414 	BRA   LcdKomut
+                  00415 			;}
+                  00416 			;void MesajYaz(const char *msj,unsigned adr)
+                  00417 			;{
+                  00418 MesajYaz
+000194 6E02       00419 	MOVWF adr,0
+                  00420 			;	unsigned i,j,k;
+CC8E Version 1.3D,   File: slavec.c            24. Jan 2011  10:46   Page 8
+
+ADDR   CODE       LINE  SOURCE
+
+                  00421 			;	i=0;
+000196 6A03       00422 	CLRF  i,0
+                  00423 			;	while(msj[i]!=0)	i++;
+000198 5003       00424 m018	MOVF  i,W,0
+00019A 2401       00425 	ADDWF msj,W,0
+00019C D82A       00426 	RCALL _const1
+00019E 0A00       00427 	XORLW 0
+0001A0 B4D8       00428 	BTFSC 0xFD8,Zero_,0
+0001A2 D002       00429 	BRA   m019
+0001A4 2A03       00430 	INCF  i,1,0
+0001A6 D7F8       00431 	BRA   m018
+                  00432 			;	LcdKomut(adr);
+0001A8 5002       00433 m019	MOVF  adr,W,0
+0001AA DFD0       00434 	RCALL LcdKomut
+                  00435 			;	for(j=0;j<i;j++){
+0001AC 6A04       00436 	CLRF  j,0
+0001AE 5003       00437 m020	MOVF  i,W,0
+0001B0 6004       00438 	CPFSLT j,0
+0001B2 D00D       00439 	BRA   m023
+                  00440 			;		LcdYaz(msj[j]);
+0001B4 5004       00441 	MOVF  j,W,0
+0001B6 2401       00442 	ADDWF msj,W,0
+0001B8 D81C       00443 	RCALL _const1
+0001BA DFD3       00444 	RCALL LcdYaz
+                  00445 			;		for(k=0;k<30;k++)nop();
+0001BC 6A05       00446 	CLRF  k,0
+0001BE 0E1E       00447 m021	MOVLW 30
+0001C0 6005       00448 	CPFSLT k,0
+0001C2 D003       00449 	BRA   m022
+0001C4 0000       00450 	NOP  
+0001C6 2A05       00451 	INCF  k,1,0
+0001C8 D7FA       00452 	BRA   m021
+                  00453 			;	}
+0001CA 2A04       00454 m022	INCF  j,1,0
+0001CC D7F0       00455 	BRA   m020
+                  00456 			;}
+0001CE 0012       00457 m023	RETURN
+                  00458 			;
+                  00459 			;
+                  00460 			;
+                  00461 			;   
+                  00462 			;
+                  00463 			;//////////////////////////////////////////////////////////////////////////////////
+                  00464 			;
+                  00465 			; 
+                  00466 			;     
+                  00467 			;
+                  00468 			;
+                  00469 			;
+                  00470 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00471 			;
+                  00472 			;void bekle(unsigned long t)   //t milisaniye gecikme saðlar
+                  00473 			;{
+                  00474 bekle
+                  00475 			;   unsigned x;
+                  00476 			;   
+                  00477 			;   for(;t>0;t--)
+0001D0 5007       00478 m024	MOVF  t,W,0
+0001D2 1008       00479 	IORWF t+1,W,0
+0001D4 B4D8       00480 	BTFSC 0xFD8,Zero_,0
+CC8E Version 1.3D,   File: slavec.c            24. Jan 2011  10:46   Page 9
+
+ADDR   CODE       LINE  SOURCE
+
+0001D6 D00C       00481 	BRA   m027
+                  00482 			;      for(x=140;x>0;x--)
+0001D8 0E8C       00483 	MOVLW 140
+0001DA 6E09       00484 	MOVWF x,0
+0001DC 5209       00485 m025	MOVF  x,1,0
+0001DE B4D8       00486 	BTFSC 0xFD8,Zero_,0
+0001E0 D003       00487 	BRA   m026
+                  00488 			;         nop();
+0001E2 0000       00489 	NOP  
+0001E4 0609       00490 	DECF  x,1,0
+0001E6 D7FA       00491 	BRA   m025
+0001E8 0607       00492 m026	DECF  t,1,0
+0001EA 0E00       00493 	MOVLW 0
+0001EC 5A08       00494 	SUBWFB t+1,1,0
+0001EE D7F0       00495 	BRA   m024
+                  00496 			;}
+0001F0 0012       00497 m027	RETURN
+                  00498 _const1
+0001F2 6E06       00499 	MOVWF ci,0
+0001F4 5006       00500 	MOVF  ci,W,0
+0001F6 0F08       00501 	ADDLW 8
+0001F8 6EF6       00502 	MOVWF TBLPTR,0
+0001FA 0E02       00503 	MOVLW 2
+0001FC 6AF7       00504 	CLRF  TBLPTR+1,0
+0001FE 22F7       00505 	ADDWFC TBLPTR+1,1,0
+000200 6AF8       00506 	CLRF  TBLPTR+2,0
+000202 0008       00507 	TBLRD *
+000204 50F5       00508 	MOVF  TABLAT,W,0
+000206 0012       00509 	RETURN
+000208 3120       00510 	DW    0x3120
+00020A 6220       00511 	DW    0x6220
+00020C 7475       00512 	DW    0x7475
+00020E 6E6F       00513 	DW    0x6E6F
+000210 2075       00514 	DW    0x2075
+000212 2000       00515 	DW    0x2000
+000214 2032       00516 	DW    0x2032
+000216 7562       00517 	DW    0x7562
+000218 6F74       00518 	DW    0x6F74
+00021A 756E       00519 	DW    0x756E
+00021C 0020       00520 	DW    0x20
+00021E 3320       00521 	DW    0x3320
+000220 6220       00522 	DW    0x6220
+000222 7475       00523 	DW    0x7475
+000224 6E6F       00524 	DW    0x6E6F
+000226 2075       00525 	DW    0x2075
+000228 2000       00526 	DW    0x2000
+00022A 2034       00527 	DW    0x2034
+00022C 7562       00528 	DW    0x7562
+00022E 6F74       00529 	DW    0x6F74
+000230 756E       00530 	DW    0x756E
+000232 0020       00531 	DW    0x20
+000234 3520       00532 	DW    0x3520
+000236 6220       00533 	DW    0x6220
+000238 7475       00534 	DW    0x7475
+00023A 6E6F       00535 	DW    0x6E6F
+00023C 2075       00536 	DW    0x2075
+00023E 2000       00537 	DW    0x2000
+000240 2036       00538 	DW    0x2036
+000242 7562       00539 	DW    0x7562
+000244 6F74       00540 	DW    0x6F74
+CC8E Version 1.3D,   File: slavec.c            24. Jan 2011  10:46   Page 10
+
+ADDR   CODE       LINE  SOURCE
+
+000246 756E       00541 	DW    0x756E
+000248 0020       00542 	DW    0x20
+00024A 3020       00543 	DW    0x3020
+00024C 6220       00544 	DW    0x6220
+00024E 7475       00545 	DW    0x7475
+000250 6E6F       00546 	DW    0x6E6F
+000252 2075       00547 	DW    0x2075
+000254 2000       00548 	DW    0x2000
+000256 2042       00549 	DW    0x2042
+000258 7562       00550 	DW    0x7562
+00025A 6F74       00551 	DW    0x6F74
+00025C 756E       00552 	DW    0x756E
+00025E 0020       00553 	DW    0x20
+000260 3720       00554 	DW    0x3720
+000262 6220       00555 	DW    0x6220
+000264 7475       00556 	DW    0x7475
+000266 6E6F       00557 	DW    0x6E6F
+000268 2075       00558 	DW    0x2075
+00026A 2000       00559 	DW    0x2000
+00026C 2038       00560 	DW    0x2038
+00026E 7562       00561 	DW    0x7562
+000270 6F74       00562 	DW    0x6F74
+000272 756E       00563 	DW    0x756E
+000274 0020       00564 	DW    0x20
+000276 3920       00565 	DW    0x3920
+000278 6220       00566 	DW    0x6220
+00027A 7475       00567 	DW    0x7475
+00027C 6E6F       00568 	DW    0x6E6F
+00027E 2075       00569 	DW    0x2075
+000280 2000       00570 	DW    0x2000
+000282 2041       00571 	DW    0x2041
+000284 7562       00572 	DW    0x7562
+000286 6F74       00573 	DW    0x6F74
+000288 756E       00574 	DW    0x756E
+00028A 0020       00575 	DW    0x20
+00028C 4320       00576 	DW    0x4320
+00028E 6220       00577 	DW    0x6220
+000290 7475       00578 	DW    0x7475
+000292 6E6F       00579 	DW    0x6E6F
+000294 2075       00580 	DW    0x2075
+000296 2000       00581 	DW    0x2000
+000298 2044       00582 	DW    0x2044
+00029A 7562       00583 	DW    0x7562
+00029C 6F74       00584 	DW    0x6F74
+00029E 756E       00585 	DW    0x756E
+0002A0 0020       00586 	DW    0x20
+0002A2 4520       00587 	DW    0x4520
+0002A4 6220       00588 	DW    0x6220
+0002A6 7475       00589 	DW    0x7475
+0002A8 6E6F       00590 	DW    0x6E6F
+0002AA 2075       00591 	DW    0x2075
+0002AC 2000       00592 	DW    0x2000
+0002AE 2046       00593 	DW    0x2046
+0002B0 7562       00594 	DW    0x7562
+0002B2 6F74       00595 	DW    0x6F74
+0002B4 756E       00596 	DW    0x756E
+0002B6 0020       00597 	DW    0x20
+                  00598 
+                  00599 	END
+                  00600 
+CC8E Version 1.3D,   File: slavec.c            24. Jan 2011  10:46   Page 11
+
+ADDR   CODE       LINE  SOURCE
+
+                  00601 
+                  00602 ; *** KEY INFO ***
+                  00603 
+                  00604 ; 0x00011E   23 word(s)  0 % : ayarlar
+                  00605 ; 0x00017E   11 word(s)  0 % : LcdInit
+                  00606 ; 0x000162   14 word(s)  0 % : LcdYaz
+                  00607 ; 0x00014C   11 word(s)  0 % : LcdKomut
+                  00608 ; 0x000194   30 word(s)  0 % : MesajYaz
+                  00609 ; 0x0001D0   17 word(s)  0 % : bekle
+                  00610 ; 0x000004  141 word(s)  0 % : main
+                  00611 ; 0x0001F2   99 word(s)  0 % : _const1
+                  00612 
+                  00613 ; RAM usage: 10 bytes (10 local), 1526 bytes free
+                  00614 ; Maximum call level: 3
+                  00615 ; Total of 348 code words (2 %)

@@ -1,0 +1,4 @@
+Bütün uðraþlarýmýza raðmen adc deðeri okunmakta ama birtürlü gönderilme yapýlamamýþtýr. Bize 0 ile 255 arasýnda 
+veri vermesi gerekirken deðiþik karekterler elde edilmiþtir. Bunu adc klasörü içerisindeki adcdeneme.c dosyasýný 
+ISIS teki devreye eklediðinizde gözlemleyebilirsiniz. Fakat seri iletiþim kuramadýðýmýz için proje 
+tamamlanamamýþtýr.

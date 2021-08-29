@@ -1,0 +1,20 @@
+** Profile: "SCHEMATIC1-byd1"  [ C:\Documents and Settings\ogrenci\Desktop\byd-SCHEMATIC1-byd1.sim ] 
+
+** Creating circuit file "byd-SCHEMATIC1-byd1.sim.cir" 
+** WARNING: THIS AUTOMATICALLY GENERATED FILE MAY BE OVERWRITTEN BY SUBSEQUENT SIMULATIONS
+
+*Libraries: 
+* Local Libraries :
+* From [PSPICE NETLIST] section of pspiceev.ini file:
+.lib "C:\Program Files\OrCAD_Demo\Capture\Library\Pspice\diode.lib" 
+.lib "nom.lib" 
+
+*Analysis directives: 
+.AC DEC 11 0.1 10k
+.PROBE 
+.INC "byd-SCHEMATIC1.net" 
+
+.INC "byd-SCHEMATIC1.als"
+
+
+.END

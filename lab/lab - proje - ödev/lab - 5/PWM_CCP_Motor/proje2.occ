@@ -1,0 +1,27 @@
+CC8E Version 1.3D, Copyright (c) B Knudsen Data, Norway 2001-2010
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+proje2.c:
+ 15. Dec 2013  12:25
+ Chip = 18F452
+ RAM : ====**** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:252  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 4 bytes (4 local), 1532 bytes free
+ File 'proje2.fcs'
+ Optimizing - removed 10 code words (-16 %)
+ File 'proje2.var'
+ File 'proje2.asm'
+ File 'proje2.lst'
+ File 'proje2.cod'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Users\Phoenix\Desktop\EEM415_Dosyalar\eem415_Hamit_Hoca\2010-2011\odev2_415\20793278\ggg\proje2.c
+ File 'proje2.occ'
+ File 'proje2.hex'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Users\Phoenix\Desktop\EEM415_Dosyalar\eem415_Hamit_Hoca\2010-2011\odev2_415\20793278\ggg\proje2.c
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Users\Phoenix\Desktop\EEM415_Dosyalar\eem415_Hamit_Hoca\2010-2011\odev2_415\20793278\ggg\18F452.h
+Total of 62 code words (0 %)
+ * Estimated CODE SIZE of full optimization: 60 code words (-3 %)

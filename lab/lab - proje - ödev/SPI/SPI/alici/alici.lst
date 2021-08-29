@@ -1,0 +1,246 @@
+CC8E Version 1.3D,   File: alici.c             23. Jan 2011  19:33   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3D, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  23. Jan 2011  19:33  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+       0002       00009 Zero_       EQU   2
+       0FC9       00010 SSPBUF      EQU   0xFC9
+       0FC6       00011 SSPCON1     EQU   0xFC6
+       0F96       00012 TRISE       EQU   0xF96
+       0F95       00013 TRISD       EQU   0xF95
+       0F94       00014 TRISC       EQU   0xF94
+       0F93       00015 TRISB       EQU   0xF93
+       0F92       00016 TRISA       EQU   0xF92
+       0F83       00017 PORTD       EQU   0xF83
+       0F81       00018 PORTB       EQU   0xF81
+       0006       00019 CKE         EQU   6
+       0004       00020 CKP         EQU   4
+       0005       00021 SSPEN       EQU   5
+       0006       00022 SSPOV       EQU   6
+       0007       00023 WCOL        EQU   7
+       0003       00024 SSPIF       EQU   3
+       0000       00025 gelen       EQU   0x00
+       007F       00026 data1       EQU   0x7F
+       007F       00027 temp        EQU   0x7F
+       0001       00028 t           EQU   0x01
+       0003       00029 x           EQU   0x03
+                  00030 
+000000 EF02 F000  00031 	GOTO main
+                  00032 
+                  00033   ; FILE alici.c
+                  00034 			;void init();	//Baslangýc ayarlarý fonksiyonu
+                  00035 			;void spi_init();//SPI Ayarlarý fonksiyonu
+                  00036 			;uns8 spi_gonder_al(uns8);	//SPI veri gonderme fonksiyonu 
+                  00037 			;void bekle(unsigned long);	//Bekleme fonksiyonu
+                  00038 			;
+                  00039 			;bit e @ PORTE.0, rs @ PORTE.1, rw @ PORTE.2;
+                  00040 			;unsigned disp @ PORTD;
+                  00041 			;
+                  00042 			;void main()
+                  00043 			;{
+                  00044 main
+                  00045 			;	uns8 gelen;
+                  00046 			;	init();		//baslangýc ayarlarý yapýlýyor
+000004 D834       00047 	RCALL init
+                  00048 			;dongu:
+                  00049 			;	SSPBUF=0x00;
+000006 6AC9       00050 m001	CLRF  SSPBUF,0
+                  00051 			;	while(!SSPIF);  //	Buffer kontrolü
+000008 A69E       00052 m002	BTFSS 0xF9E,SSPIF,0
+00000A D7FE       00053 	BRA   m002
+                  00054 			;	gelen=SSPBUF;  
+00000C CFC9 F000  00055 	MOVFF SSPBUF,gelen
+                  00056 			;  	SSPIF = 0;
+000010 969E       00057 	BCF   0xF9E,SSPIF,0
+                  00058 			;	PORTB=gelen;
+000012 C000 FF81  00059 	MOVFF gelen,PORTB
+                  00060 			;	if(gelen == 0x01) 
+CC8E Version 1.3D,   File: alici.c             23. Jan 2011  19:33   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+000016 2C00       00061 	DECFSZ gelen,W,0
+000018 D002       00062 	BRA   m003
+                  00063 			;		PORTD=0x01;
+00001A 0E01       00064 	MOVLW 1
+00001C 6E83       00065 	MOVWF PORTD,0
+                  00066 			;	if(gelen == 0x02) 
+00001E 0E02       00067 m003	MOVLW 2
+000020 6200       00068 	CPFSEQ gelen,0
+000022 D002       00069 	BRA   m004
+                  00070 			;		PORTD=0x02;
+000024 0E02       00071 	MOVLW 2
+000026 6E83       00072 	MOVWF PORTD,0
+                  00073 			;	if(gelen == 0x04) 
+000028 0E04       00074 m004	MOVLW 4
+00002A 6200       00075 	CPFSEQ gelen,0
+00002C D002       00076 	BRA   m005
+                  00077 			;		PORTD=0x03;
+00002E 0E03       00078 	MOVLW 3
+000030 6E83       00079 	MOVWF PORTD,0
+                  00080 			;	if(gelen == 0x08) 
+000032 0E08       00081 m005	MOVLW 8
+000034 6200       00082 	CPFSEQ gelen,0
+000036 D002       00083 	BRA   m006
+                  00084 			;		PORTD=0x04;
+000038 0E04       00085 	MOVLW 4
+00003A 6E83       00086 	MOVWF PORTD,0
+                  00087 			;	if(gelen == 0x10) 
+00003C 0E10       00088 m006	MOVLW 16
+00003E 6200       00089 	CPFSEQ gelen,0
+000040 D002       00090 	BRA   m007
+                  00091 			;		PORTD=0x05;
+000042 0E05       00092 	MOVLW 5
+000044 6E83       00093 	MOVWF PORTD,0
+                  00094 			;	if(gelen == 0x20) 
+000046 0E20       00095 m007	MOVLW 32
+000048 6200       00096 	CPFSEQ gelen,0
+00004A D002       00097 	BRA   m008
+                  00098 			;		PORTD=0x06;
+00004C 0E06       00099 	MOVLW 6
+00004E 6E83       00100 	MOVWF PORTD,0
+                  00101 			;	if(gelen == 0x40) 
+000050 0E40       00102 m008	MOVLW 64
+000052 6200       00103 	CPFSEQ gelen,0
+000054 D002       00104 	BRA   m009
+                  00105 			;		PORTD=0x07;
+000056 0E07       00106 	MOVLW 7
+000058 6E83       00107 	MOVWF PORTD,0
+                  00108 			;	if(gelen == 0x80) 
+00005A 0E80       00109 m009	MOVLW 128
+00005C 6200       00110 	CPFSEQ gelen,0
+00005E D002       00111 	BRA   m010
+                  00112 			;		PORTD=0x08;
+000060 0E08       00113 	MOVLW 8
+000062 6E83       00114 	MOVWF PORTD,0
+                  00115 			;	bekle(100);
+000064 0E64       00116 m010	MOVLW 100
+000066 6E01       00117 	MOVWF t,0
+000068 6A02       00118 	CLRF  t+1,0
+00006A D821       00119 	RCALL bekle
+                  00120 			;	goto dongu;
+CC8E Version 1.3D,   File: alici.c             23. Jan 2011  19:33   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+00006C D7CC       00121 	BRA   m001
+                  00122 			;}
+                  00123 			;void init()
+                  00124 			;{
+                  00125 init
+                  00126 			;	TRISA=0XFF;
+00006E 6892       00127 	SETF  TRISA,0
+                  00128 			;	TRISE=0x00;
+000070 6A96       00129 	CLRF  TRISE,0
+                  00130 			;	TRISD=0x00;	// PORTD.0 = CS, PORTD çýkýþ yapýlýyor.
+000072 6A95       00131 	CLRF  TRISD,0
+                  00132 			;	TRISC=0x00;	//	SPI pinleri çýkýþ yapýlýyor.
+000074 6A94       00133 	CLRF  TRISC,0
+                  00134 			;	TRISC.3=1;
+000076 8694       00135 	BSF   TRISC,3,0
+                  00136 			;	TRISC.5=1;
+000078 8A94       00137 	BSF   TRISC,5,0
+                  00138 			;	TRISB=0x00;	//  Buton = PORTB.0, giriþ yapýlýyor
+00007A 6A93       00139 	CLRF  TRISB,0
+                  00140 			;	spi_init();	// SPI Ayarlarý yapýlýyor
+00007C D000       00141 	BRA   spi_init
+                  00142 			;}
+                  00143 			;void spi_init()
+                  00144 			;{
+                  00145 spi_init
+                  00146 			;	CKP = 0 ;	//Clock polarity 
+00007E 98C6       00147 	BCF   0xFC6,CKP,0
+                  00148 			;	CKE=0;		//Clock edge select
+000080 9CC7       00149 	BCF   0xFC7,CKE,0
+                  00150 			;	//SPI Slave Mode
+                  00151 			;	SSPCON1.3=0;
+000082 96C6       00152 	BCF   SSPCON1,3,0
+                  00153 			;	SSPCON1.2=1;
+000084 84C6       00154 	BSF   SSPCON1,2,0
+                  00155 			;	SSPCON1.1=0;
+000086 92C6       00156 	BCF   SSPCON1,1,0
+                  00157 			;	SSPCON1.0=1;
+000088 80C6       00158 	BSF   SSPCON1,0,0
+                  00159 			;	SSPEN=1;	//Synchronous Serial Port Enable bit //5. bit
+00008A 8AC6       00160 	BSF   0xFC6,SSPEN,0
+                  00161 			;	SSPOV=0;	// Receive overflow indicator bit
+00008C 9CC6       00162 	BCF   0xFC6,SSPOV,0
+                  00163 			;	WCOL=0;		// Write collision detect bit
+00008E 9EC6       00164 	BCF   0xFC6,WCOL,0
+                  00165 			;}
+000090 0012       00166 	RETURN
+                  00167 			;uns8 spi_gonder_al(uns8 data1)
+                  00168 			;{
+                  00169 spi_gonder_al
+000092 6E7F       00170 	MOVWF data1,0
+                  00171 			;	uns8 temp;
+                  00172 			;	PORTD.0=0;	//CS = 0 
+000094 9083       00173 	BCF   PORTD,0,0
+                  00174 			;	SSPBUF = data1;		//Instruction register verisi
+000096 C07F FFC9  00175 	MOVFF data1,SSPBUF
+                  00176 			;	while(!SSPIF);  //	Buffer kontrolü
+00009A A69E       00177 m011	BTFSS 0xF9E,SSPIF,0
+00009C D7FE       00178 	BRA   m011
+                  00179 			;	temp=SSPBUF;  
+00009E CFC9 F07F  00180 	MOVFF SSPBUF,temp
+CC8E Version 1.3D,   File: alici.c             23. Jan 2011  19:33   Page 4
+
+ADDR   CODE       LINE  SOURCE
+
+                  00181 			;  	SSPIF = 0;
+0000A2 969E       00182 	BCF   0xF9E,SSPIF,0
+                  00183 			;	PORTD.0=1;	//CS=1
+0000A4 8083       00184 	BSF   PORTD,0,0
+                  00185 			;	PORTB=temp;
+0000A6 C07F FF81  00186 	MOVFF temp,PORTB
+                  00187 			;	return temp;
+0000AA 507F       00188 	MOVF  temp,W,0
+0000AC 0012       00189 	RETURN
+                  00190 			;}
+                  00191 			;void bekle(unsigned long t)	/*t milisaniye gecikme saðlar*/
+                  00192 			;{
+                  00193 bekle
+                  00194 			;	unsigned x;	
+                  00195 			;	for(;t>0;t--)
+0000AE 5001       00196 m012	MOVF  t,W,0
+0000B0 1002       00197 	IORWF t+1,W,0
+0000B2 B4D8       00198 	BTFSC 0xFD8,Zero_,0
+0000B4 D00C       00199 	BRA   m015
+                  00200 			;		for(x=140;x>0;x--)
+0000B6 0E8C       00201 	MOVLW 140
+0000B8 6E03       00202 	MOVWF x,0
+0000BA 5203       00203 m013	MOVF  x,1,0
+0000BC B4D8       00204 	BTFSC 0xFD8,Zero_,0
+0000BE D003       00205 	BRA   m014
+                  00206 			;			nop();
+0000C0 0000       00207 	NOP  
+0000C2 0603       00208 	DECF  x,1,0
+0000C4 D7FA       00209 	BRA   m013
+0000C6 0601       00210 m014	DECF  t,1,0
+0000C8 0E00       00211 	MOVLW 0
+0000CA 5A02       00212 	SUBWFB t+1,1,0
+0000CC D7F0       00213 	BRA   m012
+                  00214 			;}
+0000CE 0012       00215 m015	RETURN
+                  00216 
+                  00217 	END
+                  00218 
+                  00219 
+                  00220 ; *** KEY INFO ***
+                  00221 
+                  00222 ; 0x00006E    8 word(s)  0 % : init
+                  00223 ; 0x00007E   10 word(s)  0 % : spi_init
+                  00224 ; 0x000092   14 word(s)  0 % : spi_gonder_al
+                  00225 ; 0x0000AE   17 word(s)  0 % : bekle
+                  00226 ; 0x000004   53 word(s)  0 % : main
+                  00227 
+                  00228 ; RAM usage: 4 bytes (4 local), 1532 bytes free
+                  00229 ; Maximum call level: 1
+                  00230 ; Total of 104 code words (0 %)

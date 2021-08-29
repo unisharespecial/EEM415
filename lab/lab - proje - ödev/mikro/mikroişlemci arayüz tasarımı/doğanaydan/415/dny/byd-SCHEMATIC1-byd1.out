@@ -1,0 +1,120 @@
+
+**** 06/28/07 17:25:14 *********** Evaluation PSpice (Nov 1999) **************
+
+ ** Profile: "SCHEMATIC1-byd1"  [ C:\Documents and Settings\ogrenci\Desktop\byd-SCHEMATIC1-byd1.sim ] 
+
+
+ ****     CIRCUIT DESCRIPTION
+
+
+******************************************************************************
+
+
+
+
+** Creating circuit file "byd-SCHEMATIC1-byd1.sim.cir" 
+** WARNING: THIS AUTOMATICALLY GENERATED FILE MAY BE OVERWRITTEN BY SUBSEQUENT SIMULATIONS
+
+*Libraries: 
+* Local Libraries :
+* From [PSPICE NETLIST] section of pspiceev.ini file:
+.lib "C:\Program Files\OrCAD_Demo\Capture\Library\Pspice\diode.lib" 
+.lib "nom.lib" 
+
+*Analysis directives: 
+.AC DEC 11 0.1 10k
+.PROBE 
+.INC "byd-SCHEMATIC1.net" 
+
+
+**** INCLUDING byd-SCHEMATIC1.net ****
+* source BYD
+I_I2         0 OUT DC 1mAdc  
+R_R2         0 OUT  10k  
+V_V4         IN 0 DC 0Vdc AC 1Vac 
+D_D1         IN OUT D1N4148 
+C_C1         0 OUT  5uF  
+
+**** RESUMING byd-SCHEMATIC1-byd1.sim.cir ****
+.INC "byd-SCHEMATIC1.als"
+
+
+
+**** INCLUDING byd-SCHEMATIC1.als ****
+.ALIASES
+I_I2            I2(+=0 -=OUT )
+R_R2            R2(1=0 2=OUT )
+V_V4            V4(+=IN -=0 )
+D_D1            D1(1=IN 2=OUT )
+C_C1            C1(1=0 2=OUT )
+_    _(In=IN)
+_    _(Out=OUT)
+.ENDALIASES
+
+**** RESUMING byd-SCHEMATIC1-byd1.sim.cir ****
+.END
+
+Unable to find index file diode.ind for library file diode.lib
+Making new index file diode.ind for library file diode.lib
+Index has 1171 entries from 1 file(s).
+
+**** 06/28/07 17:25:14 *********** Evaluation PSpice (Nov 1999) **************
+
+ ** Profile: "SCHEMATIC1-byd1"  [ C:\Documents and Settings\ogrenci\Desktop\byd-SCHEMATIC1-byd1.sim ] 
+
+
+ ****     Diode MODEL PARAMETERS
+
+
+******************************************************************************
+
+
+
+
+               D1N4148         
+          IS    2.682000E-09 
+           N    1.836        
+         ISR    1.565000E-09 
+         IKF     .04417      
+          BV  100            
+         IBV  100.000000E-06 
+          RS     .5664       
+          TT   11.540000E-09 
+         CJO    4.000000E-12 
+          VJ     .5          
+           M     .3333       
+
+
+**** 06/28/07 17:25:14 *********** Evaluation PSpice (Nov 1999) **************
+
+ ** Profile: "SCHEMATIC1-byd1"  [ C:\Documents and Settings\ogrenci\Desktop\byd-SCHEMATIC1-byd1.sim ] 
+
+
+ ****     SMALL SIGNAL BIAS SOLUTION       TEMPERATURE =   27.000 DEG C
+
+
+******************************************************************************
+
+
+
+ NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE
+
+
+(   IN)    0.0000  (  OUT)    9.9999  
+
+
+
+
+    VOLTAGE SOURCE CURRENTS
+    NAME         CURRENT
+
+    V_V4         6.999E-09
+
+    TOTAL POWER DISSIPATION   0.00E+00  WATTS
+
+
+
+          JOB CONCLUDED
+
+          TOTAL JOB TIME             .30
+

@@ -1,0 +1,543 @@
+CC8E Version 1.3D,   File: masterc.c           23. Jan 2011  21:14   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3D, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  23. Jan 2011  21:14  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0002       00013 Zero_       EQU   2
+       0FC9       00014 SSPBUF      EQU   0xFC9
+       0FC8       00015 SSPADD      EQU   0xFC8
+       0FC6       00016 SSPCON1     EQU   0xFC6
+       0FC2       00017 ADCON0      EQU   0xFC2
+       0FC1       00018 ADCON1      EQU   0xFC1
+       0F95       00019 TRISD       EQU   0xF95
+       0F94       00020 TRISC       EQU   0xF94
+       0F93       00021 TRISB       EQU   0xF93
+       0F92       00022 TRISA       EQU   0xF92
+       0F83       00023 PORTD       EQU   0xF83
+       0F82       00024 PORTC       EQU   0xF82
+       0F81       00025 PORTB       EQU   0xF81
+       0F80       00026 PORTA       EQU   0xF80
+       0007       00027 GIE         EQU   7
+       0005       00028 SSPEN       EQU   5
+       0003       00029 SSPIF       EQU   3
+       0000       00030 t           EQU   0x00
+       0002       00031 x           EQU   0x02
+                  00032 
+000000 EF02 F000  00033 	GOTO main
+                  00034 
+                  00035   ; FILE masterc.c
+                  00036 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00037 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00038 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00039 			;
+                  00040 			;void ayarlar();
+                  00041 			;void I2Cayar();
+                  00042 			;void bekle(unsigned long t);   // t milisaniye gecikme saðlayan fonksiyon tanýmý
+                  00043 			;void main()
+                  00044 			;{  
+                  00045 main
+                  00046 			;   
+                  00047 			;   
+                  00048 			;   ayarlar();
+000004 D8E0       00049 	RCALL ayarlar
+                  00050 			;
+                  00051 			;//-----------------------------------------------   
+                  00052 			;while(1)
+                  00053 			;{
+                  00054 			;if(PORTA.0==1)
+000006 A080       00055 m001	BTFSS PORTA,0,0
+000008 D00C       00056 	BRA   m003
+                  00057 			;{PORTD.0=0;
+00000A 9083       00058 	BCF   PORTD,0,0
+                  00059 			;   SSPBUF=0x1;
+00000C 0E01       00060 	MOVLW 1
+CC8E Version 1.3D,   File: masterc.c           23. Jan 2011  21:14   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+00000E 6EC9       00061 	MOVWF SSPBUF,0
+                  00062 			;   while(!SSPIF);
+000010 A69E       00063 m002	BTFSS 0xF9E,SSPIF,0
+000012 D7FE       00064 	BRA   m002
+                  00065 			;   SSPIF=0;
+000014 969E       00066 	BCF   0xF9E,SSPIF,0
+                  00067 			;   PORTD.0=1;
+000016 8083       00068 	BSF   PORTD,0,0
+                  00069 			; bekle(1000);
+000018 0EE8       00070 	MOVLW 232
+00001A 6E00       00071 	MOVWF t,0
+00001C 0E03       00072 	MOVLW 3
+00001E 6E01       00073 	MOVWF t+1,0
+000020 D8E7       00074 	RCALL bekle
+                  00075 			;  }
+                  00076 			;
+                  00077 			;if(PORTA.1==1)
+000022 A280       00078 m003	BTFSS PORTA,1,0
+000024 D00C       00079 	BRA   m005
+                  00080 			;{PORTD.0=0;
+000026 9083       00081 	BCF   PORTD,0,0
+                  00082 			;   SSPBUF=0x2;
+000028 0E02       00083 	MOVLW 2
+00002A 6EC9       00084 	MOVWF SSPBUF,0
+                  00085 			;   while(!SSPIF);
+00002C A69E       00086 m004	BTFSS 0xF9E,SSPIF,0
+00002E D7FE       00087 	BRA   m004
+                  00088 			;   SSPIF=0;
+000030 969E       00089 	BCF   0xF9E,SSPIF,0
+                  00090 			;   PORTD.0=1;
+000032 8083       00091 	BSF   PORTD,0,0
+                  00092 			; bekle(1000);
+000034 0EE8       00093 	MOVLW 232
+000036 6E00       00094 	MOVWF t,0
+000038 0E03       00095 	MOVLW 3
+00003A 6E01       00096 	MOVWF t+1,0
+00003C D8D9       00097 	RCALL bekle
+                  00098 			;  }
+                  00099 			;
+                  00100 			;if(PORTA.2==1)
+00003E A480       00101 m005	BTFSS PORTA,2,0
+000040 D00C       00102 	BRA   m007
+                  00103 			;{PORTD.0=0;
+000042 9083       00104 	BCF   PORTD,0,0
+                  00105 			;   SSPBUF=0x3;
+000044 0E03       00106 	MOVLW 3
+000046 6EC9       00107 	MOVWF SSPBUF,0
+                  00108 			;   while(!SSPIF);
+000048 A69E       00109 m006	BTFSS 0xF9E,SSPIF,0
+00004A D7FE       00110 	BRA   m006
+                  00111 			;   SSPIF=0;
+00004C 969E       00112 	BCF   0xF9E,SSPIF,0
+                  00113 			;   PORTD.0=1;
+00004E 8083       00114 	BSF   PORTD,0,0
+                  00115 			; bekle(1000);
+000050 0EE8       00116 	MOVLW 232
+000052 6E00       00117 	MOVWF t,0
+000054 0E03       00118 	MOVLW 3
+000056 6E01       00119 	MOVWF t+1,0
+000058 D8CB       00120 	RCALL bekle
+CC8E Version 1.3D,   File: masterc.c           23. Jan 2011  21:14   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 			;  }
+                  00122 			;if(PORTA.3==1)
+00005A A680       00123 m007	BTFSS PORTA,3,0
+00005C D00C       00124 	BRA   m009
+                  00125 			;{PORTD.0=0;
+00005E 9083       00126 	BCF   PORTD,0,0
+                  00127 			;   SSPBUF=0xA;
+000060 0E0A       00128 	MOVLW 10
+000062 6EC9       00129 	MOVWF SSPBUF,0
+                  00130 			;   while(!SSPIF);
+000064 A69E       00131 m008	BTFSS 0xF9E,SSPIF,0
+000066 D7FE       00132 	BRA   m008
+                  00133 			;   SSPIF=0;
+000068 969E       00134 	BCF   0xF9E,SSPIF,0
+                  00135 			;   PORTD.0=1;
+00006A 8083       00136 	BSF   PORTD,0,0
+                  00137 			; bekle(1000);
+00006C 0EE8       00138 	MOVLW 232
+00006E 6E00       00139 	MOVWF t,0
+000070 0E03       00140 	MOVLW 3
+000072 6E01       00141 	MOVWF t+1,0
+000074 D8BD       00142 	RCALL bekle
+                  00143 			;  }
+                  00144 			;
+                  00145 			;if(PORTA.4==1)
+000076 A880       00146 m009	BTFSS PORTA,4,0
+000078 D00C       00147 	BRA   m011
+                  00148 			;{PORTD.0=0;
+00007A 9083       00149 	BCF   PORTD,0,0
+                  00150 			;   SSPBUF=0x4;
+00007C 0E04       00151 	MOVLW 4
+00007E 6EC9       00152 	MOVWF SSPBUF,0
+                  00153 			;   while(!SSPIF);
+000080 A69E       00154 m010	BTFSS 0xF9E,SSPIF,0
+000082 D7FE       00155 	BRA   m010
+                  00156 			;   SSPIF=0;
+000084 969E       00157 	BCF   0xF9E,SSPIF,0
+                  00158 			;   PORTD.0=1;
+000086 8083       00159 	BSF   PORTD,0,0
+                  00160 			; bekle(1000);
+000088 0EE8       00161 	MOVLW 232
+00008A 6E00       00162 	MOVWF t,0
+00008C 0E03       00163 	MOVLW 3
+00008E 6E01       00164 	MOVWF t+1,0
+000090 D8AF       00165 	RCALL bekle
+                  00166 			;  }
+                  00167 			;if(PORTA.5==1)
+000092 AA80       00168 m011	BTFSS PORTA,5,0
+000094 D00C       00169 	BRA   m013
+                  00170 			;{PORTD.0=0;
+000096 9083       00171 	BCF   PORTD,0,0
+                  00172 			;   SSPBUF=0x5;
+000098 0E05       00173 	MOVLW 5
+00009A 6EC9       00174 	MOVWF SSPBUF,0
+                  00175 			;   while(!SSPIF);
+00009C A69E       00176 m012	BTFSS 0xF9E,SSPIF,0
+00009E D7FE       00177 	BRA   m012
+                  00178 			;   SSPIF=0;
+0000A0 969E       00179 	BCF   0xF9E,SSPIF,0
+                  00180 			;   PORTD.0=1;
+CC8E Version 1.3D,   File: masterc.c           23. Jan 2011  21:14   Page 4
+
+ADDR   CODE       LINE  SOURCE
+
+0000A2 8083       00181 	BSF   PORTD,0,0
+                  00182 			; bekle(1000);
+0000A4 0EE8       00183 	MOVLW 232
+0000A6 6E00       00184 	MOVWF t,0
+0000A8 0E03       00185 	MOVLW 3
+0000AA 6E01       00186 	MOVWF t+1,0
+0000AC D8A1       00187 	RCALL bekle
+                  00188 			;  }
+                  00189 			;
+                  00190 			;if(PORTC.6==1)
+0000AE AC82       00191 m013	BTFSS PORTC,6,0
+0000B0 D00C       00192 	BRA   m015
+                  00193 			;{PORTD.0=0;
+0000B2 9083       00194 	BCF   PORTD,0,0
+                  00195 			;   SSPBUF=0x6;
+0000B4 0E06       00196 	MOVLW 6
+0000B6 6EC9       00197 	MOVWF SSPBUF,0
+                  00198 			;   while(!SSPIF);
+0000B8 A69E       00199 m014	BTFSS 0xF9E,SSPIF,0
+0000BA D7FE       00200 	BRA   m014
+                  00201 			;   SSPIF=0;
+0000BC 969E       00202 	BCF   0xF9E,SSPIF,0
+                  00203 			;   PORTD.0=1;
+0000BE 8083       00204 	BSF   PORTD,0,0
+                  00205 			; bekle(1000);
+0000C0 0EE8       00206 	MOVLW 232
+0000C2 6E00       00207 	MOVWF t,0
+0000C4 0E03       00208 	MOVLW 3
+0000C6 6E01       00209 	MOVWF t+1,0
+0000C8 D893       00210 	RCALL bekle
+                  00211 			;  }
+                  00212 			;
+                  00213 			;if(PORTB.0==1)
+0000CA A081       00214 m015	BTFSS PORTB,0,0
+0000CC D00C       00215 	BRA   m017
+                  00216 			;{PORTD.0=0;
+0000CE 9083       00217 	BCF   PORTD,0,0
+                  00218 			;   SSPBUF=0xB;
+0000D0 0E0B       00219 	MOVLW 11
+0000D2 6EC9       00220 	MOVWF SSPBUF,0
+                  00221 			;   while(!SSPIF);
+0000D4 A69E       00222 m016	BTFSS 0xF9E,SSPIF,0
+0000D6 D7FE       00223 	BRA   m016
+                  00224 			;   SSPIF=0;
+0000D8 969E       00225 	BCF   0xF9E,SSPIF,0
+                  00226 			;   PORTD.0=1;
+0000DA 8083       00227 	BSF   PORTD,0,0
+                  00228 			; bekle(1000);
+0000DC 0EE8       00229 	MOVLW 232
+0000DE 6E00       00230 	MOVWF t,0
+0000E0 0E03       00231 	MOVLW 3
+0000E2 6E01       00232 	MOVWF t+1,0
+0000E4 D885       00233 	RCALL bekle
+                  00234 			;  }
+                  00235 			;if(PORTB.1==1)
+0000E6 A281       00236 m017	BTFSS PORTB,1,0
+0000E8 D00C       00237 	BRA   m019
+                  00238 			;{PORTD.0=0;
+0000EA 9083       00239 	BCF   PORTD,0,0
+                  00240 			;   SSPBUF=0x7;
+CC8E Version 1.3D,   File: masterc.c           23. Jan 2011  21:14   Page 5
+
+ADDR   CODE       LINE  SOURCE
+
+0000EC 0E07       00241 	MOVLW 7
+0000EE 6EC9       00242 	MOVWF SSPBUF,0
+                  00243 			;   while(!SSPIF);
+0000F0 A69E       00244 m018	BTFSS 0xF9E,SSPIF,0
+0000F2 D7FE       00245 	BRA   m018
+                  00246 			;   SSPIF=0;
+0000F4 969E       00247 	BCF   0xF9E,SSPIF,0
+                  00248 			;   PORTD.0=1;
+0000F6 8083       00249 	BSF   PORTD,0,0
+                  00250 			; bekle(1000);
+0000F8 0EE8       00251 	MOVLW 232
+0000FA 6E00       00252 	MOVWF t,0
+0000FC 0E03       00253 	MOVLW 3
+0000FE 6E01       00254 	MOVWF t+1,0
+000100 D877       00255 	RCALL bekle
+                  00256 			;  }
+                  00257 			;if(PORTB.2==1)
+000102 A481       00258 m019	BTFSS PORTB,2,0
+000104 D00C       00259 	BRA   m021
+                  00260 			;{PORTD.0=0;
+000106 9083       00261 	BCF   PORTD,0,0
+                  00262 			;   SSPBUF=0x8;
+000108 0E08       00263 	MOVLW 8
+00010A 6EC9       00264 	MOVWF SSPBUF,0
+                  00265 			;   while(!SSPIF);
+00010C A69E       00266 m020	BTFSS 0xF9E,SSPIF,0
+00010E D7FE       00267 	BRA   m020
+                  00268 			;   SSPIF=0;
+000110 969E       00269 	BCF   0xF9E,SSPIF,0
+                  00270 			;   PORTD.0=1;
+000112 8083       00271 	BSF   PORTD,0,0
+                  00272 			; bekle(1000);
+000114 0EE8       00273 	MOVLW 232
+000116 6E00       00274 	MOVWF t,0
+000118 0E03       00275 	MOVLW 3
+00011A 6E01       00276 	MOVWF t+1,0
+00011C D869       00277 	RCALL bekle
+                  00278 			;  }
+                  00279 			;if(PORTB.3==1)
+00011E A681       00280 m021	BTFSS PORTB,3,0
+000120 D00C       00281 	BRA   m023
+                  00282 			;{PORTD.0=0;
+000122 9083       00283 	BCF   PORTD,0,0
+                  00284 			;   SSPBUF=0x9;
+000124 0E09       00285 	MOVLW 9
+000126 6EC9       00286 	MOVWF SSPBUF,0
+                  00287 			;   while(!SSPIF);
+000128 A69E       00288 m022	BTFSS 0xF9E,SSPIF,0
+00012A D7FE       00289 	BRA   m022
+                  00290 			;   SSPIF=0;
+00012C 969E       00291 	BCF   0xF9E,SSPIF,0
+                  00292 			;   PORTD.0=1;
+00012E 8083       00293 	BSF   PORTD,0,0
+                  00294 			; bekle(1000);
+000130 0EE8       00295 	MOVLW 232
+000132 6E00       00296 	MOVWF t,0
+000134 0E03       00297 	MOVLW 3
+000136 6E01       00298 	MOVWF t+1,0
+000138 D85B       00299 	RCALL bekle
+                  00300 			;  }
+CC8E Version 1.3D,   File: masterc.c           23. Jan 2011  21:14   Page 6
+
+ADDR   CODE       LINE  SOURCE
+
+                  00301 			;if(PORTB.4==1)
+00013A A881       00302 m023	BTFSS PORTB,4,0
+00013C D00C       00303 	BRA   m025
+                  00304 			;{PORTD.0=0;
+00013E 9083       00305 	BCF   PORTD,0,0
+                  00306 			;   SSPBUF=0xC;
+000140 0E0C       00307 	MOVLW 12
+000142 6EC9       00308 	MOVWF SSPBUF,0
+                  00309 			;   while(!SSPIF);
+000144 A69E       00310 m024	BTFSS 0xF9E,SSPIF,0
+000146 D7FE       00311 	BRA   m024
+                  00312 			;   SSPIF=0;
+000148 969E       00313 	BCF   0xF9E,SSPIF,0
+                  00314 			;   PORTD.0=1;
+00014A 8083       00315 	BSF   PORTD,0,0
+                  00316 			; bekle(1000);
+00014C 0EE8       00317 	MOVLW 232
+00014E 6E00       00318 	MOVWF t,0
+000150 0E03       00319 	MOVLW 3
+000152 6E01       00320 	MOVWF t+1,0
+000154 D84D       00321 	RCALL bekle
+                  00322 			;  }
+                  00323 			;if(PORTB.5==1)
+000156 AA81       00324 m025	BTFSS PORTB,5,0
+000158 D00C       00325 	BRA   m027
+                  00326 			;{PORTD.0=0;
+00015A 9083       00327 	BCF   PORTD,0,0
+                  00328 			;   SSPBUF=0xF;
+00015C 0E0F       00329 	MOVLW 15
+00015E 6EC9       00330 	MOVWF SSPBUF,0
+                  00331 			;   while(!SSPIF);
+000160 A69E       00332 m026	BTFSS 0xF9E,SSPIF,0
+000162 D7FE       00333 	BRA   m026
+                  00334 			;   SSPIF=0;
+000164 969E       00335 	BCF   0xF9E,SSPIF,0
+                  00336 			;   PORTD.0=1;
+000166 8083       00337 	BSF   PORTD,0,0
+                  00338 			; bekle(1000);
+000168 0EE8       00339 	MOVLW 232
+00016A 6E00       00340 	MOVWF t,0
+00016C 0E03       00341 	MOVLW 3
+00016E 6E01       00342 	MOVWF t+1,0
+000170 D83F       00343 	RCALL bekle
+                  00344 			;  }
+                  00345 			;if(PORTB.6==1)
+000172 AC81       00346 m027	BTFSS PORTB,6,0
+000174 D00C       00347 	BRA   m029
+                  00348 			;{PORTD.0=0;
+000176 9083       00349 	BCF   PORTD,0,0
+                  00350 			;   SSPBUF=0xE;
+000178 0E0E       00351 	MOVLW 14
+00017A 6EC9       00352 	MOVWF SSPBUF,0
+                  00353 			;   while(!SSPIF);
+00017C A69E       00354 m028	BTFSS 0xF9E,SSPIF,0
+00017E D7FE       00355 	BRA   m028
+                  00356 			;   SSPIF=0;
+000180 969E       00357 	BCF   0xF9E,SSPIF,0
+                  00358 			;   PORTD.0=1;
+000182 8083       00359 	BSF   PORTD,0,0
+                  00360 			; bekle(1000);
+CC8E Version 1.3D,   File: masterc.c           23. Jan 2011  21:14   Page 7
+
+ADDR   CODE       LINE  SOURCE
+
+000184 0EE8       00361 	MOVLW 232
+000186 6E00       00362 	MOVWF t,0
+000188 0E03       00363 	MOVLW 3
+00018A 6E01       00364 	MOVWF t+1,0
+00018C D831       00365 	RCALL bekle
+                  00366 			;  }
+                  00367 			;if(PORTB.7==1)
+00018E AE81       00368 m029	BTFSS PORTB,7,0
+000190 D00C       00369 	BRA   m031
+                  00370 			;{PORTD.0=0;
+000192 9083       00371 	BCF   PORTD,0,0
+                  00372 			;   SSPBUF=0xD;
+000194 0E0D       00373 	MOVLW 13
+000196 6EC9       00374 	MOVWF SSPBUF,0
+                  00375 			;   while(!SSPIF);
+000198 A69E       00376 m030	BTFSS 0xF9E,SSPIF,0
+00019A D7FE       00377 	BRA   m030
+                  00378 			;   SSPIF=0;
+00019C 969E       00379 	BCF   0xF9E,SSPIF,0
+                  00380 			;   PORTD.0=1;
+00019E 8083       00381 	BSF   PORTD,0,0
+                  00382 			; bekle(1000);
+0001A0 0EE8       00383 	MOVLW 232
+0001A2 6E00       00384 	MOVWF t,0
+0001A4 0E03       00385 	MOVLW 3
+0001A6 6E01       00386 	MOVWF t+1,0
+0001A8 D823       00387 	RCALL bekle
+                  00388 			;  }
+                  00389 			;
+                  00390 			;if(PORTC.7==1)
+0001AA AE82       00391 m031	BTFSS PORTC,7,0
+0001AC D72C       00392 	BRA   m001
+                  00393 			;{PORTD.0=0;
+0001AE 9083       00394 	BCF   PORTD,0,0
+                  00395 			;   SSPBUF=0x0;
+0001B0 6AC9       00396 	CLRF  SSPBUF,0
+                  00397 			;   while(!SSPIF);
+0001B2 A69E       00398 m032	BTFSS 0xF9E,SSPIF,0
+0001B4 D7FE       00399 	BRA   m032
+                  00400 			;   SSPIF=0;
+0001B6 969E       00401 	BCF   0xF9E,SSPIF,0
+                  00402 			;   PORTD.0=1;
+0001B8 8083       00403 	BSF   PORTD,0,0
+                  00404 			; bekle(1000);
+0001BA 0EE8       00405 	MOVLW 232
+0001BC 6E00       00406 	MOVWF t,0
+0001BE 0E03       00407 	MOVLW 3
+0001C0 6E01       00408 	MOVWF t+1,0
+0001C2 D816       00409 	RCALL bekle
+                  00410 			;  }
+                  00411 			;
+                  00412 			;}
+0001C4 D720       00413 	BRA   m001
+                  00414 			;//-----------------------------------------------   
+                  00415 			;}
+                  00416 			;
+                  00417 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00418 			;void ayarlar()   // Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00419 			;{   
+                  00420 ayarlar
+CC8E Version 1.3D,   File: masterc.c           23. Jan 2011  21:14   Page 8
+
+ADDR   CODE       LINE  SOURCE
+
+                  00421 			;   GIE=0;         // Bütün kesmeleri kapat
+0001C6 9EF2       00422 	BCF   0xFF2,GIE,0
+                  00423 			;   TRISA=0xFF;
+0001C8 6892       00424 	SETF  TRISA,0
+                  00425 			;   TRISB=0xFF;
+0001CA 6893       00426 	SETF  TRISB,0
+                  00427 			;  // TRISE=0xFF;
+                  00428 			;   TRISD=0x00; 
+0001CC 6A95       00429 	CLRF  TRISD,0
+                  00430 			;   TRISC=0xD0;
+0001CE 0ED0       00431 	MOVLW 208
+0001D0 6E94       00432 	MOVWF TRISC,0
+                  00433 			;   PORTC=0x00;     
+0001D2 6A82       00434 	CLRF  PORTC,0
+                  00435 			;}
+0001D4 0012       00436 	RETURN
+                  00437 			;//////////////////////////////////////////////////////////////////////////////////
+                  00438 			;
+                  00439 			;void I2Cayar()
+                  00440 			;{
+                  00441 I2Cayar
+                  00442 			;    TRISC.3=1; //I2C SCL Ayarý
+0001D6 8694       00443 	BSF   TRISC,3,0
+                  00444 			;	TRISC.4=1; //I2C SDA Ayarý
+0001D8 8894       00445 	BSF   TRISC,4,0
+                  00446 			;	SSPCON1.3=1; //I2C Master Modu seç
+0001DA 86C6       00447 	BSF   SSPCON1,3,0
+                  00448 			;	SSPCON1.2=0;
+0001DC 94C6       00449 	BCF   SSPCON1,2,0
+                  00450 			;	SSPCON1.1=0;
+0001DE 92C6       00451 	BCF   SSPCON1,1,0
+                  00452 			;	SSPCON1.0=0;
+0001E0 90C6       00453 	BCF   SSPCON1,0,0
+                  00454 			;	SSPADD=0x0A; //100kHZ Hýz Modu seç
+0001E2 0E0A       00455 	MOVLW 10
+0001E4 6EC8       00456 	MOVWF SSPADD,0
+                  00457 			;	SSPEN=1; //MSSP'yi Etkinleþtir
+0001E6 8AC6       00458 	BSF   0xFC6,SSPEN,0
+                  00459 			;	ADCON0=0b.0000.0001; //ADC Etkinleþtir
+0001E8 0E01       00460 	MOVLW 1
+0001EA 6EC2       00461 	MOVWF ADCON0,0
+                  00462 			;	ADCON1=0b.0000.0000; //ADC Hýzý FClock/2
+0001EC 6AC1       00463 	CLRF  ADCON1,0
+                  00464 			;}
+0001EE 0012       00465 	RETURN
+                  00466 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00467 			;
+                  00468 			;void bekle(unsigned long t)   //t milisaniye gecikme saðlar
+                  00469 			;{
+                  00470 bekle
+                  00471 			;   unsigned x;
+                  00472 			;   
+                  00473 			;   for(;t>0;t--)
+0001F0 5000       00474 m033	MOVF  t,W,0
+0001F2 1001       00475 	IORWF t+1,W,0
+0001F4 B4D8       00476 	BTFSC 0xFD8,Zero_,0
+0001F6 D00C       00477 	BRA   m036
+                  00478 			;      for(x=140;x>0;x--)
+0001F8 0E8C       00479 	MOVLW 140
+0001FA 6E02       00480 	MOVWF x,0
+CC8E Version 1.3D,   File: masterc.c           23. Jan 2011  21:14   Page 9
+
+ADDR   CODE       LINE  SOURCE
+
+0001FC 5202       00481 m034	MOVF  x,1,0
+0001FE B4D8       00482 	BTFSC 0xFD8,Zero_,0
+000200 D003       00483 	BRA   m035
+                  00484 			;         nop();
+000202 0000       00485 	NOP  
+000204 0602       00486 	DECF  x,1,0
+000206 D7FA       00487 	BRA   m034
+000208 0600       00488 m035	DECF  t,1,0
+00020A 0E00       00489 	MOVLW 0
+00020C 5A01       00490 	SUBWFB t+1,1,0
+00020E D7F0       00491 	BRA   m033
+                  00492 			;}
+000210 0012       00493 m036	RETURN
+                  00494 
+                  00495 	END
+                  00496 
+                  00497 
+                  00498 ; *** KEY INFO ***
+                  00499 
+                  00500 ; 0x0001C6    8 word(s)  0 % : ayarlar
+                  00501 ; 0x0001D6   13 word(s)  0 % : I2Cayar
+                  00502 ; 0x0001F0   17 word(s)  0 % : bekle
+                  00503 ; 0x000004  225 word(s)  1 % : main
+                  00504 
+                  00505 ; RAM usage: 3 bytes (3 local), 1533 bytes free
+                  00506 ; Maximum call level: 1
+                  00507 ; Total of 265 code words (1 %)

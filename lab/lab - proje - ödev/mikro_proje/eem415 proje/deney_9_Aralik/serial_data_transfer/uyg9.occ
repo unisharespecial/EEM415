@@ -1,0 +1,27 @@
+CC8E Version 1.3D, Copyright (c) B Knudsen Data, Norway 2001-2010
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+uyg9.c:
+ 23. Dec 2010  15:00
+ Chip = 18F452
+ RAM : ====**** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:252  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 4 bytes (4 local), 1532 bytes free
+ File 'uyg9.fcs'
+ Optimizing - removed 14 code words (-19 %)
+ File 'uyg9.var'
+ File 'uyg9.asm'
+ File 'uyg9.lst'
+ File 'uyg9.cod'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\Administrator\Desktop\eem415 proje\deney_9_Aralik\serial_data_transfer\uyg9.c
+ File 'uyg9.occ'
+ File 'uyg9.hex'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\Administrator\Desktop\eem415 proje\deney_9_Aralik\serial_data_transfer\uyg9.c
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\Administrator\Desktop\eem415 proje\deney_9_Aralik\serial_data_transfer\18F452.h
+Total of 73 code words (0 %)
+ * Estimated CODE SIZE of full optimization: 71 code words (-2 %)

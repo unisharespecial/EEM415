@@ -1,0 +1,23 @@
+CC8E Version 1.3B, Copyright (c) B Knudsen Data, Norway 2001-2009, No. 2367
+ --> STANDARD edition, 8-32 bit int, 16-32 bit float, 128k code words
+DTMF.c:
+ 30. Dec 2010   8:11
+ Chip = 18F452
+ RAM : ===***** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:253  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 3 bytes (3 local), 1533 bytes free
+ File 'DTMF.fcs'
+ Optimizing - removed 34 code words (-25 %)
+ File 'DTMF.var'
+ File 'DTMF.asm'
+ File 'DTMF.lst'
+ File 'DTMF.cod'
+ File 'DTMF.occ'
+Warning[1] F:\mikro_proje\DTMF.c 38 : Read-modify-write sequence on same PORT may fail
+Warning[2] F:\mikro_proje\DTMF.c 53 : Read-modify-write sequence on same PORT may fail
+Warning[3] F:\mikro_proje\DTMF.c 68 : Read-modify-write sequence on same PORT may fail
+ File 'DTMF.hex'
+Total of 133 code words (0 %)

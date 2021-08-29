@@ -1,0 +1,32 @@
+[DeviceName]
+Value=P18F452
+[DeviceClock]
+Value=4
+[MainUnit]
+Value=
+[DeviceFlags]
+Count=4
+Value0=_XT_OSC_1H = $00F9
+Value1=_BOR_OFF_2L = $00FD
+Value2=_PWRT_OFF_2L = $00FF
+Value3=_WDT_OFF_2H = $00FE
+[BuildType]
+bType=0
+[ProjectFiles]
+Count=1
+Value0=faruk2.c
+[HeaderFiles]
+Count=0
+[ObjLibFiles]
+Count=0
+[PLDFiles]
+Count=0
+[EEPROMinfo]
+isused=0
+[SearchPath]
+Count=3
+Value0=C:\Program Files\Mikroelektronika\mikroC\Defs\
+Value1=C:\Program Files\Mikroelektronika\mikroC\Uses\p18\
+Value2=C:\Documents and Settings\Deniz\Desktop\faruk\
+[IncludePath]
+Count=0

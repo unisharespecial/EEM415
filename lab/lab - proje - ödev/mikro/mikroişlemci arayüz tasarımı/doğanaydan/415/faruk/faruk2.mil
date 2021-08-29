@@ -1,0 +1,90 @@
+_fonk:
+  begin
+//faruk2.c,5 :: 		{if(portd==1)
+	if ( PORTD != 1) then goto L_fonk_0
+//faruk2.c,6 :: 		{ portc=dizi[x];
+	STACK_0 <-  2 * _x
+	FSR0L <-  0 + STACK_0
+	PORTC <- *FSR0L  [Optimized To Dest]
+	PORTC <- PORTC
+//faruk2.c,7 :: 		x++;
+	_x <-  _x + 1
+	_x <- _x
+//faruk2.c,8 :: 		if(x==8)
+	if ( _x != 8) then goto L_fonk_1
+//faruk2.c,9 :: 		x=0; }
+	_x <- 0
+L_fonk_1:
+	goto	L_fonk_2
+L_fonk_0:
+//faruk2.c,10 :: 		else if(portd==2)
+	if ( PORTD != 2) then goto L_fonk_3
+//faruk2.c,11 :: 		{ portc=dizi[x];
+	STACK_0 <-  2 * _x
+	FSR0L <-  0 + STACK_0
+	PORTC <- *FSR0L  [Optimized To Dest]
+	PORTC <- PORTC
+//faruk2.c,12 :: 		x--;
+	_x <-  _x - 1
+	_x <- _x
+//faruk2.c,13 :: 		if(x==-1)
+	if ( _x != -1) then goto L_fonk_4
+//faruk2.c,14 :: 		x=7; }
+	_x <- 7
+L_fonk_4:
+L_fonk_3:
+L_fonk_2:
+  end
+
+_interrupt:
+  begin
+//faruk2.c,18 :: 		{ if(INTCON.INT0IF)
+	if (!INTCON) then goto L_interrupt_5
+//faruk2.c,19 :: 		{ fonk();
+	CALL _fonk
+//faruk2.c,20 :: 		INTCON.INT0IF=0;
+	INTCON <-  INTCON & -3
+//faruk2.c,21 :: 		}
+L_interrupt_5:
+  end
+
+_init:
+  begin
+//faruk2.c,26 :: 		{TRISC=0;
+	TRISC <- 0
+//faruk2.c,27 :: 		PORTC=0;
+	PORTC <- 0
+//faruk2.c,28 :: 		TRISD=1;
+	TRISD <- 1
+//faruk2.c,29 :: 		PORTD=0;
+	PORTD <- 0
+//faruk2.c,30 :: 		INTCON=0X88;
+	INTCON <- 136
+//faruk2.c,31 :: 		INTCON2=0XF1;
+	INTCON2 <- 241
+//faruk2.c,32 :: 		INTCON3=0X8B;
+	INTCON3 <- 139
+//faruk2.c,33 :: 		INTCON.INT0IF=0;
+	INTCON <-  INTCON & -3
+//faruk2.c,34 :: 		INTCON.RBIF=0;
+	INTCON <-  INTCON & -2
+//faruk2.c,35 :: 		INTCON3.INT2IF=0;
+	INTCON3 <-  INTCON3 & -3
+//faruk2.c,36 :: 		INTCON3.INT1IF=0;
+	INTCON3 <-  INTCON3 & -2
+  end
+
+_main:
+  begin
+//faruk2.c,40 :: 		{init();
+	CALL _init
+//faruk2.c,41 :: 		do{
+L_main_6:
+//faruk2.c,42 :: 		}while(1);
+	goto	L_main_6
+  end
+
+GlobalInifaruk2:
+  begin
+  end
+

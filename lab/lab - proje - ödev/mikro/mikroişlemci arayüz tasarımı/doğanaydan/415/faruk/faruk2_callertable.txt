@@ -1,0 +1,5 @@
+interrupt
+	fonk
+main
+	GlobalInifaruk2
+	init

@@ -1,0 +1,24 @@
+CC8E Version 1.3D, Copyright (c) B Knudsen Data, Norway 2001-2010
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+alici.c:
+ 23. Jan 2011  19:33
+ Chip = 18F452
+Warning[1] C:\eem415\SPI\alici\alici.c 80 : Local variables and parameters in uncalled functions are not allocated (2)
+ (The application contains non-library functions that are not called. Local
+ variables in these functions (option -wU) are not allocated to save space)
+ RAM : ====**** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:252  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 4 bytes (4 local), 1532 bytes free
+ File 'alici.fcs'
+ Optimizing - removed 21 code words (-21 %)
+ File 'alici.var'
+ File 'alici.asm'
+ File 'alici.lst'
+ File 'alici.cod'
+ File 'alici.occ'
+ File 'alici.hex'
+Total of 104 code words (0 %)
+ * Estimated CODE SIZE of full optimization: 101 code words (-2 %)

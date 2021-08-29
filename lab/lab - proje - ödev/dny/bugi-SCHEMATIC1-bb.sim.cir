@@ -1,0 +1,21 @@
+** Profile: "SCHEMATIC1-bb"  [ C:\Documents and Settings\ogrenci\Desktop\bugi-SCHEMATIC1-bb.sim ] 
+
+** Creating circuit file "bugi-SCHEMATIC1-bb.sim.cir" 
+** WARNING: THIS AUTOMATICALLY GENERATED FILE MAY BE OVERWRITTEN BY SUBSEQUENT SIMULATIONS
+
+*Libraries: 
+* Local Libraries :
+* From [PSPICE NETLIST] section of pspiceev.ini file:
+.lib "C:\Program Files\OrCAD_Demo\Capture\Library\Pspice\diode.lib" 
+.lib "nom.lib" 
+
+*Analysis directives: 
+.TRAN  0 1000ns 0 
+.STEP PARAM Rvar LIST 1k,3k,5k,7k,10k 
+.PROBE 
+.INC "bugi-SCHEMATIC1.net" 
+
+.INC "bugi-SCHEMATIC1.als"
+
+
+.END

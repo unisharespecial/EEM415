@@ -1,0 +1,33 @@
+CC8E Version 1.3D, Copyright (c) B Knudsen Data, Norway 2001-2010
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+uygulama.c:
+ 23. Nov 2013  16:37
+ Chip = 18F452
+ RAM : ===***** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:253  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 3 bytes (3 local), 1533 bytes free
+ File 'uygulama.fcs'
+ Optimizing - removed 29 code words (-20 %)
+ File 'uygulama.var'
+ File 'uygulama.asm'
+ File 'uygulama.lst'
+ File 'uygulama.cod'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Users\Phoenix\Okul Dosyalarý\Kami\Lisans\4.Sýnýf\1. Dönem\Mikroiþlemci Arayüz Teknikleri - EEM415\polling_keyboard\uygulama.c
+ File 'uygulama.occ'
+Warning[1] C:\Users\Phoenix\Okul Dosyalarý\Kami\Lisans\4.Sýnýf\1. Dönem\Mikroiþlemci Arayüz Teknikleri - EEM415\polling_keyboard\uygulama.c 18 : Read-modify-write sequence on the same PORT may fail
+ (Two consecutive instructions modifying the same PORT may fail depending on
+ execution speed and load (fall/rise times) on the port pins. Option -wf will
+ remove this warning)
+Warning[2] C:\Users\Phoenix\Okul Dosyalarý\Kami\Lisans\4.Sýnýf\1. Dönem\Mikroiþlemci Arayüz Teknikleri - EEM415\polling_keyboard\uygulama.c 43 : Read-modify-write sequence on the same PORT may fail
+Warning[3] C:\Users\Phoenix\Okul Dosyalarý\Kami\Lisans\4.Sýnýf\1. Dönem\Mikroiþlemci Arayüz Teknikleri - EEM415\polling_keyboard\uygulama.c 63 : Read-modify-write sequence on the same PORT may fail
+ File 'uygulama.hex'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Users\Phoenix\Okul Dosyalarý\Kami\Lisans\4.Sýnýf\1. Dönem\Mikroiþlemci Arayüz Teknikleri - EEM415\polling_keyboard\uygulama.c
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Users\Phoenix\Okul Dosyalarý\Kami\Lisans\4.Sýnýf\1. Dönem\Mikroiþlemci Arayüz Teknikleri - EEM415\polling_keyboard\18F452.h
+Total of 147 code words (0 %)
+ * Estimated CODE SIZE of full optimization: 145 code words (-1 %)

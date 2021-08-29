@@ -1,0 +1,24 @@
+CC8E Version 1.3F, Copyright (c) B Knudsen Data, Norway 2001-2012
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+lcd.c:
+  7. Dec 2013   9:41
+ Chip = 18F452
+Warning[1] C:\Users\Beril\Desktop\ödev mikro\Ornekler\lcd415\lcd.c 136 : Local variables and parameters in uncalled functions are not allocated (9)
+ (The application contains non-library functions that are not called. Local
+ variables in these functions (option -wU) are not allocated to save space)
+ RAM : ******** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:256  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 0 bytes (0 local), 1536 bytes free
+ File 'lcd.fcs'
+ Optimizing - removed 15 code words (-15 %)
+ File 'lcd.var'
+ File 'lcd.asm'
+ File 'lcd.lst'
+ File 'lcd.cod'
+ File 'lcd.occ'
+ File 'lcd.hex'
+Total of 102 code words (0 %)
+ * Estimated CODE SIZE of full optimization: 97 code words (-4 %)

@@ -1,0 +1,445 @@
+CC8E Version 1.3F,   File: uygulama.c           2. Dec 2013  21:53   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3F, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************   2. Dec 2013  21:53  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0FF2       00013 INTCON      EQU   0xFF2
+       0FF1       00014 INTCON2     EQU   0xFF1
+       0FF0       00015 INTCON3     EQU   0xFF0
+       0002       00016 Zero_       EQU   2
+       0F96       00017 TRISE       EQU   0xF96
+       0F95       00018 TRISD       EQU   0xF95
+       0F94       00019 TRISC       EQU   0xF94
+       0F93       00020 TRISB       EQU   0xF93
+       0F92       00021 TRISA       EQU   0xF92
+       0F83       00022 PORTD       EQU   0xF83
+       0F82       00023 PORTC       EQU   0xF82
+       0F81       00024 PORTB       EQU   0xF81
+       0001       00025 INT0IF      EQU   1
+       0007       00026 GIE         EQU   7
+       0000       00027 t           EQU   0x00
+       0002       00028 x           EQU   0x02
+                  00029 
+000000 EF0D F000  00030 	GOTO main
+                  00031 
+                  00032   ; FILE uygulama.c
+                  00033 			;//interrupt Tabanlý Klavyeden Basýlan Butonu Algýlama
+                  00034 			;
+                  00035 			;// Mikrodenetleyici Timer ve Clock Ayarlamalarý
+                  00036 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00037 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00038 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00039 			;
+                  00040 			;void ayarlar(); // Port ayarlamalarýnýn yapýldýðý fonksiyonlarýn tanýmý
+                  00041 			;void bekle(unsigned long t);	// t milisaniye gecikme saðlayan fonksiyon tanýmý
+                  00042 			;void anadongu();
+                  00043 			;void kesme() //kesme gelince yapilacak komutlar, kesmede calisacak fonksiyon main fonksiyonunun ustunde yazilir...	
+                  00044 			;{
+                  00045 kesme
+                  00046 			;	INTCON=0x90; // kesmeler acilir RBO/INT0 girisi interrupt enable edilir.
+000004 0E90       00047 	MOVLW 144
+000006 6EF2       00048 	MOVWF INTCON,0
+                  00049 			;anadongu();
+000008 D81D       00050 	RCALL anadongu
+                  00051 			;bekle(300);
+00000A 0E2C       00052 	MOVLW 44
+00000C 6E00       00053 	MOVWF t,0
+00000E 0E01       00054 	MOVLW 1
+000010 6E01       00055 	MOVWF t+1,0
+000012 D88E       00056 	RCALL bekle
+                  00057 			;	INT0IF=0;  // yeni kesmeler gelmesi icin butona bagli olan INT0 portundaki interrupt flagi kapatilir.
+000014 92F2       00058 	BCF   0xFF2,INT0IF,0
+                  00059 			;	GIE=1;	//kesmeler acilir, yeni kesme gelmesine musade edilir
+000016 8EF2       00060 	BSF   0xFF2,GIE,0
+CC8E Version 1.3F,   File: uygulama.c           2. Dec 2013  21:53   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;
+                  00062 			;}	
+000018 0012       00063 	RETURN
+                  00064 			;
+                  00065 			;
+                  00066 			;void main()
+                  00067 			;{	
+                  00068 main
+                  00069 			;	ayarlar(); // Port Ayarlamalarý Programýn ilk adýmýnda yapýlýyor.
+00001A D803       00070 	RCALL ayarlar
+                  00071 			;/*if(PORTB.4==1|| PORTB.5==1||	PORTB.6==1)
+                  00072 			;anadongu();
+                  00073 			;bekle(300);*/
+                  00074 			;
+                  00075 			;//-----------------------------------------------	
+                  00076 			;/*anadongu:
+                  00077 			;	PORTB.0=1; // Port B' nin 0. biti high yapýlýyor
+                  00078 			;	PORTB.1=0; // Port B' nin 1. biti low yapýlýyor
+                  00079 			;	PORTB.2=0; // Port B' nin 2. biti low yapýlýyor
+                  00080 			;	if(PORTB.0==1){ // Port B' nin 0. biti high olduðu sürece, input bitlerine tek tek bakýlacak
+                  00081 			;	if(PORTB.5 == 1){ // Port B' nin 5. biti high olmuþsa göstergede 1 göster.
+                  00082 			;		PORTD=0x06;
+                  00083 			;		bekle(300);
+                  00084 			;		PORTD=0;
+                  00085 			;	}
+                  00086 			;	if(PORTB.4 == 1){ // Port B' nin 4. biti high olmuþsa göstergede 2 göster.
+                  00087 			;		PORTD=0x5B;
+                  00088 			;		bekle(300);
+                  00089 			;		PORTD=0;
+                  00090 			;	}
+                  00091 			;	if(PORTB.3 == 1){ // Port B' nin 3. biti high olmuþsa göstergede 3 göster.
+                  00092 			;		PORTD=0x4F;
+                  00093 			;		bekle(300);
+                  00094 			;		PORTD=0;
+                  00095 			;	}
+                  00096 			;	if(PORTB.6 == 1){// Port B' nin 6. biti high olmuþsa göstergede 0 göster.
+                  00097 			;		PORTD=0x03F;
+                  00098 			;		bekle(300);
+                  00099 			;		PORTD=0;
+                  00100 			;	}
+                  00101 			;	}
+                  00102 			;	PORTB.1=1; // Port B' nin 1. biti high, 0 ve 2. bitleri low yapýlýr.
+                  00103 			;	PORTB.0=0;
+                  00104 			;	PORTB.2=0;
+                  00105 			;	if(PORTB.1==1){ // Port B' nin 1. biti high olduðu sürece, input bitlerine tek tek bakýlacak
+                  00106 			;	if(PORTB.5 == 1){ // Port B' nin 5. biti high olmuþsa göstergede 4 göster.
+                  00107 			;		PORTD=0x66;
+                  00108 			;		bekle(300);
+                  00109 			;		PORTD=0;
+                  00110 			;	}
+                  00111 			;	if(PORTB.4 == 1){ // Port B' nin 4. biti high olmuþsa göstergede 5 göster.
+                  00112 			;		PORTD=0x6D;
+                  00113 			;		bekle(300);
+                  00114 			;		PORTD=0;
+                  00115 			;	}
+                  00116 			;	if(PORTB.3 == 1){ // Port B' nin 3. biti high olmuþsa göstergede 6 göster.
+                  00117 			;		PORTD=0x7D;
+                  00118 			;		bekle(300);
+                  00119 			;		PORTD=0;
+                  00120 			;	}
+CC8E Version 1.3F,   File: uygulama.c           2. Dec 2013  21:53   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 			;	}
+                  00122 			;	PORTB.2=1; // Port B' nin 2. biti high, 0 ve 1. bitleri low yapýlýr.
+                  00123 			;	PORTB.0=0;
+                  00124 			;	PORTB.1=0;
+                  00125 			;	if(PORTB.2==1){ // Port B' nin 2. biti high olduðu sürece, input bitlerine tek tek bakýlacak
+                  00126 			;	if(PORTB.5 == 1){ // Port B' nin 5. biti high olmuþsa göstergede 7 göster.
+                  00127 			;		PORTD=0x07;
+                  00128 			;		bekle(300);
+                  00129 			;		PORTD=0;
+                  00130 			;	}
+                  00131 			;	if(PORTB.4 == 1){ // Port B' nin 4. biti high olmuþsa göstergede 8 göster.
+                  00132 			;		PORTD=0x7F;
+                  00133 			;		bekle(300);
+                  00134 			;		PORTD=0;
+                  00135 			;	}
+                  00136 			;	if(PORTB.3 == 1){ // Port B' nin 3. biti high olmuþsa göstergede 9 göster.
+                  00137 			;		PORTD=0x6F;
+                  00138 			;		bekle(300);
+                  00139 			;		PORTD=0;
+                  00140 			;	}
+                  00141 			;}
+                  00142 			;*/
+                  00143 			;kesme(); // Döngü baþýna dönüþ
+00001C DFF3       00144 	RCALL kesme
+                  00145 			;//-----------------------------------------------	
+                  00146 			;}
+00001E 0003       00147 	SLEEP
+000020 00FF       00148 	RESET
+                  00149 			;
+                  00150 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00151 			;
+                  00152 			;void ayarlar()	// Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00153 			;{	
+                  00154 ayarlar
+                  00155 			;	GIE=0;			// Bütün kesmeleri kapat
+000022 9EF2       00156 	BCF   0xFF2,GIE,0
+                  00157 			;	TRISA=0xFF;		// Port A input
+000024 6892       00158 	SETF  TRISA,0
+                  00159 			;	TRISB=0xF8;		// Port B' nin 0-3 arasý bitleri output, 4-7 arasý bitleri input 
+000026 0EF8       00160 	MOVLW 248
+000028 6E93       00161 	MOVWF TRISB,0
+                  00162 			;	TRISC=0;		// Port C output	
+00002A 6A94       00163 	CLRF  TRISC,0
+                  00164 			;	TRISD=0;		// Port D output
+00002C 6A95       00165 	CLRF  TRISD,0
+                  00166 			;	TRISE=0;		// Port E output
+00002E 6A96       00167 	CLRF  TRISE,0
+                  00168 			;
+                  00169 			;	// Program ilk çalýþtýrýldýðýnda çýkýþlarda deðer görülmemesi için ilk çýkýþ deðerleri 0 alýnýr.	
+                  00170 			;	PORTC=0;		
+000030 6A82       00171 	CLRF  PORTC,0
+                  00172 			;	PORTD=0;
+000032 6A83       00173 	CLRF  PORTD,0
+                  00174 			;	PORTB=0;
+000034 6A81       00175 	CLRF  PORTB,0
+                  00176 			; INTCON=0X88;
+000036 0E88       00177 	MOVLW 136
+000038 6EF2       00178 	MOVWF INTCON,0
+                  00179 			; INTCON2=0XF1;
+00003A 0EF1       00180 	MOVLW 241
+CC8E Version 1.3F,   File: uygulama.c           2. Dec 2013  21:53   Page 4
+
+ADDR   CODE       LINE  SOURCE
+
+00003C 6EF1       00181 	MOVWF INTCON2,0
+                  00182 			; INTCON3=0X8B;
+00003E 0E8B       00183 	MOVLW 139
+000040 6EF0       00184 	MOVWF INTCON3,0
+                  00185 			;		
+                  00186 			;}
+000042 0012       00187 	RETURN
+                  00188 			;void anadongu()
+                  00189 			;{
+                  00190 anadongu
+                  00191 			;INTCON=0x90;
+000044 0E90       00192 	MOVLW 144
+000046 6EF2       00193 	MOVWF INTCON,0
+                  00194 			;    PORTB.0=1; // Port B' nin 0. biti high yapýlýyor
+000048 8081       00195 	BSF   PORTB,0,0
+                  00196 			;	PORTB.1=0; // Port B' nin 1. biti low yapýlýyor
+00004A 9281       00197 	BCF   PORTB,1,0
+                  00198 			;	PORTB.2=0; // Port B' nin 2. biti low yapýlýyor
+00004C 9481       00199 	BCF   PORTB,2,0
+                  00200 			;	if(PORTB.0==1){ // Port B' nin 0. biti high olduðu sürece, input bitlerine tek tek bakýlacak
+00004E A081       00201 	BTFSS PORTB,0,0
+000050 D028       00202 	BRA   m004
+                  00203 			;	if(PORTB.5 == 1){ // Port B' nin 5. biti high olmuþsa göstergede 1 göster.
+000052 AA81       00204 	BTFSS PORTB,5,0
+000054 D008       00205 	BRA   m001
+                  00206 			;		PORTD=0x06;
+000056 0E06       00207 	MOVLW 6
+000058 6E83       00208 	MOVWF PORTD,0
+                  00209 			;		bekle(300);
+00005A 0E2C       00210 	MOVLW 44
+00005C 6E00       00211 	MOVWF t,0
+00005E 0E01       00212 	MOVLW 1
+000060 6E01       00213 	MOVWF t+1,0
+000062 D866       00214 	RCALL bekle
+                  00215 			;		PORTD=0;
+000064 6A83       00216 	CLRF  PORTD,0
+                  00217 			;	}
+                  00218 			;	if(PORTB.4 == 1){ // Port B' nin 4. biti high olmuþsa göstergede 2 göster.
+000066 A881       00219 m001	BTFSS PORTB,4,0
+000068 D008       00220 	BRA   m002
+                  00221 			;		PORTD=0x5B;
+00006A 0E5B       00222 	MOVLW 91
+00006C 6E83       00223 	MOVWF PORTD,0
+                  00224 			;		bekle(300);
+00006E 0E2C       00225 	MOVLW 44
+000070 6E00       00226 	MOVWF t,0
+000072 0E01       00227 	MOVLW 1
+000074 6E01       00228 	MOVWF t+1,0
+000076 D85C       00229 	RCALL bekle
+                  00230 			;		PORTD=0;
+000078 6A83       00231 	CLRF  PORTD,0
+                  00232 			;	}
+                  00233 			;	if(PORTB.3 == 1){ // Port B' nin 3. biti high olmuþsa göstergede 3 göster.
+00007A A681       00234 m002	BTFSS PORTB,3,0
+00007C D008       00235 	BRA   m003
+                  00236 			;		PORTD=0x4F;
+00007E 0E4F       00237 	MOVLW 79
+000080 6E83       00238 	MOVWF PORTD,0
+                  00239 			;		bekle(300);
+000082 0E2C       00240 	MOVLW 44
+CC8E Version 1.3F,   File: uygulama.c           2. Dec 2013  21:53   Page 5
+
+ADDR   CODE       LINE  SOURCE
+
+000084 6E00       00241 	MOVWF t,0
+000086 0E01       00242 	MOVLW 1
+000088 6E01       00243 	MOVWF t+1,0
+00008A D852       00244 	RCALL bekle
+                  00245 			;		PORTD=0;
+00008C 6A83       00246 	CLRF  PORTD,0
+                  00247 			;	}
+                  00248 			;	if(PORTB.6 == 1){// Port B' nin 6. biti high olmuþsa göstergede 0 göster.
+00008E AC81       00249 m003	BTFSS PORTB,6,0
+000090 D008       00250 	BRA   m004
+                  00251 			;		PORTD=0x03F;
+000092 0E3F       00252 	MOVLW 63
+000094 6E83       00253 	MOVWF PORTD,0
+                  00254 			;		bekle(300);
+000096 0E2C       00255 	MOVLW 44
+000098 6E00       00256 	MOVWF t,0
+00009A 0E01       00257 	MOVLW 1
+00009C 6E01       00258 	MOVWF t+1,0
+00009E D848       00259 	RCALL bekle
+                  00260 			;		PORTD=0;
+0000A0 6A83       00261 	CLRF  PORTD,0
+                  00262 			;	}
+                  00263 			;	}
+                  00264 			;	PORTB.1=1; // Port B' nin 1. biti high, 0 ve 2. bitleri low yapýlýr.
+0000A2 8281       00265 m004	BSF   PORTB,1,0
+                  00266 			;	PORTB.0=0;
+0000A4 9081       00267 	BCF   PORTB,0,0
+                  00268 			;	PORTB.2=0;
+0000A6 9481       00269 	BCF   PORTB,2,0
+                  00270 			;	if(PORTB.1==1){ // Port B' nin 1. biti high olduðu sürece, input bitlerine tek tek bakýlacak
+0000A8 A281       00271 	BTFSS PORTB,1,0
+0000AA D01E       00272 	BRA   m007
+                  00273 			;	if(PORTB.5 == 1){ // Port B' nin 5. biti high olmuþsa göstergede 4 göster.
+0000AC AA81       00274 	BTFSS PORTB,5,0
+0000AE D008       00275 	BRA   m005
+                  00276 			;		PORTD=0x66;
+0000B0 0E66       00277 	MOVLW 102
+0000B2 6E83       00278 	MOVWF PORTD,0
+                  00279 			;		bekle(300);
+0000B4 0E2C       00280 	MOVLW 44
+0000B6 6E00       00281 	MOVWF t,0
+0000B8 0E01       00282 	MOVLW 1
+0000BA 6E01       00283 	MOVWF t+1,0
+0000BC D839       00284 	RCALL bekle
+                  00285 			;		PORTD=0;
+0000BE 6A83       00286 	CLRF  PORTD,0
+                  00287 			;	}
+                  00288 			;	if(PORTB.4 == 1){ // Port B' nin 4. biti high olmuþsa göstergede 5 göster.
+0000C0 A881       00289 m005	BTFSS PORTB,4,0
+0000C2 D008       00290 	BRA   m006
+                  00291 			;		PORTD=0x6D;
+0000C4 0E6D       00292 	MOVLW 109
+0000C6 6E83       00293 	MOVWF PORTD,0
+                  00294 			;		bekle(300);
+0000C8 0E2C       00295 	MOVLW 44
+0000CA 6E00       00296 	MOVWF t,0
+0000CC 0E01       00297 	MOVLW 1
+0000CE 6E01       00298 	MOVWF t+1,0
+0000D0 D82F       00299 	RCALL bekle
+                  00300 			;		PORTD=0;
+CC8E Version 1.3F,   File: uygulama.c           2. Dec 2013  21:53   Page 6
+
+ADDR   CODE       LINE  SOURCE
+
+0000D2 6A83       00301 	CLRF  PORTD,0
+                  00302 			;	}
+                  00303 			;	if(PORTB.3 == 1){ // Port B' nin 3. biti high olmuþsa göstergede 6 göster.
+0000D4 A681       00304 m006	BTFSS PORTB,3,0
+0000D6 D008       00305 	BRA   m007
+                  00306 			;		PORTD=0x7D;
+0000D8 0E7D       00307 	MOVLW 125
+0000DA 6E83       00308 	MOVWF PORTD,0
+                  00309 			;		bekle(300);
+0000DC 0E2C       00310 	MOVLW 44
+0000DE 6E00       00311 	MOVWF t,0
+0000E0 0E01       00312 	MOVLW 1
+0000E2 6E01       00313 	MOVWF t+1,0
+0000E4 D825       00314 	RCALL bekle
+                  00315 			;		PORTD=0;
+0000E6 6A83       00316 	CLRF  PORTD,0
+                  00317 			;	}
+                  00318 			;	}
+                  00319 			;	PORTB.2=1; // Port B' nin 2. biti high, 0 ve 1. bitleri low yapýlýr.
+0000E8 8481       00320 m007	BSF   PORTB,2,0
+                  00321 			;	PORTB.0=0;
+0000EA 9081       00322 	BCF   PORTB,0,0
+                  00323 			;	PORTB.1=0;
+0000EC 9281       00324 	BCF   PORTB,1,0
+                  00325 			;	if(PORTB.2==1){ // Port B' nin 2. biti high olduðu sürece, input bitlerine tek tek bakýlacak
+0000EE A481       00326 	BTFSS PORTB,2,0
+0000F0 D01E       00327 	BRA   m010
+                  00328 			;	if(PORTB.5 == 1){ // Port B' nin 5. biti high olmuþsa göstergede 7 göster.
+0000F2 AA81       00329 	BTFSS PORTB,5,0
+0000F4 D008       00330 	BRA   m008
+                  00331 			;		PORTD=0x07;
+0000F6 0E07       00332 	MOVLW 7
+0000F8 6E83       00333 	MOVWF PORTD,0
+                  00334 			;		bekle(300);
+0000FA 0E2C       00335 	MOVLW 44
+0000FC 6E00       00336 	MOVWF t,0
+0000FE 0E01       00337 	MOVLW 1
+000100 6E01       00338 	MOVWF t+1,0
+000102 D816       00339 	RCALL bekle
+                  00340 			;		PORTD=0;
+000104 6A83       00341 	CLRF  PORTD,0
+                  00342 			;	}
+                  00343 			;	if(PORTB.4 == 1){ // Port B' nin 4. biti high olmuþsa göstergede 8 göster.
+000106 A881       00344 m008	BTFSS PORTB,4,0
+000108 D008       00345 	BRA   m009
+                  00346 			;		PORTD=0x7F;
+00010A 0E7F       00347 	MOVLW 127
+00010C 6E83       00348 	MOVWF PORTD,0
+                  00349 			;		bekle(300);
+00010E 0E2C       00350 	MOVLW 44
+000110 6E00       00351 	MOVWF t,0
+000112 0E01       00352 	MOVLW 1
+000114 6E01       00353 	MOVWF t+1,0
+000116 D80C       00354 	RCALL bekle
+                  00355 			;		PORTD=0;
+000118 6A83       00356 	CLRF  PORTD,0
+                  00357 			;	}
+                  00358 			;	if(PORTB.3 == 1){ // Port B' nin 3. biti high olmuþsa göstergede 9 göster.
+00011A A681       00359 m009	BTFSS PORTB,3,0
+00011C D008       00360 	BRA   m010
+CC8E Version 1.3F,   File: uygulama.c           2. Dec 2013  21:53   Page 7
+
+ADDR   CODE       LINE  SOURCE
+
+                  00361 			;		PORTD=0x6F;
+00011E 0E6F       00362 	MOVLW 111
+000120 6E83       00363 	MOVWF PORTD,0
+                  00364 			;		bekle(300);
+000122 0E2C       00365 	MOVLW 44
+000124 6E00       00366 	MOVWF t,0
+000126 0E01       00367 	MOVLW 1
+000128 6E01       00368 	MOVWF t+1,0
+00012A D802       00369 	RCALL bekle
+                  00370 			;		PORTD=0;
+00012C 6A83       00371 	CLRF  PORTD,0
+                  00372 			;	}
+                  00373 			;}
+                  00374 			;}
+00012E 0012       00375 m010	RETURN
+                  00376 			;
+                  00377 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00378 			;{
+                  00379 bekle
+                  00380 			;	unsigned x;
+                  00381 			;	
+                  00382 			;	for(;t>0;t--)
+000130 5000       00383 m011	MOVF  t,W,0
+000132 1001       00384 	IORWF t+1,W,0
+000134 B4D8       00385 	BTFSC 0xFD8,Zero_,0
+000136 D00C       00386 	BRA   m014
+                  00387 			;		for(x=140;x>0;x--)
+000138 0E8C       00388 	MOVLW 140
+00013A 6E02       00389 	MOVWF x,0
+00013C 5202       00390 m012	MOVF  x,1,0
+00013E B4D8       00391 	BTFSC 0xFD8,Zero_,0
+000140 D003       00392 	BRA   m013
+                  00393 			;			nop();
+000142 0000       00394 	NOP  
+000144 0602       00395 	DECF  x,1,0
+000146 D7FA       00396 	BRA   m012
+000148 0600       00397 m013	DECF  t,1,0
+00014A 0E00       00398 	MOVLW 0
+00014C 5A01       00399 	SUBWFB t+1,1,0
+00014E D7F0       00400 	BRA   m011
+                  00401 			;}
+000150 0012       00402 m014	RETURN
+                  00403 
+                  00404 	END
+                  00405 
+                  00406 
+                  00407 ; *** KEY INFO ***
+                  00408 
+                  00409 ; 0x000022   17 word(s)  0 % : ayarlar
+                  00410 ; 0x000130   17 word(s)  0 % : bekle
+                  00411 ; 0x000044  118 word(s)  0 % : anadongu
+                  00412 ; 0x000004   11 word(s)  0 % : kesme
+                  00413 ; 0x00001A    4 word(s)  0 % : main
+                  00414 
+                  00415 ; RAM usage: 3 bytes (3 local), 1533 bytes free
+                  00416 ; Maximum call level: 3
+                  00417 ; Total of 169 code words (1 %)

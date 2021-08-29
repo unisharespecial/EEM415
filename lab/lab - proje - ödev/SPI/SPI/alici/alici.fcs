@@ -1,0 +1,23 @@
+
+CC8E Version 1.3D, Copyright (c) B Knudsen Data.
+* FUNCTION CALL STRUCTURE
+
+F: main                   :#0 
+    init                  : #1 
+    bekle                 : #1 
+
+F: init                   :#1 
+    spi_init              : #1 
+
+F: spi_init               :#1 
+
+F: spi_gonder_al          :#0 
+
+F: bekle                  :#1 
+
+
+ L0  main
+ L1    init
+ L1      spi_init [T-GOTO]
+ L1    bekle
+

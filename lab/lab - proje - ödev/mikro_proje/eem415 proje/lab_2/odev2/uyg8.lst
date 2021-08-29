@@ -1,0 +1,153 @@
+CC8E Version 1.3B,   File: uyg8.c               9. Dec 2010   3:58   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3B, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************   9. Dec 2010   3:58  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0F95       00013 TRISD       EQU   0xF95
+       0F93       00014 TRISB       EQU   0xF93
+       0F83       00015 PORTD       EQU   0xF83
+       0F81       00016 PORTB       EQU   0xF81
+       0001       00017 INT0IF      EQU   1
+       0004       00018 INT0IE      EQU   4
+       0007       00019 GIE         EQU   7
+       0006       00020 INTEDG0     EQU   6
+       0000       00021 t           EQU   0x00
+       0002       00022 x           EQU   0x02
+                  00023 
+000000 EF0B F000  00024 	GOTO main
+                  00025 
+                  00026   ; FILE uyg8.c
+                  00027 			;#include "INT18XXX.H"
+                  00028 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00029 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00030 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00031 			;#pragma origin 0x8    //Aþaðýdaki kesme fonksiyonunun hangi program satýrýndan baþlayacaðý ayarlandý
+       0000       00032 	ORG 0x0008
+                  00033 			;       					//(0x8 adresi yüksek öncelikli kesme baþlangýç adresidir)
+                  00034 			;
+                  00035 			;
+                  00036 			;void ayarlar();
+                  00037 			;void bekle(unsigned long t);	// t milisaniye gecikme saðlayan fonksiyon tanýmý
+                  00038 			;
+                  00039 			;interrupt int_server(void)  // KESME SUNUCU FONKSÝYONU
+                  00040 			;{
+                  00041 int_server
+                  00042 			;	if(INT0IF)	//Gelen kesme, INT0 kesmesi mi?
+000008 A2F2       00043 	BTFSS 0xFF2,INT0IF,0
+00000A D004       00044 	BRA   m002
+                  00045 			;	{
+                  00046 			;      PORTD.0=1;
+00000C 8083       00047 	BSF   PORTD,0,0
+                  00048 			;	  while(PORTB.0==1);	
+00000E B081       00049 m001	BTFSC PORTB,0,0
+000010 D7FE       00050 	BRA   m001
+                  00051 			;      INT0IF = 0;			// INT0 kesme bayraðýný sýfýrla
+000012 92F2       00052 	BCF   0xFF2,INT0IF,0
+                  00053 			;
+                  00054 			;	}
+                  00055 			;
+                  00056 			;}
+000014 0010       00057 m002	RETFIE
+                  00058 			;
+                  00059 			;void main()
+                  00060 			;{
+CC8E Version 1.3B,   File: uyg8.c               9. Dec 2010   3:58   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 main
+                  00062 			;	ayarlar();
+000016 D806       00063 	RCALL ayarlar
+                  00064 			;
+                  00065 			;//-----------------------------------------------	
+                  00066 			;anadongu:
+                  00067 			;
+                  00068 			; 	bekle(1);	// Acquisition Time(Sample & Hold kapasitörünün þarj olmasý için gerekli zaman)
+000018 0E01       00069 m003	MOVLW 1
+00001A 6E00       00070 	MOVWF t,0
+00001C 6A01       00071 	CLRF  t+1,0
+00001E D809       00072 	RCALL bekle
+                  00073 			;  	PORTD.0=0;
+000020 9083       00074 	BCF   PORTD,0,0
+                  00075 			;	goto anadongu;
+000022 D7FA       00076 	BRA   m003
+                  00077 			;//-----------------------------------------------	
+                  00078 			;}
+                  00079 			;
+                  00080 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00081 			;
+                  00082 			;void ayarlar()	// Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00083 			;{	
+                  00084 ayarlar
+                  00085 			;
+                  00086 			;	INT0IE=1;		// INT0 kesmesi açýk
+000024 88F2       00087 	BSF   0xFF2,INT0IE,0
+                  00088 			;	INTEDG0=1;		// INT0 kesmesi yükselen kenarda aktif olacak
+000026 8CF1       00089 	BSF   0xFF1,INTEDG0,0
+                  00090 			;	GIE=1;			// Bütün kesmeler kullanýlabilir
+000028 8EF2       00091 	BSF   0xFF2,GIE,0
+                  00092 			;	TRISB=0xFF;		// PORTB giriþ yapýldý(Buton)
+00002A 6893       00093 	SETF  TRISB,0
+                  00094 			;	TRISD=0x00;		// PORTD çýkýþ yapýldý(LED)
+00002C 6A95       00095 	CLRF  TRISD,0
+                  00096 			;	PORTD=0;		// PORTD çýkýþlarý sýfýrlandý
+00002E 6A83       00097 	CLRF  PORTD,0
+                  00098 			;	
+                  00099 			;}
+000030 0012       00100 	RETURN
+                  00101 			;
+                  00102 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00103 			;
+                  00104 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00105 			;{
+                  00106 bekle
+                  00107 			;	unsigned x;
+                  00108 			;	
+                  00109 			;	for(;t>0;t--)
+000032 5000       00110 m004	MOVF  t,W,0
+000034 1001       00111 	IORWF t+1,W,0
+000036 E00B       00112 	BZ    m007
+                  00113 			;		for(x=140;x>0;x--)
+000038 0E8C       00114 	MOVLW 140
+00003A 6E02       00115 	MOVWF x,0
+00003C 5202       00116 m005	MOVF  x,1,0
+00003E E003       00117 	BZ    m006
+                  00118 			;			nop();
+000040 0000       00119 	NOP  
+000042 0602       00120 	DECF  x,1,0
+CC8E Version 1.3B,   File: uyg8.c               9. Dec 2010   3:58   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+000044 D7FB       00121 	BRA   m005
+000046 0600       00122 m006	DECF  t,1,0
+000048 0E00       00123 	MOVLW 0
+00004A 5A01       00124 	SUBWFB t+1,1,0
+00004C D7F2       00125 	BRA   m004
+                  00126 			;}
+00004E 0012       00127 m007	RETURN
+                  00128 
+                  00129 	END
+                  00130 
+                  00131 
+                  00132 ; *** KEY INFO ***
+                  00133 
+                  00134 ; 0x000024    7 word(s)  0 % : ayarlar
+                  00135 ; 0x000032   15 word(s)  0 % : bekle
+                  00136 ; 0x000008    7 word(s)  0 % : int_server
+                  00137 ; 0x000016    7 word(s)  0 % : main
+                  00138 
+                  00139 ; RAM usage: 3 bytes (3 local), 1533 bytes free
+                  00140 ; Maximum call level: 1 (+1 for interrupt)
+                  00141 ; Total of 38 code words (0 %)

@@ -1,0 +1,27 @@
+CC8E Version 1.3D, Copyright (c) B Knudsen Data, Norway 2001-2010
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+slavec.c:
+ 23. Jan 2011  21:15
+ Chip = 18F452
+ RAM : ======== ==****** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:246  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 10 bytes (10 local), 1526 bytes free
+ File 'slavec.fcs'
+ Optimizing - removed 75 code words (-17 %)
+ File 'slavec.var'
+ File 'slavec.asm'
+ File 'slavec.lst'
+ File 'slavec.cod'
+ File 'slavec.occ'
+Warning[1] C:\eem415\SPI\alici\slavec.c 139 : Read-modify-write sequence on the same PORT may fail
+ (Two consecutive instructions modifying the same PORT may fail depending on
+ execution speed and load (fall/rise times) on the port pins. Option -wf will
+ remove this warning)
+Warning[2] C:\eem415\SPI\alici\slavec.c 148 : Read-modify-write sequence on the same PORT may fail
+Warning[3] C:\eem415\SPI\alici\slavec.c 155 : Read-modify-write sequence on the same PORT may fail
+ File 'slavec.hex'
+Total of 348 code words (2 %)
+ * Estimated CODE SIZE of full optimization: 342 code words (-1 %)

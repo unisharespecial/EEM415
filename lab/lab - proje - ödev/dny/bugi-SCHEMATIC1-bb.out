@@ -1,0 +1,588 @@
+
+**** 07/02/07 17:10:38 *********** Evaluation PSpice (Nov 1999) **************
+
+ ** Profile: "SCHEMATIC1-bb"  [ C:\Documents and Settings\ogrenci\Desktop\bugi-SCHEMATIC1-bb.sim ] 
+
+
+ ****     CIRCUIT DESCRIPTION
+
+
+******************************************************************************
+
+
+
+
+** Creating circuit file "bugi-SCHEMATIC1-bb.sim.cir" 
+** WARNING: THIS AUTOMATICALLY GENERATED FILE MAY BE OVERWRITTEN BY SUBSEQUENT SIMULATIONS
+
+*Libraries: 
+* Local Libraries :
+* From [PSPICE NETLIST] section of pspiceev.ini file:
+.lib "C:\Program Files\OrCAD_Demo\Capture\Library\Pspice\diode.lib" 
+.lib "nom.lib" 
+
+*Analysis directives: 
+.TRAN  0 1000ns 0 
+.STEP PARAM Rvar LIST 1k,3k,5k,7k,10k 
+.PROBE 
+.INC "bugi-SCHEMATIC1.net" 
+
+
+**** INCLUDING bugi-SCHEMATIC1.net ****
+* source BUGI
+V_V4         N00500 0 -9Vdc
+X_U1         0 N00079 N00278 N00500 N00075 uA741
+V_V1         N00254 0 9Vdc
+V_V2         N00278 0 9Vdc
+X_U2         0 N00156 N00278 N00500 N00017 uA741
+V_V3         N00284 0 9Vdc
+X_U3         N00114 N00017 N00278 N00500 N00120 uA741
+R_R1         N00075 N00156  1k  
+R_R2         N00079 N00075  0.67k  
+R_R3         N00059 N00254  1k  
+R_R5         N00059 N00079 {Rvar*0.5+.001}
+R_R6         N00156 N00278  16k  
+R_R7         N00114 N00284  7k  
+R_R8         0 N00114  2k  
+R_R9         0 N00120  0.36k  
+.PARAM  Rvar=234
+
+**** RESUMING bugi-SCHEMATIC1-bb.sim.cir ****
+.INC "bugi-SCHEMATIC1.als"
+
+
+
+**** INCLUDING bugi-SCHEMATIC1.als ****
+.ALIASES
+V_V4            V4(+=N00500 -=0 )
+X_U1            U1(+=0 -=N00079 V+=N00278 V-=N00500 OUT=N00075 )
+V_V1            V1(+=N00254 -=0 )
+V_V2            V2(+=N00278 -=0 )
+X_U2            U2(+=0 -=N00156 V+=N00278 V-=N00500 OUT=N00017 )
+V_V3            V3(+=N00284 -=0 )
+X_U3            U3(+=N00114 -=N00017 V+=N00278 V-=N00500 OUT=N00120 )
+R_R1            R1(1=N00075 2=N00156 )
+R_R2            R2(1=N00079 2=N00075 )
+R_R3            R3(1=N00059 2=N00254 )
+R_R5            R5(1=N00059 2=N00079 )
+R_R6            R6(1=N00156 2=N00278 )
+R_R7            R7(1=N00114 2=N00284 )
+R_R8            R8(1=0 2=N00114 )
+R_R9            R9(1=0 2=N00120 )
+.ENDALIASES
+
+**** RESUMING bugi-SCHEMATIC1-bb.sim.cir ****
+.END
+
+**** 07/02/07 17:10:38 *********** Evaluation PSpice (Nov 1999) **************
+
+ ** Profile: "SCHEMATIC1-bb"  [ C:\Documents and Settings\ogrenci\Desktop\bugi-SCHEMATIC1-bb.sim ] 
+
+
+ ****     Diode MODEL PARAMETERS
+
+
+******************************************************************************
+
+
+
+
+               X_U1.dx         X_U2.dx         X_U3.dx         
+          IS  800.000000E-18  800.000000E-18  800.000000E-18 
+          RS    1               1               1            
+
+
+**** 07/02/07 17:10:38 *********** Evaluation PSpice (Nov 1999) **************
+
+ ** Profile: "SCHEMATIC1-bb"  [ C:\Documents and Settings\ogrenci\Desktop\bugi-SCHEMATIC1-bb.sim ] 
+
+
+ ****     BJT MODEL PARAMETERS
+
+
+******************************************************************************
+
+
+
+
+               X_U1.qx         X_U2.qx         X_U3.qx         
+               NPN             NPN             NPN             
+          IS  800.000000E-18  800.000000E-18  800.000000E-18 
+          BF   93.75           93.75           93.75         
+          NF    1               1               1            
+          BR    1               1               1            
+          NR    1               1               1            
+          CN    2.42            2.42            2.42         
+           D     .87             .87             .87         
+
+
+**** 07/02/07 17:10:38 *********** Evaluation PSpice (Nov 1999) **************
+
+ ** Profile: "SCHEMATIC1-bb"  [ C:\Documents and Settings\ogrenci\Desktop\bugi-SCHEMATIC1-bb.sim ] 
+
+
+ ****     INITIAL TRANSIENT SOLUTION       TEMPERATURE =   27.000 DEG C
+
+ ****     CURRENT STEP                     PARAM RVAR =    1.0000E+03
+
+
+******************************************************************************
+
+
+
+ NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE
+
+
+(N00017)    8.6133 (N00059)    3.0000 (N00075)   -4.0199 (N00079) 44.58E-06     
+
+(N00114)    2.0000 (N00120)   -8.6144 (N00156)   -3.2540 (N00254)    9.0000     
+
+(N00278)    9.0000 (N00284)    9.0000 (N00500)   -9.0000 (X_U1.6) 476.6E-06     
+
+(X_U1.7)   -4.3582 (X_U1.8)   -4.3582 (X_U1.9)    0.0000 (X_U2.6)   -1.4956     
+
+(X_U2.7)    8.6141 (X_U2.8)    8.6141 (X_U2.9)    0.0000 (X_U3.6)    1.5645     
+
+(X_U3.7)   -9.8117 (X_U3.8)   -9.8117 (X_U3.9)    0.0000 (X_U1.10)    -.6076    
+
+(X_U1.11)    8.9603                   (X_U1.12)    8.9604                       
+
+(X_U1.13)    -.5938                   (X_U1.14)    -.5938                       
+
+(X_U1.53)    8.0000                   (X_U1.54)   -8.0000                       
+
+(X_U1.90)   -6.7658                   (X_U1.91)   40.0000                       
+
+(X_U1.92)  -40.0000                   (X_U1.99)    0.0000                       
+
+(X_U2.10)    -.6395                   (X_U2.11)    9.0000                       
+
+(X_U2.12)    8.9207                   (X_U2.13)    -.6395                       
+
+(X_U2.14)    -.6117                   (X_U2.53)    8.0000                       
+
+(X_U2.54)   -8.0000                   (X_U2.90)     .0160                       
+
+(X_U2.91)   40.0000                   (X_U2.92)  -40.0000                       
+
+(X_U2.99)    0.0000                   (X_U3.10)    7.9715                       
+
+(X_U3.11)    8.9173                   (X_U3.12)    9.0000                       
+
+(X_U3.13)    8.0004                   (X_U3.14)    7.9715                       
+
+(X_U3.53)    8.0000                   (X_U3.54)   -8.0000                       
+
+(X_U3.90)  -23.9460                   (X_U3.91)   40.0000                       
+
+(X_U3.92)  -40.0000                   (X_U3.99)    0.0000                   
+
+
+
+
+    VOLTAGE SOURCE CURRENTS
+    NAME         CURRENT
+
+    V_V4         3.002E-03
+    V_V1        -6.000E-03
+    V_V2        -3.769E-03
+    V_V3        -1.000E-03
+    X_U1.vb      4.766E-09
+    X_U1.vc      1.202E-11
+    X_U1.ve      3.983E-12
+    X_U1.vlim   -6.766E-03
+    X_U1.vlp    -4.677E-11
+    X_U1.vln    -3.324E-11
+    X_U2.vb     -1.496E-05
+    X_U2.vc     -1.586E-05
+    X_U2.ve      1.662E-11
+    X_U2.vlim    1.604E-05
+    X_U2.vlp    -3.998E-11
+    X_U2.vln    -4.002E-11
+    X_U3.vb      1.565E-05
+    X_U3.vc      1.662E-11
+    X_U3.ve     -1.659E-05
+    X_U3.vlim   -2.395E-02
+    X_U3.vlp    -6.395E-11
+    X_U3.vln    -1.606E-11
+
+    TOTAL POWER DISSIPATION   1.24E-01  WATTS
+
+
+**** 07/02/07 17:10:38 *********** Evaluation PSpice (Nov 1999) **************
+
+ ** Profile: "SCHEMATIC1-bb"  [ C:\Documents and Settings\ogrenci\Desktop\bugi-SCHEMATIC1-bb.sim ] 
+
+
+ ****     INITIAL TRANSIENT SOLUTION       TEMPERATURE =   27.000 DEG C
+
+ ****     CURRENT STEP                     PARAM RVAR =    3.0000E+03
+
+
+******************************************************************************
+
+
+
+ NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE
+
+
+(N00017)    8.6133 (N00059)    5.4000 (N00075)   -2.4119 (N00079) 34.61E-06     
+
+(N00114)    2.0000 (N00120)   -8.6144 (N00156)   -1.7406 (N00254)    9.0000     
+
+(N00278)    9.0000 (N00284)    9.0000 (N00500)   -9.0000 (X_U1.6) 289.0E-06     
+
+(X_U1.7)   -2.6255 (X_U1.8)   -2.6255 (X_U1.9)    0.0000 (X_U2.6)   -1.4956     
+
+(X_U2.7)    8.6141 (X_U2.8)    8.6141 (X_U2.9)    0.0000 (X_U3.6)    1.5645     
+
+(X_U3.7)   -9.8117 (X_U3.8)   -9.8117 (X_U3.9)    0.0000 (X_U1.10)    -.6077    
+
+(X_U1.11)    8.9603                   (X_U1.12)    8.9604                       
+
+(X_U1.13)    -.5938                   (X_U1.14)    -.5938                       
+
+(X_U1.53)    8.0000                   (X_U1.54)   -8.0000                       
+
+(X_U1.90)   -4.2712                   (X_U1.91)   40.0000                       
+
+(X_U1.92)  -40.0000                   (X_U1.99)    0.0000                       
+
+(X_U2.10)    -.6395                   (X_U2.11)    9.0000                       
+
+(X_U2.12)    8.9207                   (X_U2.13)    -.6395                       
+
+(X_U2.14)    -.6117                   (X_U2.53)    8.0000                       
+
+(X_U2.54)   -8.0000                   (X_U2.90)     .0160                       
+
+(X_U2.91)   40.0000                   (X_U2.92)  -40.0000                       
+
+(X_U2.99)    0.0000                   (X_U3.10)    7.9715                       
+
+(X_U3.11)    8.9173                   (X_U3.12)    9.0000                       
+
+(X_U3.13)    8.0004                   (X_U3.14)    7.9715                       
+
+(X_U3.53)    8.0000                   (X_U3.54)   -8.0000                       
+
+(X_U3.90)  -23.9460                   (X_U3.91)   40.0000                       
+
+(X_U3.92)  -40.0000                   (X_U3.99)    0.0000                   
+
+
+
+
+    VOLTAGE SOURCE CURRENTS
+    NAME         CURRENT
+
+    V_V4         3.002E-03
+    V_V1        -3.600E-03
+    V_V2        -3.675E-03
+    V_V3        -1.000E-03
+    X_U1.vb      2.890E-09
+    X_U1.vc      1.041E-11
+    X_U1.ve      5.590E-12
+    X_U1.vlim   -4.271E-03
+    X_U1.vlp    -4.427E-11
+    X_U1.vln    -3.573E-11
+    X_U2.vb     -1.496E-05
+    X_U2.vc     -1.586E-05
+    X_U2.ve      1.662E-11
+    X_U2.vlim    1.603E-05
+    X_U2.vlp    -3.998E-11
+    X_U2.vln    -4.002E-11
+    X_U3.vb      1.565E-05
+    X_U3.vc      1.662E-11
+    X_U3.ve     -1.659E-05
+    X_U3.vlim   -2.395E-02
+    X_U3.vlp    -6.395E-11
+    X_U3.vln    -1.606E-11
+
+    TOTAL POWER DISSIPATION   1.02E-01  WATTS
+
+
+**** 07/02/07 17:10:38 *********** Evaluation PSpice (Nov 1999) **************
+
+ ** Profile: "SCHEMATIC1-bb"  [ C:\Documents and Settings\ogrenci\Desktop\bugi-SCHEMATIC1-bb.sim ] 
+
+
+ ****     INITIAL TRANSIENT SOLUTION       TEMPERATURE =   27.000 DEG C
+
+ ****     CURRENT STEP                     PARAM RVAR =    5.0000E+03
+
+
+******************************************************************************
+
+
+
+ NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE
+
+
+(N00017)    8.6133 (N00059)    6.4286 (N00075)   -1.7228 (N00079) 30.34E-06     
+
+(N00114)    2.0000 (N00120)   -8.6144 (N00156)   -1.0920 (N00254)    9.0000     
+
+(N00278)    9.0000 (N00284)    9.0000 (N00500)   -9.0000 (X_U1.6) 208.6E-06     
+
+(X_U1.7)   -1.8829 (X_U1.8)   -1.8829 (X_U1.9)    0.0000 (X_U2.6)   -1.4956     
+
+(X_U2.7)    8.6141 (X_U2.8)    8.6141 (X_U2.9)    0.0000 (X_U3.6)    1.5645     
+
+(X_U3.7)   -9.8117 (X_U3.8)   -9.8117 (X_U3.9)    0.0000 (X_U1.10)    -.6077    
+
+(X_U1.11)    8.9603                   (X_U1.12)    8.9603                       
+
+(X_U1.13)    -.5938                   (X_U1.14)    -.5938                       
+
+(X_U1.53)    8.0000                   (X_U1.54)   -8.0000                       
+
+(X_U1.90)   -3.2021                   (X_U1.91)   40.0000                       
+
+(X_U1.92)  -40.0000                   (X_U1.99)    0.0000                       
+
+(X_U2.10)    -.6395                   (X_U2.11)    9.0000                       
+
+(X_U2.12)    8.9207                   (X_U2.13)    -.6395                       
+
+(X_U2.14)    -.6117                   (X_U2.53)    8.0000                       
+
+(X_U2.54)   -8.0000                   (X_U2.90)     .0160                       
+
+(X_U2.91)   40.0000                   (X_U2.92)  -40.0000                       
+
+(X_U2.99)    0.0000                   (X_U3.10)    7.9715                       
+
+(X_U3.11)    8.9173                   (X_U3.12)    9.0000                       
+
+(X_U3.13)    8.0004                   (X_U3.14)    7.9715                       
+
+(X_U3.53)    8.0000                   (X_U3.54)   -8.0000                       
+
+(X_U3.90)  -23.9460                   (X_U3.91)   40.0000                       
+
+(X_U3.92)  -40.0000                   (X_U3.99)    0.0000                   
+
+
+
+
+    VOLTAGE SOURCE CURRENTS
+    NAME         CURRENT
+
+    V_V4         3.002E-03
+    V_V1        -2.571E-03
+    V_V2        -3.634E-03
+    V_V3        -1.000E-03
+    X_U1.vb      2.086E-09
+    X_U1.vc      9.724E-12
+    X_U1.ve      6.279E-12
+    X_U1.vlim   -3.202E-03
+    X_U1.vlp    -4.320E-11
+    X_U1.vln    -3.680E-11
+    X_U2.vb     -1.496E-05
+    X_U2.vc     -1.586E-05
+    X_U2.ve      1.662E-11
+    X_U2.vlim    1.603E-05
+    X_U2.vlp    -3.998E-11
+    X_U2.vln    -4.002E-11
+    X_U3.vb      1.565E-05
+    X_U3.vc      1.662E-11
+    X_U3.ve     -1.659E-05
+    X_U3.vlim   -2.395E-02
+    X_U3.vlp    -6.395E-11
+    X_U3.vln    -1.606E-11
+
+    TOTAL POWER DISSIPATION   9.19E-02  WATTS
+
+
+**** 07/02/07 17:10:38 *********** Evaluation PSpice (Nov 1999) **************
+
+ ** Profile: "SCHEMATIC1-bb"  [ C:\Documents and Settings\ogrenci\Desktop\bugi-SCHEMATIC1-bb.sim ] 
+
+
+ ****     INITIAL TRANSIENT SOLUTION       TEMPERATURE =   27.000 DEG C
+
+ ****     CURRENT STEP                     PARAM RVAR =    7.0000E+03
+
+
+******************************************************************************
+
+
+
+ NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE
+
+
+(N00017)    8.6133 (N00059)    7.0000 (N00075)   -1.3399 (N00079) 27.96E-06     
+
+(N00114)    2.0000 (N00120)   -8.6144 (N00156)    -.7317 (N00254)    9.0000     
+
+(N00278)    9.0000 (N00284)    9.0000 (N00500)   -9.0000 (X_U1.6) 163.9E-06     
+
+(X_U1.7)   -1.4703 (X_U1.8)   -1.4703 (X_U1.9)    0.0000 (X_U2.6)   -1.4956     
+
+(X_U2.7)    8.6141 (X_U2.8)    8.6141 (X_U2.9)    0.0000 (X_U3.6)    1.5645     
+
+(X_U3.7)   -9.8117 (X_U3.8)   -9.8117 (X_U3.9)    0.0000 (X_U1.10)    -.6077    
+
+(X_U1.11)    8.9603                   (X_U1.12)    8.9603                       
+
+(X_U1.13)    -.5938                   (X_U1.14)    -.5938                       
+
+(X_U1.53)    8.0000                   (X_U1.54)   -8.0000                       
+
+(X_U1.90)   -2.6081                   (X_U1.91)   40.0000                       
+
+(X_U1.92)  -40.0000                   (X_U1.99)    0.0000                       
+
+(X_U2.10)    -.6395                   (X_U2.11)    9.0000                       
+
+(X_U2.12)    8.9207                   (X_U2.13)    -.6395                       
+
+(X_U2.14)    -.6117                   (X_U2.53)    8.0000                       
+
+(X_U2.54)   -8.0000                   (X_U2.90)     .0160                       
+
+(X_U2.91)   40.0000                   (X_U2.92)  -40.0000                       
+
+(X_U2.99)    0.0000                   (X_U3.10)    7.9715                       
+
+(X_U3.11)    8.9173                   (X_U3.12)    9.0000                       
+
+(X_U3.13)    8.0004                   (X_U3.14)    7.9715                       
+
+(X_U3.53)    8.0000                   (X_U3.54)   -8.0000                       
+
+(X_U3.90)  -23.9460                   (X_U3.91)   40.0000                       
+
+(X_U3.92)  -40.0000                   (X_U3.99)    0.0000                   
+
+
+
+
+    VOLTAGE SOURCE CURRENTS
+    NAME         CURRENT
+
+    V_V4         3.002E-03
+    V_V1        -2.000E-03
+    V_V2        -3.611E-03
+    V_V3        -1.000E-03
+    X_U1.vb      1.639E-09
+    X_U1.vc      9.341E-12
+    X_U1.ve      6.661E-12
+    X_U1.vlim   -2.608E-03
+    X_U1.vlp    -4.261E-11
+    X_U1.vln    -3.740E-11
+    X_U2.vb     -1.496E-05
+    X_U2.vc     -1.586E-05
+    X_U2.ve      1.662E-11
+    X_U2.vlim    1.603E-05
+    X_U2.vlp    -3.998E-11
+    X_U2.vln    -4.002E-11
+    X_U3.vb      1.565E-05
+    X_U3.vc      1.662E-11
+    X_U3.ve     -1.659E-05
+    X_U3.vlim   -2.395E-02
+    X_U3.vlp    -6.395E-11
+    X_U3.vln    -1.606E-11
+
+    TOTAL POWER DISSIPATION   8.66E-02  WATTS
+
+
+**** 07/02/07 17:10:38 *********** Evaluation PSpice (Nov 1999) **************
+
+ ** Profile: "SCHEMATIC1-bb"  [ C:\Documents and Settings\ogrenci\Desktop\bugi-SCHEMATIC1-bb.sim ] 
+
+
+ ****     INITIAL TRANSIENT SOLUTION       TEMPERATURE =   27.000 DEG C
+
+ ****     CURRENT STEP                     PARAM RVAR =   10.0000E+03
+
+
+******************************************************************************
+
+
+
+ NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE     NODE   VOLTAGE
+
+
+(N00017)    8.6133 (N00059)    7.5000 (N00075)   -1.0049 (N00079) 25.89E-06     
+
+(N00114)    2.0000 (N00120)   -8.6144 (N00156)    -.4164 (N00254)    9.0000     
+
+(N00278)    9.0000 (N00284)    9.0000 (N00500)   -9.0000 (X_U1.6) 124.8E-06     
+
+(X_U1.7)   -1.1093 (X_U1.8)   -1.1093 (X_U1.9)    0.0000 (X_U2.6)   -1.4956     
+
+(X_U2.7)    8.6141 (X_U2.8)    8.6141 (X_U2.9)    0.0000 (X_U3.6)    1.5645     
+
+(X_U3.7)   -9.8117 (X_U3.8)   -9.8117 (X_U3.9)    0.0000 (X_U1.10)    -.6077    
+
+(X_U1.11)    8.9603                   (X_U1.12)    8.9603                       
+
+(X_U1.13)    -.5938                   (X_U1.14)    -.5938                       
+
+(X_U1.53)    8.0000                   (X_U1.54)   -8.0000                       
+
+(X_U1.90)   -2.0884                   (X_U1.91)   40.0000                       
+
+(X_U1.92)  -40.0000                   (X_U1.99)    0.0000                       
+
+(X_U2.10)    -.6395                   (X_U2.11)    9.0000                       
+
+(X_U2.12)    8.9207                   (X_U2.13)    -.6395                       
+
+(X_U2.14)    -.6117                   (X_U2.53)    8.0000                       
+
+(X_U2.54)   -8.0000                   (X_U2.90)     .0160                       
+
+(X_U2.91)   40.0000                   (X_U2.92)  -40.0000                       
+
+(X_U2.99)    0.0000                   (X_U3.10)    7.9715                       
+
+(X_U3.11)    8.9173                   (X_U3.12)    9.0000                       
+
+(X_U3.13)    8.0004                   (X_U3.14)    7.9715                       
+
+(X_U3.53)    8.0000                   (X_U3.54)   -8.0000                       
+
+(X_U3.90)  -23.9460                   (X_U3.91)   40.0000                       
+
+(X_U3.92)  -40.0000                   (X_U3.99)    0.0000                   
+
+
+
+
+    VOLTAGE SOURCE CURRENTS
+    NAME         CURRENT
+
+    V_V4         3.002E-03
+    V_V1        -1.500E-03
+    V_V2        -3.592E-03
+    V_V3        -1.000E-03
+    X_U1.vb      1.248E-09
+    X_U1.vc      9.006E-12
+    X_U1.ve      6.997E-12
+    X_U1.vlim   -2.088E-03
+    X_U1.vlp    -4.209E-11
+    X_U1.vln    -3.792E-11
+    X_U2.vb     -1.496E-05
+    X_U2.vc     -1.586E-05
+    X_U2.ve      1.662E-11
+    X_U2.vlim    1.603E-05
+    X_U2.vlp    -3.998E-11
+    X_U2.vln    -4.002E-11
+    X_U3.vb      1.565E-05
+    X_U3.vc      1.662E-11
+    X_U3.ve     -1.659E-05
+    X_U3.vlim   -2.395E-02
+    X_U3.vlp    -6.395E-11
+    X_U3.vln    -1.606E-11
+
+    TOTAL POWER DISSIPATION   8.19E-02  WATTS
+
+
+
+          JOB CONCLUDED
+
+          TOTAL JOB TIME             .14
+

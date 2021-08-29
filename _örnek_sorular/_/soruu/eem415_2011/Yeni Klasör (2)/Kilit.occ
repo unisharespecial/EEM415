@@ -1,0 +1,22 @@
+CC8E Version 1.3B, Copyright (c) B Knudsen Data, Norway 2001-2009, No. 2367
+ --> STANDARD edition, 8-32 bit int, 16-32 bit float, 128k code words
+Kilit.c:
+ 14. Jan 2011  12:05
+ Chip = 18F452
+ RAM : ====**** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:252  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 4 bytes (4 local), 1532 bytes free
+ File 'Kilit.fcs'
+ Optimizing - removed 14 code words (-26 %)
+ File 'Kilit.var'
+ File 'Kilit.asm'
+ File 'Kilit.lst'
+ File 'Kilit.cod'
+ File 'Kilit.occ'
+Warning[1] F:\2\Kilit.c 19 : Read-modify-write sequence on same PORT may fail
+Warning[2] F:\2\Kilit.c 32 : Read-modify-write sequence on same PORT may fail
+ File 'Kilit.hex'
+Total of 52 code words (0 %)

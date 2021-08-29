@@ -1,0 +1,26 @@
+CC8E Version 1.3D, Copyright (c) B Knudsen Data, Norway 2001-2010
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+proje12.c:
+ 31. Oct 2010  19:22
+
+
+char	tus=0				   //karekter tipinde deðiþken tanýmlandý
+    	   ^------
+Error[1] C:\eem415\proje1\proje12.c 18 : Initialized static and global RAM variables are not supported
+
+
+char	keypad_oku()		//fonksiyon ismi
+   ^------
+Error[2] C:\eem415\proje1\proje12.c 22 : No ';' found
+ (Each statement (and definition) must be terminated by a semicolon. Check
+ previous statement)
+
+
+char	keypad_oku()		//fonksiyon ismi
+    	         ^------
+Error[3] C:\eem415\proje1\proje12.c 22 : Syntax error (or limitation)
+ (CC8E is unable to compile the expression due to syntax error or
+ limited C support. Code correction is required. Check also for
+ unbalanced block delimiters '{ .. }' in previous statements)
+
+Error options: -ew: no warning details  -ed: no error details  -eL: list details

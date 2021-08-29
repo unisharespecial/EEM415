@@ -1,0 +1,31 @@
+CC8E Version 1.3D, Copyright (c) B Knudsen Data, Norway 2001-2010
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+adcdeneme1.c:
+ 23. Dec 2010  15:44
+
+	bekle(1000);
+	sarial(sayi);
+	      ^------
+Error[1] C:\Documents and Settings\Administrator\Desktop\eem415 proje\deneme\adcdeneme1.c 21 : Symbol 'sarial' is undefined
+ (The definition of the symbol in not known. This can be due to
+ wrong spelling or letter case mismatch. Otherwise a new symbol
+ definition is required: variable, function, macro, etc.)
+
+	ADCON1=0b.0000.0000;;
+	seriRXayar();
+	          ^------
+Error[2] C:\Documents and Settings\Administrator\Desktop\eem415 proje\deneme\adcdeneme1.c 47 : Symbol 'seriRXayar' is undefined
+
+	nop(); nop(); nop(); nop();
+	deger=RXREG;
+	          ^------
+Error[3] C:\Documents and Settings\Administrator\Desktop\eem415 proje\deneme\adcdeneme1.c 58 : Symbol 'RXREG' is undefined
+
+void seriRXayar()	// Seri Portu veri göndermeye hazýr hale getirir
+{
+^------
+Error[4] C:\Documents and Settings\Administrator\Desktop\eem415 proje\deneme\adcdeneme1.c 73 : Illegal name
+ (The identifier seems to be used for another purpose. Variable names must
+ be unique)
+
+Error options: -ew: no warning details  -ed: no error details  -eL: list details

@@ -1,0 +1,157 @@
+CC8E Version 1.3D,   File: prj2.c              19. Nov 2010  21:35   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3D, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  19. Nov 2010  21:35  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0002       00013 Zero_       EQU   2
+       0F95       00014 TRISD       EQU   0xF95
+       0F94       00015 TRISC       EQU   0xF94
+       0F93       00016 TRISB       EQU   0xF93
+       0F83       00017 PORTD       EQU   0xF83
+       0F81       00018 PORTB       EQU   0xF81
+       0007       00019 GIE         EQU   7
+       0004       00020 t           EQU   0x04
+       0006       00021 x           EQU   0x06
+                  00022 
+000000 EF2E F000  00023 	GOTO main
+                  00024 
+                  00025   ; FILE prj2.c
+                  00026 			;
+                  00027 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00028 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00029 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00030 			;
+                  00031 			;
+                  00032 			; void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00033 			;{
+                  00034 bekle
+                  00035 			;	unsigned x;
+                  00036 			;	
+                  00037 			;	for(;t>0;t--)
+000004 5004       00038 m001	MOVF  t,W,0
+000006 1005       00039 	IORWF t+1,W,0
+000008 B4D8       00040 	BTFSC 0xFD8,Zero_,0
+00000A D00C       00041 	BRA   m004
+                  00042 			;		for(x=140;x>0;x--)
+00000C 0E8C       00043 	MOVLW 140
+00000E 6E06       00044 	MOVWF x,0
+000010 5206       00045 m002	MOVF  x,1,0
+000012 B4D8       00046 	BTFSC 0xFD8,Zero_,0
+000014 D003       00047 	BRA   m003
+                  00048 			;			nop();
+000016 0000       00049 	NOP  
+000018 0606       00050 	DECF  x,1,0
+00001A D7FA       00051 	BRA   m002
+00001C 0604       00052 m003	DECF  t,1,0
+00001E 0E00       00053 	MOVLW 0
+000020 5A05       00054 	SUBWFB t+1,1,0
+000022 D7F0       00055 	BRA   m001
+                  00056 			;}
+000024 0012       00057 m004	RETURN
+                  00058 			;void ayarlar()   // Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00059 			;{   
+                  00060 ayarlar
+CC8E Version 1.3D,   File: prj2.c              19. Nov 2010  21:35   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;   GIE=0;         // Bütün kesmeleri kapat
+000026 9EF2       00062 	BCF   0xFF2,GIE,0
+                  00063 			;   TRISB=0xFF;    // B portu giriþ yapýldý(Butonlar)
+000028 6893       00064 	SETF  TRISB,0
+                  00065 			;   TRISC=0;
+00002A 6A94       00066 	CLRF  TRISC,0
+                  00067 			;   TRISD=0;       // D portu çýkýþ yapýldý(DC-Motor)      
+00002C 6A95       00068 	CLRF  TRISD,0
+                  00069 			;   PORTD=0xFF;       
+00002E 6883       00070 	SETF  PORTD,0
+                  00071 			;}
+000030 0012       00072 	RETURN
+                  00073 			;
+                  00074 			;void basla()
+                  00075 			;{
+                  00076 basla
+                  00077 			;
+                  00078 			;	while(PORTB.1) // stop butonuna basýlmadýðý sürece program devam edecek
+000032 A281       00079 m005	BTFSS PORTB,1,0
+000034 D012       00080 	BRA   m007
+                  00081 			;	{
+                  00082 			;		PORTD=0xFF;
+000036 6883       00083 	SETF  PORTD,0
+                  00084 			;		if(PORTB.2==0)   	//  saga donme butonuna basýldý mý?
+000038 B481       00085 	BTFSC PORTB,2,0
+00003A D006       00086 	BRA   m006
+                  00087 			;		{PORTD = 0x01;bekle(10);}
+00003C 0E01       00088 	MOVLW 1
+00003E 6E83       00089 	MOVWF PORTD,0
+000040 0E0A       00090 	MOVLW 10
+000042 6E04       00091 	MOVWF t,0
+000044 6A05       00092 	CLRF  t+1,0
+000046 DFDE       00093 	RCALL bekle
+                  00094 			;
+                  00095 			;		if(PORTB.3==0)    	// sola dönme butonuna basýldý mý?
+000048 B681       00096 m006	BTFSC PORTB,3,0
+00004A D7F3       00097 	BRA   m005
+                  00098 			;		{PORTD = 0x02;bekle(10);}
+00004C 0E02       00099 	MOVLW 2
+00004E 6E83       00100 	MOVWF PORTD,0
+000050 0E0A       00101 	MOVLW 10
+000052 6E04       00102 	MOVWF t,0
+000054 6A05       00103 	CLRF  t+1,0
+000056 DFD6       00104 	RCALL bekle
+                  00105 			;				
+                  00106 			;	}
+000058 D7EC       00107 	BRA   m005
+                  00108 			;}
+00005A 0012       00109 m007	RETURN
+                  00110 			;
+                  00111 			;
+                  00112 			;void main()
+                  00113 			;{
+                  00114 main
+                  00115 			;anadongu:		
+                  00116 			;    bekle(1);	
+00005C 0E01       00117 m008	MOVLW 1
+00005E 6E04       00118 	MOVWF t,0
+000060 6A05       00119 	CLRF  t+1,0
+000062 DFD0       00120 	RCALL bekle
+CC8E Version 1.3D,   File: prj2.c              19. Nov 2010  21:35   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 			;    ayarlar();
+000064 DFE0       00122 	RCALL ayarlar
+                  00123 			;    unsigned STOP,START,RIGHT,LEFT;
+                  00124 			;    
+                  00125 			;    if(PORTB.0==0) // start butonuna basýldý mý?
+000066 B081       00126 	BTFSC PORTB,0,0
+000068 D7F9       00127 	BRA   m008
+                  00128 			;      {basla(); }
+00006A DFE3       00129 	RCALL basla
+                  00130 			;goto anadongu;
+00006C D7F7       00131 	BRA   m008
+                  00132 
+                  00133 	END
+                  00134 
+                  00135 
+                  00136 ; *** KEY INFO ***
+                  00137 
+                  00138 ; 0x000004   17 word(s)  0 % : bekle
+                  00139 ; 0x000026    6 word(s)  0 % : ayarlar
+                  00140 ; 0x000032   21 word(s)  0 % : basla
+                  00141 ; 0x00005C    9 word(s)  0 % : main
+                  00142 
+                  00143 ; RAM usage: 7 bytes (7 local), 1529 bytes free
+                  00144 ; Maximum call level: 2
+                  00145 ; Total of 55 code words (0 %)

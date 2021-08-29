@@ -1,0 +1,13 @@
+
+CC8E Version 1.3B, Copyright (c) B Knudsen Data.
+* FUNCTION CALL STRUCTURE
+
+F: int_server             :#0 
+
+F: main                   :#0 
+
+
+ L1  int_server
+
+ L0  main
+

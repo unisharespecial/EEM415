@@ -1,0 +1,25 @@
+
+CC8E Version 1.3D, Copyright (c) B Knudsen Data.
+* FUNCTION CALL STRUCTURE
+
+F: bekle                  :#3 
+
+F: ayarlar                :#1 
+
+F: basla                  :#1 
+    bekle                 : #3 
+    bekle                 : #3 
+
+F: main                   :#0 
+    bekle                 : #3 
+    ayarlar               : #1 
+    basla                 : #1 
+
+
+ L0  main
+ L1    bekle
+ L1    ayarlar
+ L1    basla
+ L2      bekle
+ L2      bekle
+

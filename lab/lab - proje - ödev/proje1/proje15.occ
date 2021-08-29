@@ -1,0 +1,26 @@
+CC8E Version 1.3D, Copyright (c) B Knudsen Data, Norway 2001-2010
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+proje15.c:
+  3. Nov 2010  10:28
+ Chip = 18F452
+ RAM : ===.**** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:252  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 4 bytes (3 local), 1532 bytes free
+Warning[1] C:\eem415\proje1\proje15.c 97 : Constant is truncated
+ (The default C type cast rules force significant bits in the result to be
+ cleared. It is recommended to use typecast one value to make clear
+ what the type (size) should be. For example '(long)100*100'. Note
+ that the default int size is 8 bit)
+ File 'proje15.fcs'
+ Optimizing - removed 41 code words (-22 %)
+ File 'proje15.var'
+ File 'proje15.asm'
+ File 'proje15.lst'
+ File 'proje15.cod'
+ File 'proje15.occ'
+ File 'proje15.hex'
+Total of 183 code words (1 %)
+ * Estimated CODE SIZE of full optimization: 181 code words (-1 %)

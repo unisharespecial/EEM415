@@ -1,0 +1,25 @@
+CC8E Version 1.3F, Copyright (c) B Knudsen Data, Norway 2001-2012
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+lab1.c:
+ 25. Nov 2013  16:29
+ Chip = 18F452
+ RAM : ===***** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:253  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 3 bytes (3 local), 1533 bytes free
+ File 'lab1.fcs'
+ Optimizing - removed 11 code words (-20 %)
+ File 'lab1.var'
+ File 'lab1.asm'
+ File 'lab1.lst'
+ File 'lab1.cod'
+WARNING: File name limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\Mikrolab01\Desktop\POT_deger_okuma\lab1.c
+ -> string changed to: lab1.c
+  ***** SEE README.TXT: COD FILE NAME LIMIT
+ File 'lab1.occ'
+ File 'lab1.hex'
+Total of 57 code words (0 %)
+ * Estimated CODE SIZE of full optimization: 55 code words (-3 %)

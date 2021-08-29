@@ -1,0 +1,234 @@
+CC8E Version 1.3D,   File: uyg9.c              23. Dec 2010  15:00   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3D, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  23. Dec 2010  15:00  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0002       00013 Zero_       EQU   2
+       0FAF       00014 SPBRG       EQU   0xFAF
+       0FAD       00015 TXREG       EQU   0xFAD
+       0F96       00016 TRISE       EQU   0xF96
+       0F95       00017 TRISD       EQU   0xF95
+       0F94       00018 TRISC       EQU   0xF94
+       0F93       00019 TRISB       EQU   0xF93
+       0F92       00020 TRISA       EQU   0xF92
+       0F83       00021 PORTD       EQU   0xF83
+       0F82       00022 PORTC       EQU   0xF82
+       0F81       00023 PORTB       EQU   0xF81
+       0007       00024 GIE         EQU   7
+       0002       00025 BRGH        EQU   2
+       0004       00026 SYNC        EQU   4
+       0005       00027 TXEN        EQU   5
+       0006       00028 TX9         EQU   6
+       0007       00029 SPEN        EQU   7
+       0004       00030 TXIF        EQU   4
+       0004       00031 TXIE        EQU   4
+       0000       00032 sayi        EQU   0x00
+       0001       00033 deger       EQU   0x01
+       0001       00034 t           EQU   0x01
+       0003       00035 x           EQU   0x03
+                  00036 
+000000 EF02 F000  00037 	GOTO main
+                  00038 
+                  00039   ; FILE uyg9.c
+                  00040 			;
+                  00041 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00042 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00043 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00044 			;
+                  00045 			;void ayarlar();
+                  00046 			;void seriTXayar();
+                  00047 			;void serigonder(unsigned deger);
+                  00048 			;void bekle(unsigned long t);	// t milisaniye gecikme saðlayan fonksiyon tanýmý
+                  00049 			;
+                  00050 			;void main()
+                  00051 			;{	
+                  00052 main
+                  00053 			;	unsigned sayi='0';
+000004 0E30       00054 	MOVLW 48
+000006 6E00       00055 	MOVWF sayi,0
+                  00056 			;	ayarlar();
+000008 D812       00057 	RCALL ayarlar
+                  00058 			;
+                  00059 			;//-----------------------------------------------	
+                  00060 			;anadongu:
+CC8E Version 1.3D,   File: uyg9.c              23. Dec 2010  15:00   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;	serigonder(sayi);
+00000A 5000       00062 m001	MOVF  sayi,W,0
+00000C D81C       00063 	RCALL serigonder
+                  00064 			;	bekle(1000);
+00000E 0EE8       00065 	MOVLW 232
+000010 6E01       00066 	MOVWF t,0
+000012 0E03       00067 	MOVLW 3
+000014 6E02       00068 	MOVWF t+1,0
+000016 D82C       00069 	RCALL bekle
+                  00070 			;	sayi++;
+000018 2A00       00071 	INCF  sayi,1,0
+                  00072 			;	if(sayi>'9')
+00001A 0E39       00073 	MOVLW 57
+00001C 6400       00074 	CPFSGT sayi,0
+00001E D7F5       00075 	BRA   m001
+                  00076 			;	{
+                  00077 			;		sayi='0';
+000020 0E30       00078 	MOVLW 48
+000022 6E00       00079 	MOVWF sayi,0
+                  00080 			;		serigonder(10);
+000024 0E0A       00081 	MOVLW 10
+000026 D80F       00082 	RCALL serigonder
+                  00083 			;		serigonder(13);
+000028 0E0D       00084 	MOVLW 13
+00002A D80D       00085 	RCALL serigonder
+                  00086 			;	}
+                  00087 			;
+                  00088 			;goto anadongu;
+00002C D7EE       00089 	BRA   m001
+                  00090 			;//-----------------------------------------------	
+                  00091 			;}
+                  00092 			;
+                  00093 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00094 			;
+                  00095 			;void ayarlar()	// Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00096 			;{	
+                  00097 ayarlar
+                  00098 			;	GIE=0;			// Bütün kesmeleri kapat
+00002E 9EF2       00099 	BCF   0xFF2,GIE,0
+                  00100 			;	TRISA=0xFF;
+000030 6892       00101 	SETF  TRISA,0
+                  00102 			;	TRISB=0;
+000032 6A93       00103 	CLRF  TRISB,0
+                  00104 			;	TRISC=0;	
+000034 6A94       00105 	CLRF  TRISC,0
+                  00106 			;	TRISD=0;
+000036 6A95       00107 	CLRF  TRISD,0
+                  00108 			;	TRISE.0=1;
+000038 8096       00109 	BSF   TRISE,0,0
+                  00110 			;	TRISE.1=1;
+00003A 8296       00111 	BSF   TRISE,1,0
+                  00112 			;	TRISE.2=1;
+00003C 8496       00113 	BSF   TRISE,2,0
+                  00114 			;	
+                  00115 			;	PORTC=0;		
+00003E 6A82       00116 	CLRF  PORTC,0
+                  00117 			;	PORTD=0;
+000040 6A83       00118 	CLRF  PORTD,0
+                  00119 			;	PORTB=0;
+000042 6A81       00120 	CLRF  PORTB,0
+CC8E Version 1.3D,   File: uyg9.c              23. Dec 2010  15:00   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 			;	
+                  00122 			;	seriTXayar();
+000044 D00A       00123 	BRA   seriTXayar
+                  00124 			;
+                  00125 			;	
+                  00126 			;}
+                  00127 			;//////////////////////////////////////////////////////////////////////////////////
+                  00128 			;
+                  00129 			;
+                  00130 			;void serigonder(unsigned deger)	 // Seri porttan veri gönderir
+                  00131 			;{	
+                  00132 serigonder
+000046 6E01       00133 	MOVWF deger,0
+                  00134 			;	while(!TXIF);
+000048 A89E       00135 m002	BTFSS 0xF9E,TXIF,0
+00004A D7FE       00136 	BRA   m002
+                  00137 			;	nop(); nop(); nop(); nop();
+00004C 0000       00138 	NOP  
+00004E 0000       00139 	NOP  
+000050 0000       00140 	NOP  
+000052 0000       00141 	NOP  
+                  00142 			;	TXREG=deger;
+000054 C001 FFAD  00143 	MOVFF deger,TXREG
+                  00144 			;}
+000058 0012       00145 	RETURN
+                  00146 			;
+                  00147 			;
+                  00148 			;//////////////////////////////////////////////////////////////////////////////////
+                  00149 			;
+                  00150 			;
+                  00151 			;void seriTXayar()	// Seri Portu veri göndermeye hazýr hale getirir
+                  00152 			;{
+                  00153 seriTXayar
+                  00154 			;	TRISC.6=0;
+00005A 9C94       00155 	BCF   TRISC,6,0
+                  00156 			;	TRISC.7=1;
+00005C 8E94       00157 	BSF   TRISC,7,0
+                  00158 			;	SPBRG=25;	// Baud Rate=9.6k
+00005E 0E19       00159 	MOVLW 25
+000060 6EAF       00160 	MOVWF SPBRG,0
+                  00161 			;	BRGH=1;		// Yüksek Hýz
+000062 84AC       00162 	BSF   0xFAC,BRGH,0
+                  00163 			;	SYNC=0;		// Asenkron mod
+000064 98AC       00164 	BCF   0xFAC,SYNC,0
+                  00165 			;	SPEN=1;		// Seri port etkin
+000066 8EAB       00166 	BSF   0xFAB,SPEN,0
+                  00167 			;	TXIE=0;
+000068 989D       00168 	BCF   0xF9D,TXIE,0
+                  00169 			;	TX9=0;		// 8 bit Veri Gönderme
+00006A 9CAC       00170 	BCF   0xFAC,TX9,0
+                  00171 			;	TXEN=1;	// Gönderme etkin	
+00006C 8AAC       00172 	BSF   0xFAC,TXEN,0
+                  00173 			;}
+00006E 0012       00174 	RETURN
+                  00175 			;
+                  00176 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00177 			;
+                  00178 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00179 			;{
+                  00180 bekle
+CC8E Version 1.3D,   File: uyg9.c              23. Dec 2010  15:00   Page 4
+
+ADDR   CODE       LINE  SOURCE
+
+                  00181 			;	unsigned x;
+                  00182 			;	
+                  00183 			;	for(;t>0;t--)
+000070 5001       00184 m003	MOVF  t,W,0
+000072 1002       00185 	IORWF t+1,W,0
+000074 B4D8       00186 	BTFSC 0xFD8,Zero_,0
+000076 D00C       00187 	BRA   m006
+                  00188 			;		for(x=140;x>0;x--)
+000078 0E8C       00189 	MOVLW 140
+00007A 6E03       00190 	MOVWF x,0
+00007C 5203       00191 m004	MOVF  x,1,0
+00007E B4D8       00192 	BTFSC 0xFD8,Zero_,0
+000080 D003       00193 	BRA   m005
+                  00194 			;			nop();
+000082 0000       00195 	NOP  
+000084 0603       00196 	DECF  x,1,0
+000086 D7FA       00197 	BRA   m004
+000088 0601       00198 m005	DECF  t,1,0
+00008A 0E00       00199 	MOVLW 0
+00008C 5A02       00200 	SUBWFB t+1,1,0
+00008E D7F0       00201 	BRA   m003
+                  00202 			;}
+000090 0012       00203 m006	RETURN
+                  00204 
+                  00205 	END
+                  00206 
+                  00207 
+                  00208 ; *** KEY INFO ***
+                  00209 
+                  00210 ; 0x00002E   12 word(s)  0 % : ayarlar
+                  00211 ; 0x00005A   11 word(s)  0 % : seriTXayar
+                  00212 ; 0x000046   10 word(s)  0 % : serigonder
+                  00213 ; 0x000070   17 word(s)  0 % : bekle
+                  00214 ; 0x000004   21 word(s)  0 % : main
+                  00215 
+                  00216 ; RAM usage: 4 bytes (4 local), 1532 bytes free
+                  00217 ; Maximum call level: 1
+                  00218 ; Total of 73 code words (0 %)

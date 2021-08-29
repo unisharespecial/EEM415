@@ -1,0 +1,180 @@
+CC8E Version 1.3B,   File: FarukCC8.c          11. Jan 2010  23:05   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3B, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  11. Jan 2010  23:05  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0FE0       00013 BSR         EQU   0xFE0
+       0FD8       00014 STATUS      EQU   0xFD8
+       0002       00015 Zero_       EQU   2
+       0F95       00016 TRISD       EQU   0xF95
+       0F94       00017 TRISC       EQU   0xF94
+       0F83       00018 PORTD       EQU   0xF83
+       0F82       00019 PORTC       EQU   0xF82
+       0001       00020 INT0IF      EQU   1
+       0004       00021 INT0IE      EQU   4
+       0007       00022 GIE         EQU   7
+       0006       00023 INTEDG0     EQU   6
+       0003       00024 x           EQU   0x03
+       0000       00025 svrSTATUS   EQU   0x00
+       0001       00026 svrBSR      EQU   0x01
+       0002       00027 svrWREG     EQU   0x02
+                  00028 
+000000 EF45 F000  00029 	GOTO main
+                  00030 
+                  00031   ; FILE FarukCC8.c
+                  00032 			;#include "INT18XXX.H"
+                  00033 			;#pragma origin 0x8
+       0000       00034 	ORG 0x0008
+                  00035 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00036 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00037 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00038 			;int8 x;
+                  00039 			;interrupt int_server(void)  // KESME SUNUCU FONKSÝYONU
+                  00040 			;{   
+                  00041 int_server
+                  00042 			;   int_save_registers   //W, STATUS, ve BSR yazmaçlarýnýn kesme gelmeden önceki deðerlerini kaydeder
+000008 CFD8 F000  00043 	MOVFF STATUS,svrSTATUS
+00000C CFE0 F001  00044 	MOVFF BSR,svrBSR
+000010 6E02       00045 	MOVWF svrWREG,0
+                  00046 			;      INT0IF = 0;         // INT0 kesme bayraðýný sýfýrla(yeni kesmeler gelebilir)
+000012 92F2       00047 	BCF   0xFF2,INT0IF,0
+                  00048 			;        if(x==-1)
+000014 3C03       00049 	INCFSZ x,W,0
+000016 D002       00050 	BRA   m001
+                  00051 			;			x=7;
+000018 0E07       00052 	MOVLW 7
+00001A 6E03       00053 	MOVWF x,0
+                  00054 			;		if(x==8)
+00001C 0E08       00055 m001	MOVLW 8
+00001E 6203       00056 	CPFSEQ x,0
+000020 D001       00057 	BRA   m002
+                  00058 			;			x=0;
+000022 6A03       00059 	CLRF  x,0
+                  00060 			;		if(x==0)
+CC8E Version 1.3B,   File: FarukCC8.c          11. Jan 2010  23:05   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+000024 5203       00061 m002	MOVF  x,1,0
+000026 A4D8       00062 	BTFSS 0xFD8,Zero_,0
+000028 D002       00063 	BRA   m003
+                  00064 			;		    PORTC=1;
+00002A 0E01       00065 	MOVLW 1
+00002C 6E82       00066 	MOVWF PORTC,0
+                  00067 			;		if(x==1)
+00002E 2C03       00068 m003	DECFSZ x,W,0
+000030 D002       00069 	BRA   m004
+                  00070 			;			PORTC=2;
+000032 0E02       00071 	MOVLW 2
+000034 6E82       00072 	MOVWF PORTC,0
+                  00073 			;		if(x==2)
+000036 0E02       00074 m004	MOVLW 2
+000038 6203       00075 	CPFSEQ x,0
+00003A D002       00076 	BRA   m005
+                  00077 			;			PORTC=4;
+00003C 0E04       00078 	MOVLW 4
+00003E 6E82       00079 	MOVWF PORTC,0
+                  00080 			;		if(x==3)
+000040 0E03       00081 m005	MOVLW 3
+000042 6203       00082 	CPFSEQ x,0
+000044 D002       00083 	BRA   m006
+                  00084 			;			PORTC=8;
+000046 0E08       00085 	MOVLW 8
+000048 6E82       00086 	MOVWF PORTC,0
+                  00087 			;		if(x==4)
+00004A 0E04       00088 m006	MOVLW 4
+00004C 6203       00089 	CPFSEQ x,0
+00004E D002       00090 	BRA   m007
+                  00091 			;			PORTC=16;
+000050 0E10       00092 	MOVLW 16
+000052 6E82       00093 	MOVWF PORTC,0
+                  00094 			;		if(x==5)
+000054 0E05       00095 m007	MOVLW 5
+000056 6203       00096 	CPFSEQ x,0
+000058 D002       00097 	BRA   m008
+                  00098 			;			PORTC=32;
+00005A 0E20       00099 	MOVLW 32
+00005C 6E82       00100 	MOVWF PORTC,0
+                  00101 			;		if(x==6)
+00005E 0E06       00102 m008	MOVLW 6
+000060 6203       00103 	CPFSEQ x,0
+000062 D002       00104 	BRA   m009
+                  00105 			;			PORTC=64;
+000064 0E40       00106 	MOVLW 64
+000066 6E82       00107 	MOVWF PORTC,0
+                  00108 			;		if(x==7)
+000068 0E07       00109 m009	MOVLW 7
+00006A 6203       00110 	CPFSEQ x,0
+00006C D002       00111 	BRA   m010
+                  00112 			;			PORTC=128;
+00006E 0E80       00113 	MOVLW 128
+000070 6E82       00114 	MOVWF PORTC,0
+                  00115 			;	if(PORTD==1)
+000072 4C83       00116 m010	DCFSNZ PORTD,W,0
+                  00117 			;	x++;	
+000074 2A03       00118 	INCF  x,1,0
+                  00119 			;	if(PORTD==2)
+000076 0E02       00120 	MOVLW 2
+CC8E Version 1.3B,   File: FarukCC8.c          11. Jan 2010  23:05   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+000078 6283       00121 	CPFSEQ PORTD,0
+00007A D001       00122 	BRA   m011
+                  00123 			;	x--;
+00007C 0603       00124 	DECF  x,1,0
+                  00125 			;	
+                  00126 			;    int_restore_registers //CC8E Macro to restore W, STATUS, and BSR registers
+00007E 5002       00127 m011	MOVF  svrWREG,W,0
+000080 C001 FFE0  00128 	MOVFF svrBSR,BSR
+000084 C000 FFD8  00129 	MOVFF svrSTATUS,STATUS
+                  00130 			;   
+                  00131 			;}
+000088 0010       00132 	RETFIE
+                  00133 			;void main()
+                  00134 			;{
+                  00135 main
+                  00136 			; x=0;
+00008A 6A03       00137 	CLRF  x,0
+                  00138 			; TRISC=0;
+00008C 6A94       00139 	CLRF  TRISC,0
+                  00140 			; PORTC=0;
+00008E 6A82       00141 	CLRF  PORTC,0
+                  00142 			; TRISD=1;
+000090 0E01       00143 	MOVLW 1
+000092 6E95       00144 	MOVWF TRISD,0
+                  00145 			; PORTD=0;
+000094 6A83       00146 	CLRF  PORTD,0
+                  00147 			; 
+                  00148 			; INT0IE=1;         // INT0 kesmesi açýk
+000096 88F2       00149 	BSF   0xFF2,INT0IE,0
+                  00150 			; INTEDG0=1;        // INT0 kesmesi yükselen kenarda aktif olacak
+000098 8CF1       00151 	BSF   0xFF1,INTEDG0,0
+                  00152 			; GIE=1;            // Bütün kesmeler kullanýlabilir
+00009A 8EF2       00153 	BSF   0xFF2,GIE,0
+                  00154 			; sonsuz:
+                  00155 			;goto sonsuz;
+00009C D7FF       00156 m012	BRA   m012
+                  00157 
+                  00158 	END
+                  00159 
+                  00160 
+                  00161 ; *** KEY INFO ***
+                  00162 
+                  00163 ; 0x000008   65 word(s)  0 % : int_server
+                  00164 ; 0x00008A   10 word(s)  0 % : main
+                  00165 
+                  00166 ; RAM usage: 4 bytes (3 local), 1532 bytes free
+                  00167 ; Maximum call level: 0 (+1 for interrupt)
+                  00168 ; Total of 77 code words (0 %)

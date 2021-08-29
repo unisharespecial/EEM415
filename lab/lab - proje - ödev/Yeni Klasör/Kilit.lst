@@ -1,0 +1,145 @@
+CC8E Version 1.3B,   File: Kilit.c             14. Jan 2011  11:54   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3B, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  14. Jan 2011  11:54  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0F95       00013 TRISD       EQU   0xF95
+       0F83       00014 PORTD       EQU   0xF83
+       0F81       00015 PORTB       EQU   0xF81
+       0000       00016 t           EQU   0x00
+       0002       00017 x           EQU   0x02
+                  00018 
+000000 EF02 F000  00019 	GOTO main
+                  00020 
+                  00021   ; FILE Kilit.c
+                  00022 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00023 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00024 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00025 			;
+                  00026 			;void ayarlar();
+                  00027 			;void bekle(unsigned long t);	
+                  00028 			;void oku_yaz();
+                  00029 			;
+                  00030 			;
+                  00031 			;void main()
+                  00032 			;{
+                  00033 main
+                  00034 			;	ayarlar();
+000004 D815       00035 	RCALL ayarlar
+                  00036 			;
+                  00037 			;	bekle(1);
+000006 0E01       00038 	MOVLW 1
+000008 6E00       00039 	MOVWF t,0
+00000A 6A01       00040 	CLRF  t+1,0
+00000C D815       00041 	RCALL bekle
+                  00042 			;	anadongu:
+                  00043 			;	
+                  00044 			; 	if(PORTB.0==1)	// set-3 butonuna basýldýysa
+00000E A081       00045 m001	BTFSS PORTB,0,0
+000010 D006       00046 	BRA   m002
+                  00047 			;	{
+                  00048 			;		PORTD.0 = 0;	// yeþil ledi söndür
+000012 9083       00049 	BCF   PORTD,0,0
+                  00050 			;		PORTD.1 = 1;	// kýrmýzý ledi yak
+000014 8283       00051 	BSF   PORTD,1,0
+                  00052 			;		bekle(50);
+000016 0E32       00053 	MOVLW 50
+000018 6E00       00054 	MOVWF t,0
+00001A 6A01       00055 	CLRF  t+1,0
+00001C D80D       00056 	RCALL bekle
+                  00057 			;	}
+                  00058 			;
+                  00059 			;	if(PORTB.1==1)	//	reset-3 butonuna basýldýysa
+00001E A281       00060 m002	BTFSS PORTB,1,0
+CC8E Version 1.3B,   File: Kilit.c             14. Jan 2011  11:54   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+000020 D7F6       00061 	BRA   m001
+                  00062 			;	{
+                  00063 			;		PORTD.1 = 0;	//	kýrmýzý ledi söndür
+000022 9283       00064 	BCF   PORTD,1,0
+                  00065 			;		PORTD.0 = 1;	//	yeþil ledi yak
+000024 8083       00066 	BSF   PORTD,0,0
+                  00067 			;		bekle(50);
+000026 0E32       00068 	MOVLW 50
+000028 6E00       00069 	MOVWF t,0
+00002A 6A01       00070 	CLRF  t+1,0
+00002C D805       00071 	RCALL bekle
+                  00072 			;	}
+                  00073 			;	goto anadongu;
+00002E D7EF       00074 	BRA   m001
+                  00075 			;//-----------------------------------------------
+                  00076 			;
+                  00077 			;}
+                  00078 			;
+                  00079 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00080 			;
+                  00081 			;void ayarlar()	
+                  00082 			;{	
+                  00083 ayarlar
+                  00084 			;
+                  00085 			;	TRISD=0x00;	//	PORTD çýkýþ		
+000030 6A95       00086 	CLRF  TRISD,0
+                  00087 			;	PORTD=0;
+000032 6A83       00088 	CLRF  PORTD,0
+                  00089 			;	PORTD.0 = 1;	//	yeþil ledi yak
+000034 8083       00090 	BSF   PORTD,0,0
+                  00091 			;	
+                  00092 			;}
+000036 0012       00093 	RETURN
+                  00094 			;
+                  00095 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00096 			;
+                  00097 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00098 			;{
+                  00099 bekle
+                  00100 			;	unsigned x;
+                  00101 			;	
+                  00102 			;	for(;t>0;t--)
+000038 5000       00103 m003	MOVF  t,W,0
+00003A 1001       00104 	IORWF t+1,W,0
+00003C E00B       00105 	BZ    m006
+                  00106 			;		for(x=140;x>0;x--)
+00003E 0E8C       00107 	MOVLW 140
+000040 6E02       00108 	MOVWF x,0
+000042 5202       00109 m004	MOVF  x,1,0
+000044 E003       00110 	BZ    m005
+                  00111 			;			nop();
+000046 0000       00112 	NOP  
+000048 0602       00113 	DECF  x,1,0
+00004A D7FB       00114 	BRA   m004
+00004C 0600       00115 m005	DECF  t,1,0
+00004E 0E00       00116 	MOVLW 0
+000050 5A01       00117 	SUBWFB t+1,1,0
+000052 D7F2       00118 	BRA   m003
+                  00119 			;}
+000054 0012       00120 m006	RETURN
+CC8E Version 1.3B,   File: Kilit.c             14. Jan 2011  11:54   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 
+                  00122 	END
+                  00123 
+                  00124 
+                  00125 ; *** KEY INFO ***
+                  00126 
+                  00127 ; 0x000030    4 word(s)  0 % : ayarlar
+                  00128 ; 0x000038   15 word(s)  0 % : bekle
+                  00129 ; 0x000004   22 word(s)  0 % : main
+                  00130 
+                  00131 ; RAM usage: 3 bytes (3 local), 1533 bytes free
+                  00132 ; Maximum call level: 1
+                  00133 ; Total of 43 code words (0 %)

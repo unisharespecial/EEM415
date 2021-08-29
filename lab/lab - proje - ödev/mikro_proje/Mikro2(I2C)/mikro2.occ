@@ -1,0 +1,21 @@
+CC8E Version 1.2A, Copyright (c) B Knudsen Data, Norway 2001-2007
+ --> DEMO edition, 8-24 bit int, 24-32 bit float, 1k code words
+mikro2.c:
+ 22. Jan 2010  13:37
+ Chip = 18F452
+ RAM : .******* ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:255  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 1 bytes (0 local), 1535 bytes free
+ File 'mikro2.fcs'
+ Optimizing - removed 16 code words (-30 %)
+ File 'mikro2.var'
+ File 'mikro2.asm'
+ File 'mikro2.lst'
+ File 'mikro2.cod'
+ File 'mikro2.occ'
+ File 'mikro2.hex'
+Total of 49 code words (0 %)
+ RESTRICTION: Generated code is for evaluation use only.

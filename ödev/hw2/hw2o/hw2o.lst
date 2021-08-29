@@ -1,0 +1,143 @@
+CC8E Version 1.4,   File: hw2o.c               8. Dec 2014  19:19   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.4, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************   8. Dec 2014  19:19  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 
+       0FF2       00011 INTCON      EQU   0xFF2
+       0000       00012 Carry       EQU   0
+       0002       00013 Zero_       EQU   2
+       0F96       00014 TRISE       EQU   0xF96
+       0F95       00015 TRISD       EQU   0xF95
+       0F94       00016 TRISC       EQU   0xF94
+       0F93       00017 TRISB       EQU   0xF93
+       0F92       00018 TRISA       EQU   0xF92
+       0F83       00019 PORTD       EQU   0xF83
+       0F82       00020 PORTC       EQU   0xF82
+       0007       00021 GIE         EQU   7
+       0000       00022 t           EQU   0x00
+       0002       00023 x           EQU   0x02
+                  00024 
+000000 EF02 F000  00025 	GOTO main
+                  00026 
+                  00027   ; FILE hw2o.c
+                  00028 			;#pragma config[1] = 0xF1 // Osilatör: XT#pragma config[1] = 0xF1 // Osilatör: XT
+                  00029 			;void ayarlar();
+                  00030 			;void bekle(unsigned long t);	// t milisaniye gecikme saðlayan fonksiyon tanýmý
+                  00031 			;void main()
+                  00032 			;{
+                  00033 main
+                  00034 			;	ayarlar();
+000004 D825       00035 	RCALL ayarlar
+                  00036 			;anadongu:
+                  00037 			;  bekle(1);	// Acquisition Time(Sample & Hold kapasitörünün þarj olmasý için gerekli zaman)
+000006 0E01       00038 	MOVLW 1
+000008 6E00       00039 	MOVWF t,0
+00000A 6A01       00040 	CLRF  t+1,0
+00000C D80D       00041 	RCALL bekle
+                  00042 			;  INTCON=0x90; 
+00000E 0E90       00043 	MOVLW 144
+000010 6EF2       00044 	MOVWF INTCON,0
+                  00045 			;
+                  00046 			;PWM_dongu:
+                  00047 			;	PORTC.0=1;
+000012 8082       00048 m001	BSF   PORTC,0,0
+                  00049 			;   	bekle(2); 
+000014 0E02       00050 	MOVLW 2
+000016 6E00       00051 	MOVWF t,0
+000018 6A01       00052 	CLRF  t+1,0
+00001A D806       00053 	RCALL bekle
+                  00054 			;    	PORTC.0=0;
+00001C 9082       00055 	BCF   PORTC,0,0
+                  00056 			;    	bekle(2);
+00001E 0E02       00057 	MOVLW 2
+000020 6E00       00058 	MOVWF t,0
+000022 6A01       00059 	CLRF  t+1,0
+000024 D801       00060 	RCALL bekle
+CC8E Version 1.4,   File: hw2o.c               8. Dec 2014  19:19   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;goto PWM_dongu;
+000026 D7F5       00062 	BRA   m001
+                  00063 			;
+                  00064 			;goto anadongu;
+                  00065 			;//-----------------------------------------------	
+                  00066 			;}
+                  00067 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00068 			;{
+                  00069 bekle
+                  00070 			;	unsigned x;
+                  00071 			;	t=t/2;
+000028 90D8       00072 	BCF   0xFD8,Carry,0
+00002A 3201       00073 	RRCF  t+1,1,0
+00002C 3200       00074 	RRCF  t,1,0
+                  00075 			;	for(;t>0;t--)
+00002E 5000       00076 m002	MOVF  t,W,0
+000030 1001       00077 	IORWF t+1,W,0
+000032 B4D8       00078 	BTFSC 0xFD8,Zero_,0
+000034 D00C       00079 	BRA   m005
+                  00080 			;		for(x=35;x>0;x--)
+000036 0E23       00081 	MOVLW 35
+000038 6E02       00082 	MOVWF x,0
+00003A 5202       00083 m003	MOVF  x,1,0
+00003C B4D8       00084 	BTFSC 0xFD8,Zero_,0
+00003E D003       00085 	BRA   m004
+                  00086 			;			nop();
+000040 0000       00087 	NOP  
+000042 0602       00088 	DECF  x,1,0
+000044 D7FA       00089 	BRA   m003
+000046 0600       00090 m004	DECF  t,1,0
+000048 0E00       00091 	MOVLW 0
+00004A 5A01       00092 	SUBWFB t+1,1,0
+00004C D7F0       00093 	BRA   m002
+                  00094 			;}
+00004E 0012       00095 m005	RETURN
+                  00096 			;void ayarlar()	// Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00097 			;{	
+                  00098 ayarlar
+                  00099 			;	GIE=1;			// Bütün kesmeleri ac
+000050 8EF2       00100 	BSF   0xFF2,GIE,0
+                  00101 			;	TRISA=0xFF;
+000052 6892       00102 	SETF  TRISA,0
+                  00103 			;	TRISB=0xFF;
+000054 6893       00104 	SETF  TRISB,0
+                  00105 			;	TRISC=0x00;	
+000056 6A94       00106 	CLRF  TRISC,0
+                  00107 			;	TRISD=0x00;		
+000058 6A95       00108 	CLRF  TRISD,0
+                  00109 			;	TRISE=0xFF;
+00005A 6896       00110 	SETF  TRISE,0
+                  00111 			;	PORTC=0x00;		
+00005C 6A82       00112 	CLRF  PORTC,0
+                  00113 			;	PORTD=0x00;
+00005E 6A83       00114 	CLRF  PORTD,0
+                  00115 			;	//ADCON0=0b.0100.0001;// Anlog kanal 0 aktif, A/D conversion is not in progress
+                  00116 			;	//ADCON1=0b.0000.0000;
+                  00117 			;}
+000060 0012       00118 	RETURN
+                  00119 
+                  00120 	END
+CC8E Version 1.4,   File: hw2o.c               8. Dec 2014  19:19   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 
+                  00122 
+                  00123 ; *** KEY INFO ***
+                  00124 
+                  00125 ; 0x000050    9 word(s)  0 % : ayarlar
+                  00126 ; 0x000028   20 word(s)  0 % : bekle
+                  00127 ; 0x000004   18 word(s)  0 % : main
+                  00128 
+                  00129 ; RAM usage: 3 bytes (3 local), 1533 bytes free
+                  00130 ; Maximum call level: 1
+                  00131 ; Total of 49 code words (0 %)

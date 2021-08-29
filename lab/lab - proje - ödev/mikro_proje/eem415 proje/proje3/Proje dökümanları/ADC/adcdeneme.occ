@@ -1,0 +1,27 @@
+CC8E Version 1.3D, Copyright (c) B Knudsen Data, Norway 2001-2010
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+adcdeneme.c:
+ 23. Dec 2010  15:33
+ Chip = 18F452
+ RAM : =====*** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:251  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 5 bytes (5 local), 1531 bytes free
+ File 'adcdeneme.fcs'
+ Optimizing - removed 13 code words (-18 %)
+ File 'adcdeneme.var'
+ File 'adcdeneme.asm'
+ File 'adcdeneme.lst'
+ File 'adcdeneme.cod'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\Administrator\Desktop\eem415 proje\deneme\adcdeneme.c
+ File 'adcdeneme.occ'
+ File 'adcdeneme.hex'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\Administrator\Desktop\eem415 proje\deneme\adcdeneme.c
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\Administrator\Desktop\eem415 proje\deneme\18F452.h
+Total of 73 code words (0 %)
+ * Estimated CODE SIZE of full optimization: 70 code words (-4 %)

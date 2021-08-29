@@ -1,0 +1,237 @@
+CC8E Version 1.3D,   File: adcdeneme.c         23. Dec 2010  15:33   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3D, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  23. Dec 2010  15:33  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0002       00013 Zero_       EQU   2
+       0FC4       00014 ADRESH      EQU   0xFC4
+       0FC2       00015 ADCON0      EQU   0xFC2
+       0FC1       00016 ADCON1      EQU   0xFC1
+       0FAF       00017 SPBRG       EQU   0xFAF
+       0FAD       00018 TXREG       EQU   0xFAD
+       0F96       00019 TRISE       EQU   0xF96
+       0F95       00020 TRISD       EQU   0xF95
+       0F94       00021 TRISC       EQU   0xF94
+       0F93       00022 TRISB       EQU   0xF93
+       0F92       00023 TRISA       EQU   0xF92
+       0F83       00024 PORTD       EQU   0xF83
+       0F82       00025 PORTC       EQU   0xF82
+       0F81       00026 PORTB       EQU   0xF81
+       0007       00027 GIE         EQU   7
+       0002       00028 GO          EQU   2
+       0002       00029 BRGH        EQU   2
+       0004       00030 SYNC        EQU   4
+       0005       00031 TXEN        EQU   5
+       0006       00032 TX9         EQU   6
+       0007       00033 SPEN        EQU   7
+       0004       00034 TXIF        EQU   4
+       0004       00035 TXIE        EQU   4
+       0000       00036 sayi        EQU   0x00
+       0001       00037 sayi1       EQU   0x01
+       0002       00038 deger       EQU   0x02
+       0002       00039 t           EQU   0x02
+       0004       00040 x           EQU   0x04
+                  00041 
+000000 EF02 F000  00042 	GOTO main
+                  00043 
+                  00044   ; FILE adcdeneme.c
+                  00045 			;
+                  00046 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00047 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00048 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00049 			;
+                  00050 			;void ayarlar();
+                  00051 			;void seriTXayar();
+                  00052 			;void serigonder(unsigned deger);
+                  00053 			;void bekle(unsigned long t);	// t milisaniye gecikme saðlayan fonksiyon tanýmý
+                  00054 			;
+                  00055 			;void main()
+                  00056 			;{	
+                  00057 main
+                  00058 			;	unsigned sayi='0';
+000004 0E30       00059 	MOVLW 48
+000006 6E00       00060 	MOVWF sayi,0
+CC8E Version 1.3D,   File: adcdeneme.c         23. Dec 2010  15:33   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;	unsigned sayi1='0';
+000008 0E30       00062 	MOVLW 48
+00000A 6E01       00063 	MOVWF sayi1,0
+                  00064 			;	ayarlar();
+00000C D80D       00065 	RCALL ayarlar
+                  00066 			;
+                  00067 			;//-----------------------------------------------	
+                  00068 			;anadongu:
+                  00069 			;
+                  00070 			;	bekle(1000);
+00000E 0EE8       00071 m001	MOVLW 232
+000010 6E02       00072 	MOVWF t,0
+000012 0E03       00073 	MOVLW 3
+000014 6E03       00074 	MOVWF t+1,0
+000016 D82C       00075 	RCALL bekle
+                  00076 			;	GO=1;
+000018 84C2       00077 	BSF   0xFC2,GO,0
+                  00078 			;	while(GO);
+00001A B4C2       00079 m002	BTFSC 0xFC2,GO,0
+00001C D7FE       00080 	BRA   m002
+                  00081 			;	sayi=ADRESH; //okunan analog degerin digital karsiligi, sayi degiskenine atýlýyor
+00001E CFC4 F000  00082 	MOVFF ADRESH,sayi
+                  00083 			;	serigonder(sayi);
+000022 5000       00084 	MOVF  sayi,W,0
+000024 D810       00085 	RCALL serigonder
+                  00086 			;	
+                  00087 			;goto anadongu;
+000026 D7F3       00088 	BRA   m001
+                  00089 			;//-----------------------------------------------	
+                  00090 			;}
+                  00091 			;
+                  00092 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00093 			;
+                  00094 			;void ayarlar()	// Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00095 			;{	
+                  00096 ayarlar
+                  00097 			;	GIE=0;			// Bütün kesmeleri kapat
+000028 9EF2       00098 	BCF   0xFF2,GIE,0
+                  00099 			;	TRISA=0xFF;
+00002A 6892       00100 	SETF  TRISA,0
+                  00101 			;	TRISB=0;
+00002C 6A93       00102 	CLRF  TRISB,0
+                  00103 			;	TRISC=0;	
+00002E 6A94       00104 	CLRF  TRISC,0
+                  00105 			;	TRISD=0;
+000030 6A95       00106 	CLRF  TRISD,0
+                  00107 			;	TRISE.0=1;
+000032 8096       00108 	BSF   TRISE,0,0
+                  00109 			;	TRISE.1=1;
+000034 8296       00110 	BSF   TRISE,1,0
+                  00111 			;	TRISE.2=1;
+000036 8496       00112 	BSF   TRISE,2,0
+                  00113 			;	
+                  00114 			;	PORTC=0;		
+000038 6A82       00115 	CLRF  PORTC,0
+                  00116 			;	PORTD=0;
+00003A 6A83       00117 	CLRF  PORTD,0
+                  00118 			;	PORTB=0;
+00003C 6A81       00119 	CLRF  PORTB,0
+                  00120 			;	
+CC8E Version 1.3D,   File: adcdeneme.c         23. Dec 2010  15:33   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 			;	ADCON0=0b.0100.0001;;
+00003E 0E41       00122 	MOVLW 65
+000040 6EC2       00123 	MOVWF ADCON0,0
+                  00124 			;	ADCON1=0b.0000.0000;;
+000042 6AC1       00125 	CLRF  ADCON1,0
+                  00126 			;	seriTXayar();
+000044 D00A       00127 	BRA   seriTXayar
+                  00128 			;		
+                  00129 			;}
+                  00130 			;//////////////////////////////////////////////////////////////////////////////////
+                  00131 			;
+                  00132 			;
+                  00133 			;void serigonder(unsigned deger)	 // Seri porttan veri gönderir
+                  00134 			;{	
+                  00135 serigonder
+000046 6E02       00136 	MOVWF deger,0
+                  00137 			;	while(!TXIF);
+000048 A89E       00138 m003	BTFSS 0xF9E,TXIF,0
+00004A D7FE       00139 	BRA   m003
+                  00140 			;	nop(); nop(); nop(); nop();
+00004C 0000       00141 	NOP  
+00004E 0000       00142 	NOP  
+000050 0000       00143 	NOP  
+000052 0000       00144 	NOP  
+                  00145 			;	TXREG=deger;
+000054 C002 FFAD  00146 	MOVFF deger,TXREG
+                  00147 			;}
+000058 0012       00148 	RETURN
+                  00149 			;
+                  00150 			;//////////////////////////////////////////////////////////////////////////////////
+                  00151 			;
+                  00152 			;
+                  00153 			;void seriTXayar()	// Seri Portu veri göndermeye hazýr hale getirir
+                  00154 			;{
+                  00155 seriTXayar
+                  00156 			;	TRISC.6=0;
+00005A 9C94       00157 	BCF   TRISC,6,0
+                  00158 			;	TRISC.7=1;
+00005C 8E94       00159 	BSF   TRISC,7,0
+                  00160 			;	SPBRG=25;	// Baud Rate=9.6k
+00005E 0E19       00161 	MOVLW 25
+000060 6EAF       00162 	MOVWF SPBRG,0
+                  00163 			;	BRGH=1;		// Yüksek Hýz
+000062 84AC       00164 	BSF   0xFAC,BRGH,0
+                  00165 			;	SYNC=0;		// Asenkron mod
+000064 98AC       00166 	BCF   0xFAC,SYNC,0
+                  00167 			;	SPEN=1;		// Seri port etkin
+000066 8EAB       00168 	BSF   0xFAB,SPEN,0
+                  00169 			;	TXIE=0;
+000068 989D       00170 	BCF   0xF9D,TXIE,0
+                  00171 			;	TX9=0;		// 8 bit Veri Gönderme
+00006A 9CAC       00172 	BCF   0xFAC,TX9,0
+                  00173 			;	TXEN=1;	// Gönderme etkin	
+00006C 8AAC       00174 	BSF   0xFAC,TXEN,0
+                  00175 			;}
+00006E 0012       00176 	RETURN
+                  00177 			;
+                  00178 			;
+                  00179 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00180 			;
+CC8E Version 1.3D,   File: adcdeneme.c         23. Dec 2010  15:33   Page 4
+
+ADDR   CODE       LINE  SOURCE
+
+                  00181 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00182 			;{
+                  00183 bekle
+                  00184 			;	unsigned x;
+                  00185 			;	
+                  00186 			;	for(;t>0;t--)
+000070 5002       00187 m004	MOVF  t,W,0
+000072 1003       00188 	IORWF t+1,W,0
+000074 B4D8       00189 	BTFSC 0xFD8,Zero_,0
+000076 D00C       00190 	BRA   m007
+                  00191 			;		for(x=140;x>0;x--)
+000078 0E8C       00192 	MOVLW 140
+00007A 6E04       00193 	MOVWF x,0
+00007C 5204       00194 m005	MOVF  x,1,0
+00007E B4D8       00195 	BTFSC 0xFD8,Zero_,0
+000080 D003       00196 	BRA   m006
+                  00197 			;			nop();
+000082 0000       00198 	NOP  
+000084 0604       00199 	DECF  x,1,0
+000086 D7FA       00200 	BRA   m005
+000088 0602       00201 m006	DECF  t,1,0
+00008A 0E00       00202 	MOVLW 0
+00008C 5A03       00203 	SUBWFB t+1,1,0
+00008E D7F0       00204 	BRA   m004
+                  00205 			;}
+000090 0012       00206 m007	RETURN
+                  00207 
+                  00208 	END
+                  00209 
+                  00210 
+                  00211 ; *** KEY INFO ***
+                  00212 
+                  00213 ; 0x000028   15 word(s)  0 % : ayarlar
+                  00214 ; 0x00005A   11 word(s)  0 % : seriTXayar
+                  00215 ; 0x000046   10 word(s)  0 % : serigonder
+                  00216 ; 0x000070   17 word(s)  0 % : bekle
+                  00217 ; 0x000004   18 word(s)  0 % : main
+                  00218 
+                  00219 ; RAM usage: 5 bytes (5 local), 1531 bytes free
+                  00220 ; Maximum call level: 1
+                  00221 ; Total of 73 code words (0 %)

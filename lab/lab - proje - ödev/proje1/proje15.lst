@@ -1,0 +1,347 @@
+CC8E Version 1.3D,   File: proje15.c            3. Nov 2010  10:28   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3D, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************   3. Nov 2010  10:28  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0002       00013 Zero_       EQU   2
+       0F95       00014 TRISD       EQU   0xF95
+       0F94       00015 TRISC       EQU   0xF94
+       0F83       00016 PORTD       EQU   0xF83
+       0F82       00017 PORTC       EQU   0xF82
+       0007       00018 GIE         EQU   7
+       0003       00019 TUS         EQU   0x03
+       0000       00020 t           EQU   0x00
+       0002       00021 x           EQU   0x02
+                  00022 
+000000 EF02 F000  00023 	GOTO main
+                  00024 
+                  00025   ; FILE proje15.c
+                  00026 			;
+                  00027 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00028 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00029 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00030 			;
+                  00031 			;char	keypad_oku();
+                  00032 			;char	TUS;
+                  00033 			;void	ayarlar();
+                  00034 			;void 	bekle(unsigned long t);	// t milisaniye gecikme saðlayan fonksiyon tanýmý
+                  00035 			;
+                  00036 			;
+                  00037 			;void main()
+                  00038 			;{
+                  00039 main
+                  00040 			;	ayarlar();
+000004 D807       00041 	RCALL ayarlar
+                  00042 			;
+                  00043 			;//-----------------------------------------------	
+                  00044 			;anadongu:
+                  00045 			;	bekle(1);	// Acquisition Time(Sample & Hold kapasitörünün þarj olmasý için gerekli zaman)
+000006 0E01       00046 	MOVLW 1
+000008 6E00       00047 	MOVWF t,0
+00000A 6A01       00048 	CLRF  t+1,0
+00000C D89F       00049 	RCALL bekle
+                  00050 			;  	while(1)
+                  00051 			; {
+                  00052 			;	PORTD=keypad_oku();
+00000E D809       00053 m001	RCALL keypad_oku
+000010 6E83       00054 	MOVWF PORTD,0
+                  00055 			; }   
+000012 D7FD       00056 	BRA   m001
+                  00057 			;	goto anadongu;
+                  00058 			;//-----------------------------------------------	
+                  00059 			;}
+                  00060 			;
+CC8E Version 1.3D,   File: proje15.c            3. Nov 2010  10:28   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00062 			;
+                  00063 			;void ayarlar()	// Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00064 			;{	
+                  00065 ayarlar
+                  00066 			;	GIE=0;			// Bütün kesmeleri kapat
+000014 9EF2       00067 	BCF   0xFF2,GIE,0
+                  00068 			;	TRISC=0xF0;		// C portu giriþ yapýldý
+000016 0EF0       00069 	MOVLW 240
+000018 6E94       00070 	MOVWF TRISC,0
+                  00071 			;	TRISD=0;		// D portu çýkýþ yapýldý
+00001A 6A95       00072 	CLRF  TRISD,0
+                  00073 			;		
+                  00074 			;	PORTD=0;		// D portu çýkýþlarý sýfýrlandý
+00001C 6A83       00075 	CLRF  PORTD,0
+                  00076 			;	PORTC=0;		// C portu çýkýþlarý sýfýrlandý
+00001E 6A82       00077 	CLRF  PORTC,0
+                  00078 			;
+                  00079 			;	
+                  00080 			;	
+                  00081 			;}
+000020 0012       00082 	RETURN
+                  00083 			;
+                  00084 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00085 			;
+                  00086 			;char keypad_oku()	// tarama keypad'ýn okunduðu kýsým
+                  00087 			;{	
+                  00088 keypad_oku
+                  00089 			;	PORTC.0=1;
+000022 8082       00090 	BSF   PORTC,0,0
+                  00091 			;	if(PORTC.4==1)
+000024 A882       00092 	BTFSS PORTC,4,0
+000026 D007       00093 	BRA   m002
+                  00094 			;	{bekle(999);TUS=0X01;}
+000028 0EE7       00095 	MOVLW 231
+00002A 6E00       00096 	MOVWF t,0
+00002C 0E03       00097 	MOVLW 3
+00002E 6E01       00098 	MOVWF t+1,0
+000030 D88D       00099 	RCALL bekle
+000032 0E01       00100 	MOVLW 1
+000034 6E03       00101 	MOVWF TUS,0
+                  00102 			;	if(PORTC.5==1)
+000036 AA82       00103 m002	BTFSS PORTC,5,0
+000038 D007       00104 	BRA   m003
+                  00105 			;	{bekle(999);TUS=0X02;}
+00003A 0EE7       00106 	MOVLW 231
+00003C 6E00       00107 	MOVWF t,0
+00003E 0E03       00108 	MOVLW 3
+000040 6E01       00109 	MOVWF t+1,0
+000042 D884       00110 	RCALL bekle
+000044 0E02       00111 	MOVLW 2
+000046 6E03       00112 	MOVWF TUS,0
+                  00113 			;	if(PORTC.6==1)
+000048 AC82       00114 m003	BTFSS PORTC,6,0
+00004A D007       00115 	BRA   m004
+                  00116 			;	{bekle(999);TUS=0X03;}
+00004C 0EE7       00117 	MOVLW 231
+00004E 6E00       00118 	MOVWF t,0
+000050 0E03       00119 	MOVLW 3
+000052 6E01       00120 	MOVWF t+1,0
+CC8E Version 1.3D,   File: proje15.c            3. Nov 2010  10:28   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+000054 D87B       00121 	RCALL bekle
+000056 0E03       00122 	MOVLW 3
+000058 6E03       00123 	MOVWF TUS,0
+                  00124 			;	if(PORTC.7==1)
+00005A AE82       00125 m004	BTFSS PORTC,7,0
+00005C D007       00126 	BRA   m005
+                  00127 			;	{bekle(999);TUS=0X0A;}
+00005E 0EE7       00128 	MOVLW 231
+000060 6E00       00129 	MOVWF t,0
+000062 0E03       00130 	MOVLW 3
+000064 6E01       00131 	MOVWF t+1,0
+000066 D872       00132 	RCALL bekle
+000068 0E0A       00133 	MOVLW 10
+00006A 6E03       00134 	MOVWF TUS,0
+                  00135 			;
+                  00136 			;	PORTC.1=1;
+00006C 8282       00137 m005	BSF   PORTC,1,0
+                  00138 			;	if(PORTC.4==1)
+00006E A882       00139 	BTFSS PORTC,4,0
+000070 D007       00140 	BRA   m006
+                  00141 			;	{bekle(999);TUS=0X04;}
+000072 0EE7       00142 	MOVLW 231
+000074 6E00       00143 	MOVWF t,0
+000076 0E03       00144 	MOVLW 3
+000078 6E01       00145 	MOVWF t+1,0
+00007A D868       00146 	RCALL bekle
+00007C 0E04       00147 	MOVLW 4
+00007E 6E03       00148 	MOVWF TUS,0
+                  00149 			;	if(PORTC.5==1)
+000080 AA82       00150 m006	BTFSS PORTC,5,0
+000082 D007       00151 	BRA   m007
+                  00152 			;	{bekle(999);TUS=0X05;}
+000084 0EE7       00153 	MOVLW 231
+000086 6E00       00154 	MOVWF t,0
+000088 0E03       00155 	MOVLW 3
+00008A 6E01       00156 	MOVWF t+1,0
+00008C D85F       00157 	RCALL bekle
+00008E 0E05       00158 	MOVLW 5
+000090 6E03       00159 	MOVWF TUS,0
+                  00160 			;	if(PORTC.6==1)
+000092 AC82       00161 m007	BTFSS PORTC,6,0
+000094 D007       00162 	BRA   m008
+                  00163 			;	{bekle(999);TUS=0X06;}
+000096 0EE7       00164 	MOVLW 231
+000098 6E00       00165 	MOVWF t,0
+00009A 0E03       00166 	MOVLW 3
+00009C 6E01       00167 	MOVWF t+1,0
+00009E D856       00168 	RCALL bekle
+0000A0 0E06       00169 	MOVLW 6
+0000A2 6E03       00170 	MOVWF TUS,0
+                  00171 			;	if(PORTC.7==1)
+0000A4 AE82       00172 m008	BTFSS PORTC,7,0
+0000A6 D007       00173 	BRA   m009
+                  00174 			;	{bekle(999);TUS=0X0B;}
+0000A8 0EE7       00175 	MOVLW 231
+0000AA 6E00       00176 	MOVWF t,0
+0000AC 0E03       00177 	MOVLW 3
+0000AE 6E01       00178 	MOVWF t+1,0
+0000B0 D84D       00179 	RCALL bekle
+0000B2 0E0B       00180 	MOVLW 11
+CC8E Version 1.3D,   File: proje15.c            3. Nov 2010  10:28   Page 4
+
+ADDR   CODE       LINE  SOURCE
+
+0000B4 6E03       00181 	MOVWF TUS,0
+                  00182 			;
+                  00183 			;	PORTC.2=1;
+0000B6 8482       00184 m009	BSF   PORTC,2,0
+                  00185 			;	if(PORTC.4==1)
+0000B8 A882       00186 	BTFSS PORTC,4,0
+0000BA D007       00187 	BRA   m010
+                  00188 			;	{bekle(999);TUS=0X07;}
+0000BC 0EE7       00189 	MOVLW 231
+0000BE 6E00       00190 	MOVWF t,0
+0000C0 0E03       00191 	MOVLW 3
+0000C2 6E01       00192 	MOVWF t+1,0
+0000C4 D843       00193 	RCALL bekle
+0000C6 0E07       00194 	MOVLW 7
+0000C8 6E03       00195 	MOVWF TUS,0
+                  00196 			;	if(PORTC.5==1)
+0000CA AA82       00197 m010	BTFSS PORTC,5,0
+0000CC D007       00198 	BRA   m011
+                  00199 			;	{bekle(999);TUS=0X08;}
+0000CE 0EE7       00200 	MOVLW 231
+0000D0 6E00       00201 	MOVWF t,0
+0000D2 0E03       00202 	MOVLW 3
+0000D4 6E01       00203 	MOVWF t+1,0
+0000D6 D83A       00204 	RCALL bekle
+0000D8 0E08       00205 	MOVLW 8
+0000DA 6E03       00206 	MOVWF TUS,0
+                  00207 			;	if(PORTC.6==1)
+0000DC AC82       00208 m011	BTFSS PORTC,6,0
+0000DE D007       00209 	BRA   m012
+                  00210 			;	{bekle(999);TUS=0X09;}
+0000E0 0EE7       00211 	MOVLW 231
+0000E2 6E00       00212 	MOVWF t,0
+0000E4 0E03       00213 	MOVLW 3
+0000E6 6E01       00214 	MOVWF t+1,0
+0000E8 D831       00215 	RCALL bekle
+0000EA 0E09       00216 	MOVLW 9
+0000EC 6E03       00217 	MOVWF TUS,0
+                  00218 			;	if(PORTC.7==1)
+0000EE AE82       00219 m012	BTFSS PORTC,7,0
+0000F0 D007       00220 	BRA   m013
+                  00221 			;	{bekle(999);TUS=0X0C;}
+0000F2 0EE7       00222 	MOVLW 231
+0000F4 6E00       00223 	MOVWF t,0
+0000F6 0E03       00224 	MOVLW 3
+0000F8 6E01       00225 	MOVWF t+1,0
+0000FA D828       00226 	RCALL bekle
+0000FC 0E0C       00227 	MOVLW 12
+0000FE 6E03       00228 	MOVWF TUS,0
+                  00229 			;
+                  00230 			;	PORTC.3=1;
+000100 8682       00231 m013	BSF   PORTC,3,0
+                  00232 			;	if(PORTC.4==1)
+000102 A882       00233 	BTFSS PORTC,4,0
+000104 D007       00234 	BRA   m014
+                  00235 			;	{bekle(999);TUS=0X0E;}
+000106 0EE7       00236 	MOVLW 231
+000108 6E00       00237 	MOVWF t,0
+00010A 0E03       00238 	MOVLW 3
+00010C 6E01       00239 	MOVWF t+1,0
+00010E D81E       00240 	RCALL bekle
+CC8E Version 1.3D,   File: proje15.c            3. Nov 2010  10:28   Page 5
+
+ADDR   CODE       LINE  SOURCE
+
+000110 0E0E       00241 	MOVLW 14
+000112 6E03       00242 	MOVWF TUS,0
+                  00243 			;	if(PORTC.5==1)
+000114 AA82       00244 m014	BTFSS PORTC,5,0
+000116 D006       00245 	BRA   m015
+                  00246 			;	{bekle(999);TUS=0X00;}
+000118 0EE7       00247 	MOVLW 231
+00011A 6E00       00248 	MOVWF t,0
+00011C 0E03       00249 	MOVLW 3
+00011E 6E01       00250 	MOVWF t+1,0
+000120 D815       00251 	RCALL bekle
+000122 6A03       00252 	CLRF  TUS,0
+                  00253 			;	if(PORTC.6==1)
+000124 AC82       00254 m015	BTFSS PORTC,6,0
+000126 D007       00255 	BRA   m016
+                  00256 			;	{bekle(999);TUS=0X0F;}
+000128 0EE7       00257 	MOVLW 231
+00012A 6E00       00258 	MOVWF t,0
+00012C 0E03       00259 	MOVLW 3
+00012E 6E01       00260 	MOVWF t+1,0
+000130 D80D       00261 	RCALL bekle
+000132 0E0F       00262 	MOVLW 15
+000134 6E03       00263 	MOVWF TUS,0
+                  00264 			;	if(PORTC.7==1)
+000136 AE82       00265 m016	BTFSS PORTC,7,0
+000138 D007       00266 	BRA   m017
+                  00267 			;	{bekle(999);TUS=0X0D;}
+00013A 0EE7       00268 	MOVLW 231
+00013C 6E00       00269 	MOVWF t,0
+00013E 0E03       00270 	MOVLW 3
+000140 6E01       00271 	MOVWF t+1,0
+000142 D804       00272 	RCALL bekle
+000144 0E0D       00273 	MOVLW 13
+000146 6E03       00274 	MOVWF TUS,0
+                  00275 			;	
+                  00276 			;	return TUS;	
+000148 5003       00277 m017	MOVF  TUS,W,0
+00014A 0012       00278 	RETURN
+                  00279 			;	
+                  00280 			;}
+                  00281 			;
+                  00282 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00283 			;
+                  00284 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00285 			;{
+                  00286 bekle
+                  00287 			;	unsigned x;
+                  00288 			;	
+                  00289 			;	for(;t>0;t--)
+00014C 5000       00290 m018	MOVF  t,W,0
+00014E 1001       00291 	IORWF t+1,W,0
+000150 B4D8       00292 	BTFSC 0xFD8,Zero_,0
+000152 D00C       00293 	BRA   m021
+                  00294 			;		for(x=540;x>0;x--)
+000154 0E1C       00295 	MOVLW 28
+000156 6E02       00296 	MOVWF x,0
+000158 5202       00297 m019	MOVF  x,1,0
+00015A B4D8       00298 	BTFSC 0xFD8,Zero_,0
+00015C D003       00299 	BRA   m020
+                  00300 			;			nop();
+CC8E Version 1.3D,   File: proje15.c            3. Nov 2010  10:28   Page 6
+
+ADDR   CODE       LINE  SOURCE
+
+00015E 0000       00301 	NOP  
+000160 0602       00302 	DECF  x,1,0
+000162 D7FA       00303 	BRA   m019
+000164 0600       00304 m020	DECF  t,1,0
+000166 0E00       00305 	MOVLW 0
+000168 5A01       00306 	SUBWFB t+1,1,0
+00016A D7F0       00307 	BRA   m018
+                  00308 			;}
+00016C 0012       00309 m021	RETURN
+                  00310 
+                  00311 	END
+                  00312 
+                  00313 
+                  00314 ; *** KEY INFO ***
+                  00315 
+                  00316 ; 0x000022  149 word(s)  0 % : keypad_oku
+                  00317 ; 0x000014    7 word(s)  0 % : ayarlar
+                  00318 ; 0x00014C   17 word(s)  0 % : bekle
+                  00319 ; 0x000004    8 word(s)  0 % : main
+                  00320 
+                  00321 ; RAM usage: 4 bytes (3 local), 1532 bytes free
+                  00322 ; Maximum call level: 2
+                  00323 ; Total of 183 code words (1 %)

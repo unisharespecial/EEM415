@@ -1,0 +1,21 @@
+CC8E Version 1.3B, Copyright (c) B Knudsen Data, Norway 2001-2009
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+FarukCC8.c:
+ 11. Jan 2010  23:05
+ Chip = 18F452
+ RAM : ===.**** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:252  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 4 bytes (3 local), 1532 bytes free
+ File 'FarukCC8.fcs'
+ Optimizing - removed 16 code words (-21 %)
+ File 'FarukCC8.var'
+ File 'FarukCC8.asm'
+ File 'FarukCC8.lst'
+ File 'FarukCC8.cod'
+ File 'FarukCC8.occ'
+ File 'FarukCC8.hex'
+Total of 77 code words (0 %)
+ * Estimated CODE SIZE of full optimization: 75 code words (-2 %)

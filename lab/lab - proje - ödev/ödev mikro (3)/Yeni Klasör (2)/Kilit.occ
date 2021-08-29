@@ -1,0 +1,26 @@
+CC8E Version 1.3F, Copyright (c) B Knudsen Data, Norway 2001-2012
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+Kilit.c:
+  7. Dec 2013  10:25
+ Chip = 18F452
+ RAM : ===***** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:253  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 3 bytes (3 local), 1533 bytes free
+ File 'Kilit.fcs'
+ Optimizing - removed 7 code words (-14 %)
+ File 'Kilit.var'
+ File 'Kilit.asm'
+ File 'Kilit.lst'
+ File 'Kilit.cod'
+ File 'Kilit.occ'
+Warning[1] C:\Users\Beril\Desktop\Yeni Klasör (2)\Kilit.c 12 : Read-modify-write sequence on the same PORT may fail
+ (Two consecutive instructions modifying the same PORT may fail depending on
+ execution speed and load (fall/rise times) on the port pins. Option -wf will
+ remove this warning)
+Warning[2] C:\Users\Beril\Desktop\Yeni Klasör (2)\Kilit.c 17 : Read-modify-write sequence on the same PORT may fail
+ File 'Kilit.hex'
+Total of 51 code words (0 %)
+ * Estimated CODE SIZE of full optimization: 49 code words (-3 %)

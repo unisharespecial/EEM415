@@ -1,0 +1,213 @@
+CC8E Version 1.3D,   File: proje2.c            13. Nov 2010  10:54   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3D, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  13. Nov 2010  10:54  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0002       00013 Zero_       EQU   2
+       0FCB       00014 PR2         EQU   0xFCB
+       0FCA       00015 T2CON       EQU   0xFCA
+       0FC4       00016 ADRESH      EQU   0xFC4
+       0FC2       00017 ADCON0      EQU   0xFC2
+       0FC1       00018 ADCON1      EQU   0xFC1
+       0FBE       00019 CCPR1L      EQU   0xFBE
+       0FBD       00020 CCP1CON     EQU   0xFBD
+       0FBB       00021 CCPR2L      EQU   0xFBB
+       0FBA       00022 CCP2CON     EQU   0xFBA
+       0F96       00023 TRISE       EQU   0xF96
+       0F95       00024 TRISD       EQU   0xF95
+       0F94       00025 TRISC       EQU   0xF94
+       0F93       00026 TRISB       EQU   0xF93
+       0F92       00027 TRISA       EQU   0xF92
+       0F83       00028 PORTD       EQU   0xF83
+       0F82       00029 PORTC       EQU   0xF82
+       0007       00030 GIE         EQU   7
+       0002       00031 GO          EQU   2
+       0000       00032 deger       EQU   0x00
+       0001       00033 t           EQU   0x01
+       0003       00034 x           EQU   0x03
+                  00035 
+000000 EF02 F000  00036 	GOTO main
+                  00037 
+                  00038   ; FILE proje2.c
+                  00039 			;//BERSU MEHMETLÝOGLU
+                  00040 			;//YESIM GUNHAN
+                  00041 			;//ONUR DENIZ KURT
+                  00042 			;//M.ERGIN HABERAL
+                  00043 			;//PROJE2
+                  00044 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00045 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00046 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00047 			;
+                  00048 			;void ayarlar();
+                  00049 			;void bekle(unsigned long t);	// t milisaniye gecikme saðlayan fonksiyon tanýmý
+                  00050 			;void PWMayar();
+                  00051 			;
+                  00052 			;void main()
+                  00053 			;{
+                  00054 main
+                  00055 			;    unsigned int deger;
+                  00056 			; 
+                  00057 			;    PWMayar();
+000004 D82B       00058 	RCALL PWMayar
+                  00059 			;	ayarlar();
+000006 D81E       00060 	RCALL ayarlar
+CC8E Version 1.3D,   File: proje2.c            13. Nov 2010  10:54   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;    PORTC=0;
+000008 6A82       00062 	CLRF  PORTC,0
+                  00063 			;anadongu:
+                  00064 			;    
+                  00065 			;	bekle(1);	
+00000A 0E01       00066 m001	MOVLW 1
+00000C 6E01       00067 	MOVWF t,0
+00000E 6A02       00068 	CLRF  t+1,0
+000010 D808       00069 	RCALL bekle
+                  00070 			;	GO=1;
+000012 84C2       00071 	BSF   0xFC2,GO,0
+                  00072 			;	while(GO);
+000014 B4C2       00073 m002	BTFSC 0xFC2,GO,0
+000016 D7FE       00074 	BRA   m002
+                  00075 			;	deger=ADRESH; //okunan analog degerin digital karsiligi, deger degiskenine atýlýyor
+000018 CFC4 F000  00076 	MOVFF ADRESH,deger
+                  00077 			;    CCPR1L=deger;
+00001C C000 FFBE  00078 	MOVFF deger,CCPR1L
+                  00079 			;   // CCPR2L=deger;
+                  00080 			;   //PORTC=deger;
+                  00081 			;    
+                  00082 			;
+                  00083 			;goto anadongu;
+000020 D7F4       00084 	BRA   m001
+                  00085 			;	
+                  00086 			;}
+                  00087 			;
+                  00088 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00089 			;
+                  00090 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00091 			;{
+                  00092 bekle
+                  00093 			;	unsigned x;
+                  00094 			;	
+                  00095 			;	for(;t>0;t--)
+000022 5001       00096 m003	MOVF  t,W,0
+000024 1002       00097 	IORWF t+1,W,0
+000026 B4D8       00098 	BTFSC 0xFD8,Zero_,0
+000028 D00C       00099 	BRA   m006
+                  00100 			;		for(x=140;x>0;x--)
+00002A 0E8C       00101 	MOVLW 140
+00002C 6E03       00102 	MOVWF x,0
+00002E 5203       00103 m004	MOVF  x,1,0
+000030 B4D8       00104 	BTFSC 0xFD8,Zero_,0
+000032 D003       00105 	BRA   m005
+                  00106 			;			nop();
+000034 0000       00107 	NOP  
+000036 0603       00108 	DECF  x,1,0
+000038 D7FA       00109 	BRA   m004
+00003A 0601       00110 m005	DECF  t,1,0
+00003C 0E00       00111 	MOVLW 0
+00003E 5A02       00112 	SUBWFB t+1,1,0
+000040 D7F0       00113 	BRA   m003
+                  00114 			;}
+000042 0012       00115 m006	RETURN
+                  00116 			;
+                  00117 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00118 			;
+                  00119 			;void ayarlar()	// Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00120 			;{	
+CC8E Version 1.3D,   File: proje2.c            13. Nov 2010  10:54   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 ayarlar
+                  00122 			;	GIE=0;			// Bütün kesmeleri kapat
+000044 9EF2       00123 	BCF   0xFF2,GIE,0
+                  00124 			;	TRISA=0xFF;
+000046 6892       00125 	SETF  TRISA,0
+                  00126 			;	TRISB=0xFF;
+000048 6893       00127 	SETF  TRISB,0
+                  00128 			;	TRISC=0x00;	
+00004A 6A94       00129 	CLRF  TRISC,0
+                  00130 			;	TRISD=0x00;		
+00004C 6A95       00131 	CLRF  TRISD,0
+                  00132 			;	TRISE=0xFF;
+00004E 6896       00133 	SETF  TRISE,0
+                  00134 			;	
+                  00135 			;	PORTC=0x00;		
+000050 6A82       00136 	CLRF  PORTC,0
+                  00137 			;	PORTD=0x00;
+000052 6A83       00138 	CLRF  PORTD,0
+                  00139 			;	
+                  00140 			;	ADCON0=0b.0100.0001;;
+000054 0E41       00141 	MOVLW 65
+000056 6EC2       00142 	MOVWF ADCON0,0
+                  00143 			;	ADCON1=0b.0000.0000;;
+000058 6AC1       00144 	CLRF  ADCON1,0
+                  00145 			;}
+00005A 0012       00146 	RETURN
+                  00147 			;void PWMayar()
+                  00148 			;{
+                  00149 PWMayar
+                  00150 			;	PR2=0XFF;		//Periyod yazmacý(Timer2 peryodu=255)
+00005C 68CB       00151 	SETF  PR2,0
+                  00152 			;	
+                  00153 			;	CCP1CON=0;		//PWM MODE OFF
+00005E 6ABD       00154 	CLRF  CCP1CON,0
+                  00155 			;	CCPR1L=0;		
+000060 6ABE       00156 	CLRF  CCPR1L,0
+                  00157 			;	CCP1CON.4=0;	
+000062 98BD       00158 	BCF   CCP1CON,4,0
+                  00159 			;	CCP1CON.5=0;
+000064 9ABD       00160 	BCF   CCP1CON,5,0
+                  00161 			;	
+                  00162 			;	CCP2CON=0;		//PWM MODE OFF
+000066 6ABA       00163 	CLRF  CCP2CON,0
+                  00164 			;	CCPR2L=0;		
+000068 6ABB       00165 	CLRF  CCPR2L,0
+                  00166 			;	CCP2CON.4=0;	
+00006A 98BA       00167 	BCF   CCP2CON,4,0
+                  00168 			;	CCP2CON.5=0;
+00006C 9ABA       00169 	BCF   CCP2CON,5,0
+                  00170 			;	
+                  00171 			;	TRISC.2=0;
+00006E 9494       00172 	BCF   TRISC,2,0
+                  00173 			;	TRISC.1=0;
+000070 9294       00174 	BCF   TRISC,1,0
+                  00175 			;			
+                  00176 			;	T2CON = 0b.0000.0100; // TMR2 ON, PRESCALE 1:1, POSTSCALE 1:1
+000072 0E04       00177 	MOVLW 4
+000074 6ECA       00178 	MOVWF T2CON,0
+                  00179 			;
+                  00180 			;	CCP1CON=0b.0000.1100; //CCP1 ON
+CC8E Version 1.3D,   File: proje2.c            13. Nov 2010  10:54   Page 4
+
+ADDR   CODE       LINE  SOURCE
+
+000076 0E0C       00181 	MOVLW 12
+000078 6EBD       00182 	MOVWF CCP1CON,0
+00007A 0012       00183 	RETURN
+                  00184 
+                  00185 	END
+                  00186 
+                  00187 
+                  00188 ; *** KEY INFO ***
+                  00189 
+                  00190 ; 0x000044   12 word(s)  0 % : ayarlar
+                  00191 ; 0x000022   17 word(s)  0 % : bekle
+                  00192 ; 0x00005C   16 word(s)  0 % : PWMayar
+                  00193 ; 0x000004   15 word(s)  0 % : main
+                  00194 
+                  00195 ; RAM usage: 4 bytes (4 local), 1532 bytes free
+                  00196 ; Maximum call level: 1
+                  00197 ; Total of 62 code words (0 %)

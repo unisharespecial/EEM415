@@ -1,0 +1,429 @@
+CC8E Version 1.3D,   File: alici.c             24. Jan 2011  10:40   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3D, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  24. Jan 2011  10:40  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+       0FF6       00009 TBLPTR      EQU   0xFF6
+       0FF5       00010 TABLAT      EQU   0xFF5
+       0002       00011 Zero_       EQU   2
+       0FC9       00012 SSPBUF      EQU   0xFC9
+       0FC6       00013 SSPCON1     EQU   0xFC6
+       0F96       00014 TRISE       EQU   0xF96
+       0F95       00015 TRISD       EQU   0xF95
+       0F94       00016 TRISC       EQU   0xF94
+       0F93       00017 TRISB       EQU   0xF93
+       0F92       00018 TRISA       EQU   0xF92
+       0F83       00019 PORTD       EQU   0xF83
+       0F81       00020 PORTB       EQU   0xF81
+       0006       00021 CKE         EQU   6
+       0004       00022 CKP         EQU   4
+       0005       00023 SSPEN       EQU   5
+       0006       00024 SSPOV       EQU   6
+       0007       00025 WCOL        EQU   7
+       0003       00026 SSPIF       EQU   3
+       0000       00027 e           EQU   0
+       0001       00028 rs          EQU   1
+       0002       00029 rw          EQU   2
+       0F83       00030 disp        EQU   0xF83
+       0000       00031 gelen       EQU   0x00
+       007F       00032 data1       EQU   0x7F
+       007F       00033 temp        EQU   0x7F
+       0007       00034 t           EQU   0x07
+       0009       00035 x           EQU   0x09
+       0006       00036 kom         EQU   0x06
+       0006       00037 c           EQU   0x06
+       0001       00038 msj         EQU   0x01
+       0002       00039 adr         EQU   0x02
+       0003       00040 i           EQU   0x03
+       0004       00041 j           EQU   0x04
+       0005       00042 k           EQU   0x05
+       0006       00043 ci          EQU   0x06
+                  00044 
+000000 EF02 F000  00045 	GOTO main
+                  00046 
+                  00047   ; FILE alici.c
+                  00048 			;void init();	//Baslangýc ayarlarý fonksiyonu
+                  00049 			;void spi_init();//SPI Ayarlarý fonksiyonu
+                  00050 			;uns8 spi_gonder_al(uns8);	//SPI veri gonderme fonksiyonu 
+                  00051 			;void bekle(unsigned long);	//Bekleme fonksiyonu
+                  00052 			;void LcdInit();
+                  00053 			;void LcdYaz(char );
+                  00054 			;void LcdKomut(unsigned kom);
+                  00055 			;void MesajYaz(const char *msj,unsigned adr);
+                  00056 			;
+                  00057 			;bit e @ PORTE.0, rs @ PORTE.1, rw @ PORTE.2;
+                  00058 			;unsigned disp @ PORTD;
+                  00059 			;
+                  00060 			;void main()
+CC8E Version 1.3D,   File: alici.c             24. Jan 2011  10:40   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;{
+                  00062 main
+                  00063 			;	uns8 gelen;
+                  00064 			;	init();		//baslangýc ayarlarý yapýlýyor
+000004 D828       00065 	RCALL init
+                  00066 			;dongu:
+                  00067 			;	SSPBUF=0x00;
+000006 6AC9       00068 m001	CLRF  SSPBUF,0
+                  00069 			;	while(!SSPIF);  //	Buffer kontrolü
+000008 A69E       00070 m002	BTFSS 0xF9E,SSPIF,0
+00000A D7FE       00071 	BRA   m002
+                  00072 			;	gelen=SSPBUF;  
+00000C CFC9 F000  00073 	MOVFF SSPBUF,gelen
+                  00074 			;  	SSPIF = 0;
+000010 969E       00075 	BCF   0xF9E,SSPIF,0
+                  00076 			;	PORTB=gelen;
+000012 C000 FF81  00077 	MOVFF gelen,PORTB
+                  00078 			;	if(gelen == 0x02) 
+000016 0E02       00079 	MOVLW 2
+000018 6200       00080 	CPFSEQ gelen,0
+00001A D003       00081 	BRA   m003
+                  00082 			;		MesajYaz("bir                   ",0x80);
+00001C 6A01       00083 	CLRF  msj,0
+00001E 0E80       00084 	MOVLW 128
+000020 D870       00085 	RCALL MesajYaz
+                  00086 			;	if(gelen == 0x04) 
+000022 0E04       00087 m003	MOVLW 4
+000024 6200       00088 	CPFSEQ gelen,0
+000026 D004       00089 	BRA   m004
+                  00090 			;		MesajYaz("iki                   ",0x80);
+000028 0E17       00091 	MOVLW 23
+00002A 6E01       00092 	MOVWF msj,0
+00002C 0E80       00093 	MOVLW 128
+00002E D869       00094 	RCALL MesajYaz
+                  00095 			;	if(gelen == 0x08) 
+000030 0E08       00096 m004	MOVLW 8
+000032 6200       00097 	CPFSEQ gelen,0
+000034 D004       00098 	BRA   m005
+                  00099 			;		MesajYaz("uc                    ",0x80);
+000036 0E2E       00100 	MOVLW 46
+000038 6E01       00101 	MOVWF msj,0
+00003A 0E80       00102 	MOVLW 128
+00003C D862       00103 	RCALL MesajYaz
+                  00104 			;	if(gelen == 0x10) 
+00003E 0E10       00105 m005	MOVLW 16
+000040 6200       00106 	CPFSEQ gelen,0
+000042 D004       00107 	BRA   m006
+                  00108 			;		MesajYaz("dort                  ",0x80);
+000044 0E45       00109 	MOVLW 69
+000046 6E01       00110 	MOVWF msj,0
+000048 0E80       00111 	MOVLW 128
+00004A D85B       00112 	RCALL MesajYaz
+                  00113 			;	bekle(100);
+00004C 0E64       00114 m006	MOVLW 100
+00004E 6E07       00115 	MOVWF t,0
+000050 6A08       00116 	CLRF  t+1,0
+000052 D822       00117 	RCALL bekle
+                  00118 			;	goto dongu;
+000054 D7D8       00119 	BRA   m001
+                  00120 			;}
+CC8E Version 1.3D,   File: alici.c             24. Jan 2011  10:40   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 			;void init()
+                  00122 			;{
+                  00123 init
+                  00124 			;	TRISA=0XFF;
+000056 6892       00125 	SETF  TRISA,0
+                  00126 			;	TRISE=0x00;
+000058 6A96       00127 	CLRF  TRISE,0
+                  00128 			;	TRISD=0x00;	// PORTD.0 = CS, PORTD çýkýþ yapýlýyor.
+00005A 6A95       00129 	CLRF  TRISD,0
+                  00130 			;	TRISC=0x00;	//	SPI pinleri çýkýþ yapýlýyor.
+00005C 6A94       00131 	CLRF  TRISC,0
+                  00132 			;	TRISC.3=1;
+00005E 8694       00133 	BSF   TRISC,3,0
+                  00134 			;	TRISC.5=1;
+000060 8A94       00135 	BSF   TRISC,5,0
+                  00136 			;	TRISB=0x00;	//  Buton = PORTB.0, giriþ yapýlýyor
+000062 6A93       00137 	CLRF  TRISB,0
+                  00138 			;	spi_init();	// SPI Ayarlarý yapýlýyor
+000064 D801       00139 	RCALL spi_init
+                  00140 			;	LcdInit();
+000066 D042       00141 	BRA   LcdInit
+                  00142 			;}
+                  00143 			;void spi_init()
+                  00144 			;{
+                  00145 spi_init
+                  00146 			;	CKP = 0 ;	//Clock polarity 
+000068 98C6       00147 	BCF   0xFC6,CKP,0
+                  00148 			;	CKE=0;		//Clock edge select
+00006A 9CC7       00149 	BCF   0xFC7,CKE,0
+                  00150 			;	//SPI Slave Mode
+                  00151 			;	SSPCON1.3=0;
+00006C 96C6       00152 	BCF   SSPCON1,3,0
+                  00153 			;	SSPCON1.2=1;
+00006E 84C6       00154 	BSF   SSPCON1,2,0
+                  00155 			;	SSPCON1.1=0;
+000070 92C6       00156 	BCF   SSPCON1,1,0
+                  00157 			;	SSPCON1.0=1;
+000072 80C6       00158 	BSF   SSPCON1,0,0
+                  00159 			;	SSPEN=1;	//Synchronous Serial Port Enable bit //5. bit
+000074 8AC6       00160 	BSF   0xFC6,SSPEN,0
+                  00161 			;	SSPOV=0;	// Receive overflow indicator bit
+000076 9CC6       00162 	BCF   0xFC6,SSPOV,0
+                  00163 			;	WCOL=0;		// Write collision detect bit
+000078 9EC6       00164 	BCF   0xFC6,WCOL,0
+                  00165 			;}
+00007A 0012       00166 	RETURN
+                  00167 			;uns8 spi_gonder_al(uns8 data1)
+                  00168 			;{
+                  00169 spi_gonder_al
+00007C 6E7F       00170 	MOVWF data1,0
+                  00171 			;	uns8 temp;
+                  00172 			;	PORTD.0=0;	//CS = 0 
+00007E 9083       00173 	BCF   PORTD,0,0
+                  00174 			;	SSPBUF = data1;		//Instruction register verisi
+000080 C07F FFC9  00175 	MOVFF data1,SSPBUF
+                  00176 			;	while(!SSPIF);  //	Buffer kontrolü
+000084 A69E       00177 m007	BTFSS 0xF9E,SSPIF,0
+000086 D7FE       00178 	BRA   m007
+                  00179 			;	temp=SSPBUF;  
+000088 CFC9 F07F  00180 	MOVFF SSPBUF,temp
+CC8E Version 1.3D,   File: alici.c             24. Jan 2011  10:40   Page 4
+
+ADDR   CODE       LINE  SOURCE
+
+                  00181 			;  	SSPIF = 0;
+00008C 969E       00182 	BCF   0xF9E,SSPIF,0
+                  00183 			;	PORTD.0=1;	//CS=1
+00008E 8083       00184 	BSF   PORTD,0,0
+                  00185 			;	PORTB=temp;
+000090 C07F FF81  00186 	MOVFF temp,PORTB
+                  00187 			;	return temp;
+000094 507F       00188 	MOVF  temp,W,0
+000096 0012       00189 	RETURN
+                  00190 			;}
+                  00191 			;void bekle(unsigned long t)	/*t milisaniye gecikme saðlar*/
+                  00192 			;{
+                  00193 bekle
+                  00194 			;	unsigned x;	
+                  00195 			;	for(;t>0;t--)
+000098 5007       00196 m008	MOVF  t,W,0
+00009A 1008       00197 	IORWF t+1,W,0
+00009C B4D8       00198 	BTFSC 0xFD8,Zero_,0
+00009E D00C       00199 	BRA   m011
+                  00200 			;		for(x=140;x>0;x--)
+0000A0 0E8C       00201 	MOVLW 140
+0000A2 6E09       00202 	MOVWF x,0
+0000A4 5209       00203 m009	MOVF  x,1,0
+0000A6 B4D8       00204 	BTFSC 0xFD8,Zero_,0
+0000A8 D003       00205 	BRA   m010
+                  00206 			;			nop();
+0000AA 0000       00207 	NOP  
+0000AC 0609       00208 	DECF  x,1,0
+0000AE D7FA       00209 	BRA   m009
+0000B0 0607       00210 m010	DECF  t,1,0
+0000B2 0E00       00211 	MOVLW 0
+0000B4 5A08       00212 	SUBWFB t+1,1,0
+0000B6 D7F0       00213 	BRA   m008
+                  00214 			;}
+0000B8 0012       00215 m011	RETURN
+                  00216 			;void LcdKomut(unsigned kom)
+                  00217 			;{
+                  00218 LcdKomut
+0000BA 6E06       00219 	MOVWF kom,0
+                  00220 			;	//while(IsLcdBusy());
+                  00221 			;	bekle(20);
+0000BC 0E14       00222 	MOVLW 20
+0000BE 6E07       00223 	MOVWF t,0
+0000C0 6A08       00224 	CLRF  t+1,0
+0000C2 DFEA       00225 	RCALL bekle
+                  00226 			;	disp=kom;
+0000C4 C006 FF83  00227 	MOVFF kom,disp
+                  00228 			;	rs=0;
+0000C8 9284       00229 	BCF   0xF84,rs,0
+                  00230 			;	e=0;
+0000CA 9084       00231 	BCF   0xF84,e,0
+                  00232 			;	e=1;
+0000CC 8084       00233 	BSF   0xF84,e,0
+                  00234 			;}
+0000CE 0012       00235 	RETURN
+                  00236 			;void LcdYaz(char c)
+                  00237 			;{
+                  00238 LcdYaz
+0000D0 6E06       00239 	MOVWF c,0
+                  00240 			;	//while(IsLcdBusy());
+CC8E Version 1.3D,   File: alici.c             24. Jan 2011  10:40   Page 5
+
+ADDR   CODE       LINE  SOURCE
+
+                  00241 			;	bekle(20);
+0000D2 0E14       00242 	MOVLW 20
+0000D4 6E07       00243 	MOVWF t,0
+0000D6 6A08       00244 	CLRF  t+1,0
+0000D8 DFDF       00245 	RCALL bekle
+                  00246 			;	disp=c;
+0000DA C006 FF83  00247 	MOVFF c,disp
+                  00248 			;	rs=1;
+0000DE 8284       00249 	BSF   0xF84,rs,0
+                  00250 			;	e=0;
+0000E0 9084       00251 	BCF   0xF84,e,0
+                  00252 			;	e=1;
+0000E2 8084       00253 	BSF   0xF84,e,0
+                  00254 			;	bekle(1);	
+0000E4 0E01       00255 	MOVLW 1
+0000E6 6E07       00256 	MOVWF t,0
+0000E8 6A08       00257 	CLRF  t+1,0
+0000EA D7D6       00258 	BRA   bekle
+                  00259 			;}
+                  00260 			;void LcdInit()
+                  00261 			;{
+                  00262 LcdInit
+                  00263 			;	rw=0;
+0000EC 9484       00264 	BCF   0xF84,rw,0
+                  00265 			;	e=1;
+0000EE 8084       00266 	BSF   0xF84,e,0
+                  00267 			;	rs=1;
+0000F0 8284       00268 	BSF   0xF84,rs,0
+                  00269 			;	LcdKomut(0x38);
+0000F2 0E38       00270 	MOVLW 56
+0000F4 DFE2       00271 	RCALL LcdKomut
+                  00272 			;	LcdKomut(0x01);	//Clear display
+0000F6 0E01       00273 	MOVLW 1
+0000F8 DFE0       00274 	RCALL LcdKomut
+                  00275 			;	LcdKomut(0x0D); //Display,Cursor,Blink on
+0000FA 0E0D       00276 	MOVLW 13
+0000FC DFDE       00277 	RCALL LcdKomut
+                  00278 			;	LcdKomut(0x06); //Increment ddram adres, do not shift disp.
+0000FE 0E06       00279 	MOVLW 6
+000100 D7DC       00280 	BRA   LcdKomut
+                  00281 			;}
+                  00282 			;void MesajYaz(const char *msj,unsigned adr)
+                  00283 			;{
+                  00284 MesajYaz
+000102 6E02       00285 	MOVWF adr,0
+                  00286 			;	unsigned i,j,k;
+                  00287 			;	i=0;
+000104 6A03       00288 	CLRF  i,0
+                  00289 			;	while(msj[i]!=0)	i++;
+000106 5003       00290 m012	MOVF  i,W,0
+000108 2401       00291 	ADDWF msj,W,0
+00010A D819       00292 	RCALL _const1
+00010C 0A00       00293 	XORLW 0
+00010E B4D8       00294 	BTFSC 0xFD8,Zero_,0
+000110 D002       00295 	BRA   m013
+000112 2A03       00296 	INCF  i,1,0
+000114 D7F8       00297 	BRA   m012
+                  00298 			;	LcdKomut(adr);
+000116 5002       00299 m013	MOVF  adr,W,0
+000118 DFD0       00300 	RCALL LcdKomut
+CC8E Version 1.3D,   File: alici.c             24. Jan 2011  10:40   Page 6
+
+ADDR   CODE       LINE  SOURCE
+
+                  00301 			;	for(j=0;j<i;j++){
+00011A 6A04       00302 	CLRF  j,0
+00011C 5003       00303 m014	MOVF  i,W,0
+00011E 6004       00304 	CPFSLT j,0
+000120 D00D       00305 	BRA   m017
+                  00306 			;		LcdYaz(msj[j]);
+000122 5004       00307 	MOVF  j,W,0
+000124 2401       00308 	ADDWF msj,W,0
+000126 D80B       00309 	RCALL _const1
+000128 DFD3       00310 	RCALL LcdYaz
+                  00311 			;		for(k=0;k<30;k++)nop();
+00012A 6A05       00312 	CLRF  k,0
+00012C 0E1E       00313 m015	MOVLW 30
+00012E 6005       00314 	CPFSLT k,0
+000130 D003       00315 	BRA   m016
+000132 0000       00316 	NOP  
+000134 2A05       00317 	INCF  k,1,0
+000136 D7FA       00318 	BRA   m015
+                  00319 			;	}
+000138 2A04       00320 m016	INCF  j,1,0
+00013A D7F0       00321 	BRA   m014
+                  00322 			;}
+00013C 0012       00323 m017	RETURN
+                  00324 _const1
+00013E 6E06       00325 	MOVWF ci,0
+000140 5006       00326 	MOVF  ci,W,0
+000142 0F54       00327 	ADDLW 84
+000144 6EF6       00328 	MOVWF TBLPTR,0
+000146 0E01       00329 	MOVLW 1
+000148 6AF7       00330 	CLRF  TBLPTR+1,0
+00014A 22F7       00331 	ADDWFC TBLPTR+1,1,0
+00014C 6AF8       00332 	CLRF  TBLPTR+2,0
+00014E 0008       00333 	TBLRD *
+000150 50F5       00334 	MOVF  TABLAT,W,0
+000152 0012       00335 	RETURN
+000154 6962       00336 	DW    0x6962
+000156 2072       00337 	DW    0x2072
+000158 2020       00338 	DW    0x2020
+00015A 2020       00339 	DW    0x2020
+00015C 2020       00340 	DW    0x2020
+00015E 2020       00341 	DW    0x2020
+000160 2020       00342 	DW    0x2020
+000162 2020       00343 	DW    0x2020
+000164 2020       00344 	DW    0x2020
+000166 2020       00345 	DW    0x2020
+000168 2020       00346 	DW    0x2020
+00016A 6900       00347 	DW    0x6900
+00016C 696B       00348 	DW    0x696B
+00016E 2020       00349 	DW    0x2020
+000170 2020       00350 	DW    0x2020
+000172 2020       00351 	DW    0x2020
+000174 2020       00352 	DW    0x2020
+000176 2020       00353 	DW    0x2020
+000178 2020       00354 	DW    0x2020
+00017A 2020       00355 	DW    0x2020
+00017C 2020       00356 	DW    0x2020
+00017E 2020       00357 	DW    0x2020
+000180 0020       00358 	DW    0x20
+000182 6375       00359 	DW    0x6375
+000184 2020       00360 	DW    0x2020
+CC8E Version 1.3D,   File: alici.c             24. Jan 2011  10:40   Page 7
+
+ADDR   CODE       LINE  SOURCE
+
+000186 2020       00361 	DW    0x2020
+000188 2020       00362 	DW    0x2020
+00018A 2020       00363 	DW    0x2020
+00018C 2020       00364 	DW    0x2020
+00018E 2020       00365 	DW    0x2020
+000190 2020       00366 	DW    0x2020
+000192 2020       00367 	DW    0x2020
+000194 2020       00368 	DW    0x2020
+000196 2020       00369 	DW    0x2020
+000198 6400       00370 	DW    0x6400
+00019A 726F       00371 	DW    0x726F
+00019C 2074       00372 	DW    0x2074
+00019E 2020       00373 	DW    0x2020
+0001A0 2020       00374 	DW    0x2020
+0001A2 2020       00375 	DW    0x2020
+0001A4 2020       00376 	DW    0x2020
+0001A6 2020       00377 	DW    0x2020
+0001A8 2020       00378 	DW    0x2020
+0001AA 2020       00379 	DW    0x2020
+0001AC 2020       00380 	DW    0x2020
+0001AE 0020       00381 	DW    0x20
+                  00382 
+                  00383 	END
+                  00384 
+                  00385 
+                  00386 ; *** KEY INFO ***
+                  00387 
+                  00388 ; 0x000056    9 word(s)  0 % : init
+                  00389 ; 0x000068   10 word(s)  0 % : spi_init
+                  00390 ; 0x00007C   14 word(s)  0 % : spi_gonder_al
+                  00391 ; 0x000098   17 word(s)  0 % : bekle
+                  00392 ; 0x0000EC   11 word(s)  0 % : LcdInit
+                  00393 ; 0x0000D0   14 word(s)  0 % : LcdYaz
+                  00394 ; 0x0000BA   11 word(s)  0 % : LcdKomut
+                  00395 ; 0x000102   30 word(s)  0 % : MesajYaz
+                  00396 ; 0x000004   41 word(s)  0 % : main
+                  00397 ; 0x00013E   57 word(s)  0 % : _const1
+                  00398 
+                  00399 ; RAM usage: 10 bytes (10 local), 1526 bytes free
+                  00400 ; Maximum call level: 3
+                  00401 ; Total of 216 code words (1 %)

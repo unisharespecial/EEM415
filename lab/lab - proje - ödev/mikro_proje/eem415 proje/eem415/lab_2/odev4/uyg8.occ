@@ -1,0 +1,28 @@
+CC8E Version 1.3B, Copyright (c) B Knudsen Data, Norway 2001-2009, No. 2367
+ --> STANDARD edition, 8-32 bit int, 16-32 bit float, 128k code words
+uyg8.c:
+  9. Dec 2010   4:02
+ Chip = 18F452
+ RAM : ===***** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:253  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 3 bytes (3 local), 1533 bytes free
+ File 'uyg8.fcs'
+ Optimizing - removed 12 code words (-30 %)
+ File 'uyg8.var'
+ File 'uyg8.asm'
+ File 'uyg8.lst'
+ File 'uyg8.cod'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\GENCER\Belgelerim\DERSLER\EEM415-okul\lab_2\odev4\uyg8.c
+ File 'uyg8.occ'
+ File 'uyg8.hex'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\GENCER\Belgelerim\DERSLER\EEM415-okul\lab_2\odev4\uyg8.c
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\GENCER\Belgelerim\DERSLER\EEM415-okul\lab_2\odev4\18F452.h
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\GENCER\Belgelerim\DERSLER\EEM415-okul\lab_2\odev4\INT18XXX.H
+Total of 38 code words (0 %)

@@ -1,0 +1,27 @@
+CC8E Version 1.3D, Copyright (c) B Knudsen Data, Norway 2001-2010
+ --> FREE edition, 8-16 bit int, 24 bit float, 128k code words, reduced optim.
+uyg.c:
+ 23. Dec 2010  14:32
+ Chip = 18F452
+ RAM : ====**** ******** ******** ******** ******** ******** ******** ********
+  40h: ******** ******** ******** ******** ******** ******** ******** ********
+  80h: ******** ******** ******** ******** ******** ******** ******** ********
+  C0h: ******** ******** ******** ******** ******** ******** ******** ********
+ Bank  0:252  1:256  2:256  3:256  4:256  5:256  bytes free
+RAM usage: 4 bytes (4 local), 1532 bytes free
+ File 'uyg.fcs'
+ Optimizing - removed 42 code words (-28 %)
+ File 'uyg.var'
+ File 'uyg.asm'
+ File 'uyg.lst'
+ File 'uyg.cod'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\Administrator\Desktop\eem415 proje\proje3\uyg.c
+ File 'uyg.occ'
+ File 'uyg.hex'
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\Administrator\Desktop\eem415 proje\proje3\uyg.c
+WARNING: String limit in COD file exceeded (max 64 characters):
+C:\Documents and Settings\Administrator\Desktop\eem415 proje\proje3\18F452.h
+Total of 135 code words (0 %)
+ * Estimated CODE SIZE of full optimization: 130 code words (-3 %)

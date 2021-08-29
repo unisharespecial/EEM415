@@ -1,0 +1,287 @@
+CC8E Version 1.3B,   File: lcd.c                5. Nov 2010  22:31   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3B, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************   5. Nov 2010  22:31  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+       0FF6       00009 TBLPTR      EQU   0xFF6
+       0FF5       00010 TABLAT      EQU   0xFF5
+       0F96       00011 TRISE       EQU   0xF96
+       0F95       00012 TRISD       EQU   0xF95
+       0000       00013 e           EQU   0
+       0001       00014 rs          EQU   1
+       0002       00015 rw          EQU   2
+       0F83       00016 disp        EQU   0xF83
+       0006       00017 t           EQU   0x06
+       0008       00018 n           EQU   0x08
+       0005       00019 kom         EQU   0x05
+       0005       00020 c           EQU   0x05
+       0000       00021 msj         EQU   0x00
+       0001       00022 adr         EQU   0x01
+       0002       00023 i           EQU   0x02
+       0003       00024 j           EQU   0x03
+       0004       00025 k           EQU   0x04
+       0005       00026 ci          EQU   0x05
+                  00027 
+000000 EF02 F000  00028 	GOTO main
+                  00029 
+                  00030   ; FILE lcd.c
+                  00031 			;void init();
+                  00032 			;void bekle(unsigned long t);
+                  00033 			;void LcdInit();
+                  00034 			;void LcdYaz(char );
+                  00035 			;void LcdKomut(unsigned kom);
+                  00036 			;void MesajYaz(const char *msj,unsigned adr);
+                  00037 			;
+                  00038 			;bit e @ PORTE.0, rs @ PORTE.1, rw @ PORTE.2;
+                  00039 			;unsigned disp @ PORTD;
+                  00040 			;
+                  00041 			;void main(){
+                  00042 main
+                  00043 			;	init();
+000004 D813       00044 	RCALL init
+                  00045 			;	LcdInit();
+000006 D83D       00046 	RCALL LcdInit
+                  00047 			;anadongu:
+                  00048 			;	MesajYaz("EEM415          ",0x80);
+000008 6A00       00049 m001	CLRF  msj,0
+00000A 0E80       00050 	MOVLW 128
+00000C D845       00051 	RCALL MesajYaz
+                  00052 			;	bekle(1500);
+00000E 0EDC       00053 	MOVLW 220
+000010 6E06       00054 	MOVWF t,0
+000012 0E05       00055 	MOVLW 5
+000014 6E07       00056 	MOVWF t+1,0
+000016 D80D       00057 	RCALL bekle
+                  00058 			;	MesajYaz("application file    ",0x80);
+000018 0E11       00059 	MOVLW 17
+00001A 6E00       00060 	MOVWF msj,0
+CC8E Version 1.3B,   File: lcd.c                5. Nov 2010  22:31   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+00001C 0E80       00061 	MOVLW 128
+00001E D83C       00062 	RCALL MesajYaz
+                  00063 			;	bekle(1500);
+000020 0EDC       00064 	MOVLW 220
+000022 6E06       00065 	MOVWF t,0
+000024 0E05       00066 	MOVLW 5
+000026 6E07       00067 	MOVWF t+1,0
+000028 D804       00068 	RCALL bekle
+                  00069 			;	
+                  00070 			;goto anadongu;
+00002A D7EE       00071 	BRA   m001
+                  00072 			;}
+                  00073 			;   	
+                  00074 			;
+                  00075 			;void init()
+                  00076 			;{
+                  00077 init
+                  00078 			;	TRISD=0X00;
+00002C 6A95       00079 	CLRF  TRISD,0
+                  00080 			;	TRISE=0X00;
+00002E 6A96       00081 	CLRF  TRISE,0
+                  00082 			;}
+000030 0012       00083 	RETURN
+                  00084 			;
+                  00085 			;
+                  00086 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00087 			;{
+                  00088 bekle
+                  00089 			;	unsigned n;
+                  00090 			;	for(;t>0;t--)
+000032 5006       00091 m002	MOVF  t,W,0
+000034 1007       00092 	IORWF t+1,W,0
+000036 E00B       00093 	BZ    m005
+                  00094 			;		for(n=140;n>0;n--)
+000038 0E8C       00095 	MOVLW 140
+00003A 6E08       00096 	MOVWF n,0
+00003C 5208       00097 m003	MOVF  n,1,0
+00003E E003       00098 	BZ    m004
+                  00099 			;			nop();
+000040 0000       00100 	NOP  
+000042 0608       00101 	DECF  n,1,0
+000044 D7FB       00102 	BRA   m003
+000046 0606       00103 m004	DECF  t,1,0
+000048 0E00       00104 	MOVLW 0
+00004A 5A07       00105 	SUBWFB t+1,1,0
+00004C D7F2       00106 	BRA   m002
+                  00107 			;}
+00004E 0012       00108 m005	RETURN
+                  00109 			;
+                  00110 			;void LcdKomut(unsigned kom)
+                  00111 			;{
+                  00112 LcdKomut
+000050 6E05       00113 	MOVWF kom,0
+                  00114 			;	
+                  00115 			;	bekle(20);
+000052 0E14       00116 	MOVLW 20
+000054 6E06       00117 	MOVWF t,0
+000056 6A07       00118 	CLRF  t+1,0
+000058 DFEC       00119 	RCALL bekle
+                  00120 			;	disp=kom;
+CC8E Version 1.3B,   File: lcd.c                5. Nov 2010  22:31   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+00005A C005 FF83  00121 	MOVFF kom,disp
+                  00122 			;	rs=0;
+00005E 9284       00123 	BCF   0xF84,rs,0
+                  00124 			;	e=0;
+000060 9084       00125 	BCF   0xF84,e,0
+                  00126 			;	e=1;
+000062 8084       00127 	BSF   0xF84,e,0
+                  00128 			;}
+000064 0012       00129 	RETURN
+                  00130 			;
+                  00131 			;void LcdYaz(char c)
+                  00132 			;{
+                  00133 LcdYaz
+000066 6E05       00134 	MOVWF c,0
+                  00135 			;	bekle(100);
+000068 0E64       00136 	MOVLW 100
+00006A 6E06       00137 	MOVWF t,0
+00006C 6A07       00138 	CLRF  t+1,0
+00006E DFE1       00139 	RCALL bekle
+                  00140 			;	disp=c;
+000070 C005 FF83  00141 	MOVFF c,disp
+                  00142 			;	rs=1;
+000074 8284       00143 	BSF   0xF84,rs,0
+                  00144 			;	e=0;
+000076 9084       00145 	BCF   0xF84,e,0
+                  00146 			;	e=1;
+000078 8084       00147 	BSF   0xF84,e,0
+                  00148 			;	bekle(1);	
+00007A 0E01       00149 	MOVLW 1
+00007C 6E06       00150 	MOVWF t,0
+00007E 6A07       00151 	CLRF  t+1,0
+000080 D7D8       00152 	BRA   bekle
+                  00153 			;}
+                  00154 			;
+                  00155 			;
+                  00156 			;void LcdInit()
+                  00157 			;{
+                  00158 LcdInit
+                  00159 			;	rw=0;
+000082 9484       00160 	BCF   0xF84,rw,0
+                  00161 			;	e=1;
+000084 8084       00162 	BSF   0xF84,e,0
+                  00163 			;	rs=1;
+000086 8284       00164 	BSF   0xF84,rs,0
+                  00165 			;	LcdKomut(0x38);	
+000088 0E38       00166 	MOVLW 56
+00008A DFE2       00167 	RCALL LcdKomut
+                  00168 			;	LcdKomut(0x01);	//Clear display
+00008C 0E01       00169 	MOVLW 1
+00008E DFE0       00170 	RCALL LcdKomut
+                  00171 			;	LcdKomut(0x0D); //Display,Cursor,Blink on
+000090 0E0D       00172 	MOVLW 13
+000092 DFDE       00173 	RCALL LcdKomut
+                  00174 			;	LcdKomut(0x06); //Increment ddram adres, do not shift disp.
+000094 0E06       00175 	MOVLW 6
+000096 D7DC       00176 	BRA   LcdKomut
+                  00177 			;}
+                  00178 			;
+                  00179 			;void MesajYaz(const char *msj,unsigned adr)
+                  00180 			;{
+CC8E Version 1.3B,   File: lcd.c                5. Nov 2010  22:31   Page 4
+
+ADDR   CODE       LINE  SOURCE
+
+                  00181 MesajYaz
+000098 6E01       00182 	MOVWF adr,0
+                  00183 			;	unsigned i,j,k;
+                  00184 			;	i=0;
+00009A 6A02       00185 	CLRF  i,0
+                  00186 			;	while(msj[i]!=0)	i++;
+00009C 5002       00187 m006	MOVF  i,W,0
+00009E 2400       00188 	ADDWF msj,W,0
+0000A0 D818       00189 	RCALL _const1
+0000A2 0A00       00190 	XORLW 0
+0000A4 E002       00191 	BZ    m007
+0000A6 2A02       00192 	INCF  i,1,0
+0000A8 D7F9       00193 	BRA   m006
+                  00194 			;	
+                  00195 			;	LcdKomut(adr);
+0000AA 5001       00196 m007	MOVF  adr,W,0
+0000AC DFD1       00197 	RCALL LcdKomut
+                  00198 			;	for(j=0;j<i;j++){
+0000AE 6A03       00199 	CLRF  j,0
+0000B0 5002       00200 m008	MOVF  i,W,0
+0000B2 6003       00201 	CPFSLT j,0
+0000B4 D00D       00202 	BRA   m011
+                  00203 			;		LcdYaz(msj[j]);
+0000B6 5003       00204 	MOVF  j,W,0
+0000B8 2400       00205 	ADDWF msj,W,0
+0000BA D80B       00206 	RCALL _const1
+0000BC DFD4       00207 	RCALL LcdYaz
+                  00208 			;		for(k=0;k<30;k++)nop();
+0000BE 6A04       00209 	CLRF  k,0
+0000C0 0E1E       00210 m009	MOVLW 30
+0000C2 6004       00211 	CPFSLT k,0
+0000C4 D003       00212 	BRA   m010
+0000C6 0000       00213 	NOP  
+0000C8 2A04       00214 	INCF  k,1,0
+0000CA D7FA       00215 	BRA   m009
+                  00216 			;	}
+0000CC 2A03       00217 m010	INCF  j,1,0
+0000CE D7F0       00218 	BRA   m008
+0000D0 0012       00219 m011	RETURN
+                  00220 _const1
+0000D2 6E05       00221 	MOVWF ci,0
+0000D4 0FE6       00222 	ADDLW 230
+0000D6 6EF6       00223 	MOVWF TBLPTR,0
+0000D8 0E00       00224 	MOVLW 0
+0000DA 6AF7       00225 	CLRF  TBLPTR+1,0
+0000DC 22F7       00226 	ADDWFC TBLPTR+1,1,0
+0000DE 6AF8       00227 	CLRF  TBLPTR+2,0
+0000E0 0008       00228 	TBLRD *
+0000E2 50F5       00229 	MOVF  TABLAT,W,0
+0000E4 0012       00230 	RETURN
+0000E6 4545       00231 	DW    0x4545
+0000E8 344D       00232 	DW    0x344D
+0000EA 3531       00233 	DW    0x3531
+0000EC 2020       00234 	DW    0x2020
+0000EE 2020       00235 	DW    0x2020
+0000F0 2020       00236 	DW    0x2020
+0000F2 2020       00237 	DW    0x2020
+0000F4 2020       00238 	DW    0x2020
+0000F6 6100       00239 	DW    0x6100
+0000F8 7070       00240 	DW    0x7070
+CC8E Version 1.3B,   File: lcd.c                5. Nov 2010  22:31   Page 5
+
+ADDR   CODE       LINE  SOURCE
+
+0000FA 696C       00241 	DW    0x696C
+0000FC 6163       00242 	DW    0x6163
+0000FE 6974       00243 	DW    0x6974
+000100 6E6F       00244 	DW    0x6E6F
+000102 6620       00245 	DW    0x6620
+000104 6C69       00246 	DW    0x6C69
+000106 2065       00247 	DW    0x2065
+000108 2020       00248 	DW    0x2020
+00010A 0020       00249 	DW    0x20
+                  00250 
+                  00251 	END
+                  00252 
+                  00253 
+                  00254 ; *** KEY INFO ***
+                  00255 
+                  00256 ; 0x00002C    3 word(s)  0 % : init
+                  00257 ; 0x000032   15 word(s)  0 % : bekle
+                  00258 ; 0x000082   11 word(s)  0 % : LcdInit
+                  00259 ; 0x000066   14 word(s)  0 % : LcdYaz
+                  00260 ; 0x000050   11 word(s)  0 % : LcdKomut
+                  00261 ; 0x000098   29 word(s)  0 % : MesajYaz
+                  00262 ; 0x000004   20 word(s)  0 % : main
+                  00263 ; 0x0000D2   29 word(s)  0 % : _const1
+                  00264 
+                  00265 ; RAM usage: 9 bytes (9 local), 1527 bytes free
+                  00266 ; Maximum call level: 3
+                  00267 ; Total of 134 code words (0 %)

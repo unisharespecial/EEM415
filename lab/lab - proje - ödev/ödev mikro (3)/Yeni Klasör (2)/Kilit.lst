@@ -1,0 +1,177 @@
+CC8E Version 1.3F,   File: Kilit.c              7. Dec 2013  10:25   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3F, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************   7. Dec 2013  10:25  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+                  00009 	__config 0x300002, 0xF8
+300002 FEF8       00010 	__config 0x300003, 0xFE
+                  00011 
+       0FF2       00012 INTCON      EQU   0xFF2
+       0002       00013 Zero_       EQU   2
+       0FD7       00014 TMR0H       EQU   0xFD7
+       0FD5       00015 T0CON       EQU   0xFD5
+       0F95       00016 TRISD       EQU   0xF95
+       0F93       00017 TRISB       EQU   0xF93
+       0F92       00018 TRISA       EQU   0xF92
+       0F83       00019 PORTD       EQU   0xF83
+       0001       00020 INT0IF      EQU   1
+       0007       00021 GIE         EQU   7
+       0007       00022 TMR0ON      EQU   7
+       0000       00023 t           EQU   0x00
+       0002       00024 x           EQU   0x02
+                  00025 
+000000 EF13 F000  00026 	GOTO main
+                  00027 
+                  00028   ; FILE Kilit.c
+                  00029 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00030 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00031 			;
+                  00032 			;void ayarlar();
+                  00033 			;void bekle(unsigned long t);
+                  00034 			;void kesme() //kesme gelince yapilacak komutlar, kesmede calisacak fonksiyon main fonksiyonunun ustunde yazilir...	
+                  00035 			;{
+                  00036 kesme
+                  00037 			;    INTCON=0x90; // kesmeler acilir RBO/INT0 girisi interrupt enable edilir.
+000004 0E90       00038 	MOVLW 144
+000006 6EF2       00039 	MOVWF INTCON,0
+                  00040 			;    T0CON=0b.0000.0101;//Timer baslatilir.
+000008 0E05       00041 	MOVLW 5
+00000A 6ED5       00042 	MOVWF T0CON,0
+                  00043 			;   	TMR0ON = 1;	// Timer0'ý saymaya baþlat
+00000C 8ED5       00044 	BSF   0xFD5,TMR0ON,0
+                  00045 			;    PORTD.1 = 0;	//	yeþil ledi söndür
+00000E 9283       00046 	BCF   PORTD,1,0
+                  00047 			;	PORTD.0 = 1;	//	mavi ledi yak
+000010 8083       00048 	BSF   PORTD,0,0
+                  00049 			;     nop();
+000012 0000       00050 	NOP  
+                  00051 			;	 T0CON=0b.0000.0000;//Timer durdurulur.
+000014 6AD5       00052 	CLRF  T0CON,0
+                  00053 			;     TMR0ON=0;
+000016 9ED5       00054 	BCF   0xFD5,TMR0ON,0
+                  00055 			;     PORTD.1=1;
+000018 8283       00056 	BSF   PORTD,1,0
+                  00057 			;     PORTD.0=0;	 
+00001A 9083       00058 	BCF   PORTD,0,0
+                  00059 			;	 TMR0H=0b.0000;
+00001C 6AD7       00060 	CLRF  TMR0H,0
+CC8E Version 1.3F,   File: Kilit.c              7. Dec 2013  10:25   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			;	 nop();
+00001E 0000       00062 	NOP  
+                  00063 			;
+                  00064 			;    INT0IF=0;  // yeni kesmeler gelmesi icin butona bagli olan INT0 portundaki interrupt flagi kapatilir.
+000020 92F2       00065 	BCF   0xFF2,INT0IF,0
+                  00066 			;	GIE=1;	//kesmeler acilir, yeni kesme gelmesine musade edilir	
+000022 8EF2       00067 	BSF   0xFF2,GIE,0
+                  00068 			;
+                  00069 			;}		
+000024 0012       00070 	RETURN
+                  00071 			;
+                  00072 			;void main()
+                  00073 			;{
+                  00074 main
+                  00075 			; 
+                  00076 			;	ayarlar();
+000026 D806       00077 	RCALL ayarlar
+                  00078 			;
+                  00079 			;	anadongu: 
+                  00080 			;   
+                  00081 			;
+                  00082 			;	 
+                  00083 			;     	
+                  00084 			; 		bekle(1000);
+000028 0EE8       00085 m001	MOVLW 232
+00002A 6E00       00086 	MOVWF t,0
+00002C 0E03       00087 	MOVLW 3
+00002E 6E01       00088 	MOVWF t+1,0
+000030 D809       00089 	RCALL bekle
+                  00090 			;
+                  00091 			;	goto anadongu;
+000032 D7FA       00092 	BRA   m001
+                  00093 			;//-----------------------------------------------
+                  00094 			;
+                  00095 			;}
+                  00096 			;
+                  00097 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00098 			;
+                  00099 			;void ayarlar()	
+                  00100 			;{	
+                  00101 ayarlar
+                  00102 			;
+                  00103 			;  	GIE=0;			// Bütün kesmeleri kapat
+000034 9EF2       00104 	BCF   0xFF2,GIE,0
+                  00105 			;	TRISA=0xFF;		// PORTA giriþ
+000036 6892       00106 	SETF  TRISA,0
+                  00107 			;	TRISB=0xFF;		// PORTB giriþ	
+000038 6893       00108 	SETF  TRISB,0
+                  00109 			;	TRISD=0x00;		// PORTD çýkýþ
+00003A 6A95       00110 	CLRF  TRISD,0
+                  00111 			;
+                  00112 			; 	PORTD=0x00;
+00003C 6A83       00113 	CLRF  PORTD,0
+                  00114 			;
+                  00115 			;/*	ADCON0=0b.0100.0001;	//	ADC ayarlarý
+                  00116 			;	ADCON1=0b.0000.0000;*/
+                  00117 			;	
+                  00118 			;	T0CON = 0b.1101.1000;	// Timer0 ayarlarý
+00003E 0ED8       00119 	MOVLW 216
+000040 6ED5       00120 	MOVWF T0CON,0
+CC8E Version 1.3F,   File: Kilit.c              7. Dec 2013  10:25   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 			;}
+000042 0012       00122 	RETURN
+                  00123 			;
+                  00124 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00125 			;
+                  00126 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00127 			;{
+                  00128 bekle
+                  00129 			;	unsigned x;
+                  00130 			;	
+                  00131 			;	for(;t>0;t--)
+000044 5000       00132 m002	MOVF  t,W,0
+000046 1001       00133 	IORWF t+1,W,0
+000048 B4D8       00134 	BTFSC 0xFD8,Zero_,0
+00004A D00C       00135 	BRA   m005
+                  00136 			;		for(x=140;x>0;x--)
+00004C 0E8C       00137 	MOVLW 140
+00004E 6E02       00138 	MOVWF x,0
+000050 5202       00139 m003	MOVF  x,1,0
+000052 B4D8       00140 	BTFSC 0xFD8,Zero_,0
+000054 D003       00141 	BRA   m004
+                  00142 			;			nop();
+000056 0000       00143 	NOP  
+000058 0602       00144 	DECF  x,1,0
+00005A D7FA       00145 	BRA   m003
+00005C 0600       00146 m004	DECF  t,1,0
+00005E 0E00       00147 	MOVLW 0
+000060 5A01       00148 	SUBWFB t+1,1,0
+000062 D7F0       00149 	BRA   m002
+                  00150 			;}
+000064 0012       00151 m005	RETURN
+                  00152 
+                  00153 	END
+                  00154 
+                  00155 
+                  00156 ; *** KEY INFO ***
+                  00157 
+                  00158 ; 0x000034    8 word(s)  0 % : ayarlar
+                  00159 ; 0x000044   17 word(s)  0 % : bekle
+                  00160 ; 0x000004   17 word(s)  0 % : kesme
+                  00161 ; 0x000026    7 word(s)  0 % : main
+                  00162 
+                  00163 ; RAM usage: 3 bytes (3 local), 1533 bytes free
+                  00164 ; Maximum call level: 1
+                  00165 ; Total of 51 code words (0 %)

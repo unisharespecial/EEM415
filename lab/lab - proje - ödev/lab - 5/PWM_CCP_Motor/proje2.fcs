@@ -1,0 +1,21 @@
+
+CC8E Version 1.3D, Copyright (c) B Knudsen Data.
+* FUNCTION CALL STRUCTURE
+
+F: main                   :#0 
+    PWMayar               : #1 
+    ayarlar               : #1 
+    bekle                 : #1 
+
+F: bekle                  :#1 
+
+F: ayarlar                :#1 
+
+F: PWMayar                :#1 
+
+
+ L0  main
+ L1    PWMayar
+ L1    ayarlar
+ L1    bekle
+

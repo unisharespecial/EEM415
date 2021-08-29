@@ -1,0 +1,229 @@
+CC8E Version 1.3D,   File: prj2.c              19. Nov 2010  16:22   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3D, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************  19. Nov 2010  16:22  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+300000 F1FF       00009 	__config 0x300001, 0xF1
+                  00010 	__config 0x300002, 0xF8
+300002 FEF8       00011 	__config 0x300003, 0xFE
+                  00012 
+       0002       00013 Zero_       EQU   2
+       0F96       00014 TRISE       EQU   0xF96
+       0F95       00015 TRISD       EQU   0xF95
+       0F94       00016 TRISC       EQU   0xF94
+       0F93       00017 TRISB       EQU   0xF93
+       0F84       00018 PORTE       EQU   0xF84
+       0F83       00019 PORTD       EQU   0xF83
+       0F82       00020 PORTC       EQU   0xF82
+       0F81       00021 PORTB       EQU   0xF81
+       0007       00022 GIE         EQU   7
+       0003       00023 TUS         EQU   0x03
+       0004       00024 TUS1        EQU   0x04
+       0005       00025 TUS2        EQU   0x05
+       0000       00026 t           EQU   0x00
+       0002       00027 x           EQU   0x02
+                  00028 
+000000 EF02 F000  00029 	GOTO main
+                  00030 
+                  00031   ; FILE prj2.c
+                  00032 			;
+                  00033 			;#pragma config[1] = 0xF1 // Osilatör: XT
+                  00034 			;#pragma config[2] = 0xFE & 0xF9 // PWRT açýk, BOR kapalý
+                  00035 			;#pragma config[3] = 0xFE // Watchdog Timer kapalý
+                  00036 			;
+                  00037 			;char	tus_oku();
+                  00038 			;char	TUS;
+                  00039 			;char	TUS1;
+                  00040 			;char	TUS2;
+                  00041 			;void	ayarlar();
+                  00042 			;void 	bekle(unsigned long t);	// t milisaniye gecikme saðlayan fonksiyon tanýmý
+                  00043 			;
+                  00044 			;
+                  00045 			;void main()
+                  00046 			;{
+                  00047 main
+                  00048 			;	ayarlar();
+000004 D81C       00049 	RCALL ayarlar
+                  00050 			;
+                  00051 			;//-----------------------------------------------	
+                  00052 			;anadongu:
+                  00053 			;	bekle(1);	// Acquisition Time(Sample & Hold kapasitörünün þarj olmasý için gerekli zaman)
+000006 0E01       00054 m001	MOVLW 1
+000008 6E00       00055 	MOVWF t,0
+00000A 6A01       00056 	CLRF  t+1,0
+00000C D842       00057 	RCALL bekle
+                  00058 			;  	while(PORTB.0==1)
+00000E A081       00059 m002	BTFSS PORTB,0,0
+000010 D014       00060 	BRA   m005
+CC8E Version 1.3D,   File: prj2.c              19. Nov 2010  16:22   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+                  00061 			; {
+                  00062 			;	PORTD=0x00;
+000012 6A83       00063 	CLRF  PORTD,0
+                  00064 			;	if (PORTB.1==1)
+000014 A281       00065 	BTFSS PORTB,1,0
+000016 D006       00066 	BRA   m003
+                  00067 			;	{PORTD=0xF1;bekle(1);}
+000018 0EF1       00068 	MOVLW 241
+00001A 6E83       00069 	MOVWF PORTD,0
+00001C 0E01       00070 	MOVLW 1
+00001E 6E00       00071 	MOVWF t,0
+000020 6A01       00072 	CLRF  t+1,0
+000022 D837       00073 	RCALL bekle
+                  00074 			;	if (PORTB.2==1)
+000024 A481       00075 m003	BTFSS PORTB,2,0
+000026 D006       00076 	BRA   m004
+                  00077 			;	{PORTD=0xF2;bekle(1);}
+000028 0EF2       00078 	MOVLW 242
+00002A 6E83       00079 	MOVWF PORTD,0
+00002C 0E01       00080 	MOVLW 1
+00002E 6E00       00081 	MOVWF t,0
+000030 6A01       00082 	CLRF  t+1,0
+000032 D82F       00083 	RCALL bekle
+                  00084 			;	PORTE=tus_oku();
+000034 D80E       00085 m004	RCALL tus_oku
+000036 6E84       00086 	MOVWF PORTE,0
+                  00087 			; }   
+000038 D7EA       00088 	BRA   m002
+                  00089 			;	PORTD=0x00;
+00003A 6A83       00090 m005	CLRF  PORTD,0
+                  00091 			;	goto anadongu;
+00003C D7E4       00092 	BRA   m001
+                  00093 			;//-----------------------------------------------	
+                  00094 			;}
+                  00095 			;
+                  00096 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00097 			;
+                  00098 			;void ayarlar()	// Bütün baþlangýç ayarlarýnýn tamamlandýðý kýsým
+                  00099 			;{	
+                  00100 ayarlar
+                  00101 			;	GIE=0;			// Bütün kesmeleri kapat
+00003E 9EF2       00102 	BCF   0xFF2,GIE,0
+                  00103 			;	TRISC=0xFF;		// C portu giriþ yapýldý
+000040 6894       00104 	SETF  TRISC,0
+                  00105 			;	TRISD=0;		// D portu çýkýþ yapýldý
+000042 6A95       00106 	CLRF  TRISD,0
+                  00107 			;	TRISB=0xFF;		// B portu çýkýþ yapýldý
+000044 6893       00108 	SETF  TRISB,0
+                  00109 			;	TRISE=0;		// E portu çýkýþ yapýldý
+000046 6A96       00110 	CLRF  TRISE,0
+                  00111 			;	
+                  00112 			;	PORTB=0;		// B portu çýkýþlarý sýfýrlandý
+000048 6A81       00113 	CLRF  PORTB,0
+                  00114 			;	PORTE=0;		// E portu çýkýþlarý sýfýrlandý	
+00004A 6A84       00115 	CLRF  PORTE,0
+                  00116 			;	PORTD=0;		// D portu çýkýþlarý sýfýrlandý
+00004C 6A83       00117 	CLRF  PORTD,0
+                  00118 			;	PORTC=0;		// C portu çýkýþlarý sýfýrlandý
+00004E 6A82       00119 	CLRF  PORTC,0
+                  00120 			;
+CC8E Version 1.3D,   File: prj2.c              19. Nov 2010  16:22   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+                  00121 			;	
+                  00122 			;	
+                  00123 			;}
+000050 0012       00124 	RETURN
+                  00125 			;
+                  00126 			;////////////////////////////////////////////////////////////////////////////////////////////
+                  00127 			;char tus_oku()	// tarama keypad'ýn okunduðu kýsým
+                  00128 			;{
+                  00129 tus_oku
+                  00130 			;
+                  00131 			;	TUS1=PORTC;
+000052 CF82 F004  00132 	MOVFF PORTC,TUS1
+                  00133 			;	bekle(5);
+000056 0E05       00134 	MOVLW 5
+000058 6E00       00135 	MOVWF t,0
+00005A 6A01       00136 	CLRF  t+1,0
+00005C D81A       00137 	RCALL bekle
+                  00138 			;	TUS2=PORTC;
+00005E CF82 F005  00139 	MOVFF PORTC,TUS2
+                  00140 			;	bekle(5);
+000062 0E05       00141 	MOVLW 5
+000064 6E00       00142 	MOVWF t,0
+000066 6A01       00143 	CLRF  t+1,0
+000068 D814       00144 	RCALL bekle
+                  00145 			;	if(TUS1<TUS2)
+00006A 5005       00146 	MOVF  TUS2,W,0
+00006C 6004       00147 	CPFSLT TUS1,0
+00006E D006       00148 	BRA   m006
+                  00149 			;	{TUS=0x01;bekle(2);}
+000070 0E01       00150 	MOVLW 1
+000072 6E03       00151 	MOVWF TUS,0
+000074 0E02       00152 	MOVLW 2
+000076 6E00       00153 	MOVWF t,0
+000078 6A01       00154 	CLRF  t+1,0
+00007A D80B       00155 	RCALL bekle
+                  00156 			;	if(TUS1>TUS2)
+00007C 5004       00157 m006	MOVF  TUS1,W,0
+00007E 6005       00158 	CPFSLT TUS2,0
+000080 D006       00159 	BRA   m007
+                  00160 			;	{TUS=0x02;bekle(2);}	
+000082 0E02       00161 	MOVLW 2
+000084 6E03       00162 	MOVWF TUS,0
+000086 0E02       00163 	MOVLW 2
+000088 6E00       00164 	MOVWF t,0
+00008A 6A01       00165 	CLRF  t+1,0
+00008C D802       00166 	RCALL bekle
+                  00167 			;
+                  00168 			;	return TUS;	
+00008E 5003       00169 m007	MOVF  TUS,W,0
+000090 0012       00170 	RETURN
+                  00171 			;}
+                  00172 			;//////////////////////////////////////////////////////////////////////////////////////////////////
+                  00173 			;
+                  00174 			;void bekle(unsigned long t)	//t milisaniye gecikme saðlar
+                  00175 			;{
+                  00176 bekle
+                  00177 			;	unsigned x;
+                  00178 			;	
+                  00179 			;	for(;t>0;t--)
+000092 5000       00180 m008	MOVF  t,W,0
+CC8E Version 1.3D,   File: prj2.c              19. Nov 2010  16:22   Page 4
+
+ADDR   CODE       LINE  SOURCE
+
+000094 1001       00181 	IORWF t+1,W,0
+000096 B4D8       00182 	BTFSC 0xFD8,Zero_,0
+000098 D00C       00183 	BRA   m011
+                  00184 			;		for(x=140;x>0;x--)
+00009A 0E8C       00185 	MOVLW 140
+00009C 6E02       00186 	MOVWF x,0
+00009E 5202       00187 m009	MOVF  x,1,0
+0000A0 B4D8       00188 	BTFSC 0xFD8,Zero_,0
+0000A2 D003       00189 	BRA   m010
+                  00190 			;			nop();
+0000A4 0000       00191 	NOP  
+0000A6 0602       00192 	DECF  x,1,0
+0000A8 D7FA       00193 	BRA   m009
+0000AA 0600       00194 m010	DECF  t,1,0
+0000AC 0E00       00195 	MOVLW 0
+0000AE 5A01       00196 	SUBWFB t+1,1,0
+0000B0 D7F0       00197 	BRA   m008
+                  00198 			;}
+0000B2 0012       00199 m011	RETURN
+                  00200 
+                  00201 	END
+                  00202 
+                  00203 
+                  00204 ; *** KEY INFO ***
+                  00205 
+                  00206 ; 0x000052   32 word(s)  0 % : tus_oku
+                  00207 ; 0x00003E   10 word(s)  0 % : ayarlar
+                  00208 ; 0x000092   17 word(s)  0 % : bekle
+                  00209 ; 0x000004   29 word(s)  0 % : main
+                  00210 
+                  00211 ; RAM usage: 6 bytes (3 local), 1530 bytes free
+                  00212 ; Maximum call level: 2
+                  00213 ; Total of 90 code words (0 %)

@@ -1,0 +1,170 @@
+CC8E Version 1.3F,   File: display.c            1. Dec 2013  17:56   Page 1
+
+ADDR   CODE       LINE  SOURCE
+
+                  00001 
+                  00002 ; CC8E Version 1.3F, Copyright (c) B Knudsen Data
+                  00003 ; C compiler for the PIC18 microcontrollers
+                  00004 ; ************   1. Dec 2013  17:56  *************
+                  00005 
+                  00006 	processor  PIC18F452
+                  00007 	radix  DEC
+                  00008 
+       0FF2       00009 INTCON      EQU   0xFF2
+       0002       00010 Zero_       EQU   2
+       0FCF       00011 TMR1H       EQU   0xFCF
+       0FCD       00012 T1CON       EQU   0xFCD
+       0F94       00013 TRISC       EQU   0xF94
+       0F93       00014 TRISB       EQU   0xF93
+       0F92       00015 TRISA       EQU   0xF92
+       0F82       00016 PORTC       EQU   0xF82
+       0001       00017 INT0IF      EQU   1
+       0007       00018 GIE         EQU   7
+       0000       00019 t           EQU   0x00
+       0002       00020 x           EQU   0x02
+       0000       00021 s           EQU   0x00
+                  00022 
+000000 EF11 F000  00023 	GOTO main
+                  00024 
+                  00025   ; FILE display.c
+                  00026 			;void ayarlar();
+                  00027 			;void bekle(unsigned long t);
+                  00028 			;void sifirla(unsigned long s);
+                  00029 			;
+                  00030 			;void kesme() //kesme gelince yapilacak komutlar, kesmede calisacak fonksiyon main fonksiyonunun ustunde yazilir...	
+                  00031 			;{
+                  00032 kesme
+                  00033 			;	INTCON=0x90; // kesmeler acilir RBO/INT0 girisi interrupt enable edilir.
+000004 0E90       00034 	MOVLW 144
+000006 6EF2       00035 	MOVWF INTCON,0
+                  00036 			;	PORTC.4=1;
+000008 8882       00037 	BSF   PORTC,4,0
+                  00038 			;	bekle(1000);
+00000A 0EE8       00039 	MOVLW 232
+00000C 6E00       00040 	MOVWF t,0
+00000E 0E03       00041 	MOVLW 3
+000010 6E01       00042 	MOVWF t+1,0
+000012 D818       00043 	RCALL bekle
+                  00044 			;	PORTC.4=0;
+000014 9882       00045 	BCF   PORTC,4,0
+                  00046 			;	INT0IF=0;  // yeni kesmeler gelmesi icin butona bagli olan INT0 portundaki interrupt flagi kapatilir.
+000016 92F2       00047 	BCF   0xFF2,INT0IF,0
+                  00048 			;	GIE=1;	//kesmeler acilir, yeni kesme gelmesine musade edilir
+000018 8EF2       00049 	BSF   0xFF2,GIE,0
+                  00050 			;	sifirla(TMR1H);
+00001A CFCF F000  00051 	MOVFF TMR1H,s
+00001E 6A01       00052 	CLRF  s+1,0
+000020 D022       00053 	BRA   sifirla
+                  00054 			;
+                  00055 			;}	
+                  00056 			;
+                  00057 			;void main()
+                  00058 			;{
+                  00059 main
+                  00060 			;	ayarlar();
+CC8E Version 1.3F,   File: display.c            1. Dec 2013  17:56   Page 2
+
+ADDR   CODE       LINE  SOURCE
+
+000022 D828       00061 	RCALL ayarlar
+                  00062 			;	
+                  00063 			;anadongu:
+                  00064 			;	INTCON=0x90;
+000024 0E90       00065 m001	MOVLW 144
+000026 6EF2       00066 	MOVWF INTCON,0
+                  00067 			;	T1CON=0b.0000.0101;
+000028 0E05       00068 	MOVLW 5
+00002A 6ECD       00069 	MOVWF T1CON,0
+                  00070 			;	PORTC=TMR1H;
+00002C CFCF FF82  00071 	MOVFF TMR1H,PORTC
+                  00072 			;	T1CON=0b.0000.0000;
+000030 6ACD       00073 	CLRF  T1CON,0
+                  00074 			;	bekle(5);
+000032 0E05       00075 	MOVLW 5
+000034 6E00       00076 	MOVWF t,0
+000036 6A01       00077 	CLRF  t+1,0
+000038 D805       00078 	RCALL bekle
+                  00079 			;	sifirla(TMR1H);
+00003A CFCF F000  00080 	MOVFF TMR1H,s
+00003E 6A01       00081 	CLRF  s+1,0
+000040 D812       00082 	RCALL sifirla
+                  00083 			;goto anadongu;
+000042 D7F0       00084 	BRA   m001
+                  00085 			;
+                  00086 			;}
+                  00087 			;
+                  00088 			;void bekle(unsigned long t)
+                  00089 			;{
+                  00090 bekle
+                  00091 			;	unsigned x;
+                  00092 			;	
+                  00093 			;	for(;t>0;t--)
+000044 5000       00094 m002	MOVF  t,W,0
+000046 1001       00095 	IORWF t+1,W,0
+000048 B4D8       00096 	BTFSC 0xFD8,Zero_,0
+00004A D00C       00097 	BRA   m005
+                  00098 			;		for(x=140;x>0;x--)
+00004C 0E8C       00099 	MOVLW 140
+00004E 6E02       00100 	MOVWF x,0
+000050 5202       00101 m003	MOVF  x,1,0
+000052 B4D8       00102 	BTFSC 0xFD8,Zero_,0
+000054 D003       00103 	BRA   m004
+                  00104 			;			nop();
+000056 0000       00105 	NOP  
+000058 0602       00106 	DECF  x,1,0
+00005A D7FA       00107 	BRA   m003
+00005C 0600       00108 m004	DECF  t,1,0
+00005E 0E00       00109 	MOVLW 0
+000060 5A01       00110 	SUBWFB t+1,1,0
+000062 D7F0       00111 	BRA   m002
+                  00112 			;}
+000064 0012       00113 m005	RETURN
+                  00114 			;
+                  00115 			;void sifirla(unsigned long s)
+                  00116 			;{
+                  00117 sifirla
+                  00118 			;	if(s>9)
+000066 5001       00119 	MOVF  s+1,W,0
+000068 A4D8       00120 	BTFSS 0xFD8,Zero_,0
+CC8E Version 1.3F,   File: display.c            1. Dec 2013  17:56   Page 3
+
+ADDR   CODE       LINE  SOURCE
+
+00006A D002       00121 	BRA   m006
+00006C 0E0A       00122 	MOVLW 10
+00006E 6000       00123 	CPFSLT s,0
+                  00124 			;		TMR1H=0b.0000;
+000070 6ACF       00125 m006	CLRF  TMR1H,0
+                  00126 			;}
+000072 0012       00127 	RETURN
+                  00128 			;
+                  00129 			;void ayarlar()
+                  00130 			;{	
+                  00131 ayarlar
+                  00132 			;	GIE=1;			
+000074 8EF2       00133 	BSF   0xFF2,GIE,0
+                  00134 			;	TRISA=0xFF;
+000076 6892       00135 	SETF  TRISA,0
+                  00136 			;	TRISB=0xFF;
+000078 6893       00137 	SETF  TRISB,0
+                  00138 			;	TRISC=0x00;	
+00007A 6A94       00139 	CLRF  TRISC,0
+                  00140 			;
+                  00141 			;		
+                  00142 			;}
+00007C 0012       00143 	RETURN
+                  00144 
+                  00145 	END
+                  00146 
+                  00147 
+                  00148 ; *** KEY INFO ***
+                  00149 
+                  00150 ; 0x000074    5 word(s)  0 % : ayarlar
+                  00151 ; 0x000044   17 word(s)  0 % : bekle
+                  00152 ; 0x000066    7 word(s)  0 % : sifirla
+                  00153 ; 0x000004   15 word(s)  0 % : kesme
+                  00154 ; 0x000022   17 word(s)  0 % : main
+                  00155 
+                  00156 ; RAM usage: 3 bytes (3 local), 1533 bytes free
+                  00157 ; Maximum call level: 1
+                  00158 ; Total of 63 code words (0 %)
